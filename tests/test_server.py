@@ -4,7 +4,7 @@ import unittest
 import urllib.error
 import urllib.request
 
-from metaxis.server import make_server
+from metaxis.server import _yeti_live_brief, make_server
 
 
 class LocalServerTests(unittest.TestCase):
@@ -93,6 +93,25 @@ class LocalServerTests(unittest.TestCase):
                 self.assertIn("GitHub broker: declared-only", turn["assistant"])
                 self.assertIn("Brain route: mock-local-development", turn["assistant"])
                 self.assertIn("Capability pack: 2 active / 4 loaded", turn["assistant"])
+                self.assertIn("D1 adapter credential: absent", turn["assistant"])
+
+    def test_yeti_brief_reports_live_d1_credential_boundary(self) -> None:
+        brief = _yeti_live_brief(
+            {
+                "backend": "cloudflare-d1",
+                "durable": True,
+                "credential_exposed_to_model": False,
+            },
+            {"live": True},
+            "mock-local-development",
+            {"active_count": 3, "loaded_count": 4},
+        )
+        self.assertIn("D1 adapter credential: active from a read-only file mount", brief)
+        self.assertIn("exposed to the model: never", brief)
+        self.assertIn("Project 21", brief)
+        self.assertIn("D1 schema administration", brief)
+        self.assertNotIn("does not currently hold Cloudflare credentials", brief)
+        self.assertNotIn("Project 18", brief)
 
     def test_github_question_uses_broker_readback_not_brain(self) -> None:
         with self.request("/api/v1/threads", {"title": "github"}) as response:

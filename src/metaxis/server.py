@@ -45,6 +45,27 @@ def _yeti_live_brief(
     capability_status: dict[str, Any],
 ) -> str:
     github_connection = "live" if github_status["live"] else "declared-only"
+    d1_live = (
+        storage_status["backend"] == "cloudflare-d1"
+        and storage_status["durable"] is True
+    )
+    if d1_live:
+        d1_credential_line = (
+            "- D1 adapter credential: active from a read-only file mount; "
+            "exposed to the model: never."
+        )
+        d1_administration_line = (
+            "- Project 21, workflow changes, and D1 schema administration remain "
+            "on the governed cGunther host path."
+        )
+    else:
+        d1_credential_line = (
+            "- D1 adapter credential: absent; durable runtime storage is inactive."
+        )
+        d1_administration_line = (
+            "- Project 21, workflow changes, and D1 activation or administration "
+            "require the governed cGunther host path."
+        )
     return "\n".join(
         [
             "YKS Ops Live Brief",
@@ -63,8 +84,8 @@ def _yeti_live_brief(
             f"- GitHub broker: {github_connection}; metadata read-only; writes denied.",
             f"- Brain route: {model_route}.",
             f"- Capability pack: {capability_status['active_count']} active / {capability_status['loaded_count']} loaded; writes denied.",
-            "- This isolated runtime does not currently hold Cloudflare credentials.",
-            "- Live repository, Project 18, workflow, and D1 refresh require the governed cGunther host path.",
+            d1_credential_line,
+            d1_administration_line,
             "",
             "4. Canon and architecture drift",
             "- GitHub, D1, and canon remain the durable body; NemaShells is presentation only.",

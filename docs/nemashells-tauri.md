@@ -60,8 +60,9 @@ does not bypass METAXIS or introduce another service.
 Inside the NemaShells conversation, `Yeti's live`, `Yeti live`, `Yetis live`,
 and `Yeti's life` are deterministic boot triggers. They return a local YKS Ops
 live brief on route `yeti-boot-local-readback` without invoking a model. The
-brief reports when live GitHub, Project 18, workflow, or D1 refresh is
-unavailable to the isolated runtime instead of fabricating current state.
+brief reports live GitHub and D1 adapter state without fabricating broader
+authority. Project 21, workflow changes, and D1 schema administration remain
+on the governed cGunther host path.
 
 The shell displays the active model route, HIGH/NOFORN denial, storage backend,
 durability posture, capability inventory, and proof state. Run
