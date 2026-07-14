@@ -1,0 +1,27 @@
+name: nemashells
+services:
+  metaxis:
+    build:
+      context: .
+      args:
+        METAXIS_REVISION: ${METAXIS_REVISION:-development}
+    image: metaxis/nemashells:${METAXIS_REVISION:-development}
+    container_name: nemashells-metaxis
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:4310:4310"
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=16m
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 128
+    mem_limit: 512m
+    environment:
+      METAXIS_PROFILE: ${METAXIS_PROFILE:-orbstack-development}
+      METAXIS_DATA_CLASSIFICATION: DEVELOPMENT
+      METAXIS_EXTERNAL_MODEL_CALLS: "0"
+      METAXIS_EXTERNAL_TELEMETRY: "0"
+      METAXIS_OPERATOR_CADENCE: "5.6 sol"

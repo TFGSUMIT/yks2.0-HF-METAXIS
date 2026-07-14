@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0",
+  "classification": "HIGH/NOFORN",
+  "default": "deny",
+  "development_data": ["synthetic", "public", "explicitly-approved-non-sensitive"],
+  "required_controls": {
+    "model_developer_country": "US",
+    "model_provenance_review": "accepted",
+    "administrators": "US-person-only",
+    "workload_users": "US-person-only",
+    "compute_and_data_location": "approved-US-only",
+    "network_egress": "deny-by-default",
+    "external_telemetry": "disabled",
+    "credential_custody": "approved",
+    "authority_record": "required"
+  },
+  "public_hosted_api_fallback": false,
+  "primary_candidate": {
+    "repository": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-BF16",
+    "revision": "cbd3fa9f933d55ef16a84236559f4ee2a0526848",
+    "developer": "NVIDIA Corporation",
+    "developer_country": "US",
+    "status": "candidate-evaluation-required"
+  },
+  "requirements": [
+    "YKS-REQ-MTX-026",
+    "YKS-REQ-MTX-BRAIN-018",
+    "YKS-REQ-MTX-BRAIN-019",
+    "YKS-REQ-MTX-BRAIN-020",
+    "YKS-REQ-MTX-BRAIN-021"
+  ]
+}

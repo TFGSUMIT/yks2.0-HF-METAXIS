@@ -1,0 +1,28 @@
+{
+  "profile": "resource-constrained-api-first",
+  "status": "disabled-until-authorized",
+  "transport": "openai-compatible",
+  "local_responsibilities": [
+    "classification",
+    "route-admission",
+    "thread-state",
+    "context-budget",
+    "quota-guard",
+    "evidence",
+    "operator-readback"
+  ],
+  "remote_responsibilities": ["inference", "large-context-compute"],
+  "development_route": {
+    "allowed_data": ["synthetic", "public", "explicitly-approved-non-sensitive"],
+    "public_hosted_api_may_be_registered": true
+  },
+  "high_noforn_route": {
+    "public_hosted_api_fallback": false,
+    "complete_control_record_required": true,
+    "missing_control_behavior": "deny"
+  },
+  "quota": {
+    "max_output_tokens_per_request": 4096,
+    "spend_cap_required_before_enablement": true
+  }
+}

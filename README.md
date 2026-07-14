@@ -18,7 +18,37 @@ execution.
 🟩 YKS Ops → 🟦 METAXIS → 🟥 AXIS → 🟪 mission execution →
 🟩 TESTIMONIUM / ACTA proof → 🟪 OCULUS readback
 
-## Phase 0: Hugging Face research and discovery
+## NemaShells installed application
+
+NemaShells is the native METAXIS operator application. The laptop profile runs
+the METAXIS service as a hardened Docker workload inside OrbStack Ubuntu while
+the installed macOS app holds presentation state only. The normal journey is:
+
+```sh
+orb start ubuntu
+orb -m ubuntu
+nemashells
+```
+
+One-time installation is documented in
+[`docs/nemashells-install.md`](docs/nemashells-install.md). The same container
+and systemd contract moves to the target Proxmox/KVM -> Debian VM -> Docker
+stack without changing the app or brain adapter.
+
+## HIGH/NOFORN hard gate
+
+HIGH/NOFORN is a hard, fail-closed route requirement. The OrbStack laptop
+profile accepts synthetic, public, or explicitly approved non-sensitive
+development data only. External model calls are disabled. A route cannot be
+eligible for HIGH/NOFORN until U.S.-origin model provenance, U.S.-person-only
+administrative and workload access, approved U.S. placement, deny-by-default
+egress, disabled external telemetry, credential custody, immutable pins, and
+an authority record all pass. A public hosted API is not a fallback.
+
+Nemotron 3 Nano 30B-A3B remains the primary evaluation candidate. Its quality
+is not treated as proven until the repository-scale METAXIS evaluation passes.
+
+## Phase 0: research and local application development
 
 This repository starts with Hugging Face as the first discovery surface and
 NVIDIA Nemotron as the first reference brain family. It does not select a
@@ -28,10 +58,10 @@ The Phase 0 gate will:
 
 - register immutable model repositories and revisions;
 - record actual model, dataset, code, container, and service licenses;
-- compare Nemotron with credible non-NVIDIA candidates;
+- compare Nemotron with a provenance-approved U.S.-origin second candidate;
 - normalize requests, responses, tool calls, errors, and provenance;
 - measure quality, latency, tool use, recovery, cost, and data boundaries;
-- prove export from hosted inference to rented vLLM; and
+- prove export to an approved U.S.-person-controlled vLLM placement; and
 - preserve a path to sovereign local inference.
 
 ## Repository layout
@@ -39,6 +69,8 @@ The Phase 0 gate will:
 | Path | Purpose |
 | --- | --- |
 | src/metaxis | Provider-neutral harness contracts and CLI |
+| apps/nemashells-macos | Native presentation-only NemaShells application |
+| deployment | OrbStack, systemd, Docker, and Proxmox profiles |
 | schemas/brain-contract | Machine-readable request and response envelopes |
 | configs/providers | Research-only provider profiles |
 | evals | Candidate register and repeatable evaluation design |
@@ -52,11 +84,12 @@ The Phase 0 gate will:
 ## Current posture
 
 - Phase: 0 — research/discovery
-- Provider profile: Hugging Face first
+- Provider profile: local deterministic mock; public hosted inference blocked for HIGH/NOFORN
 - Reference model family: NVIDIA Nemotron, discovery-gated
 - First open runtime: vLLM, conformance-gated
 - Production inference: not activated
 - Endpoint spending: not authorized
+- HIGH/NOFORN processing: blocked in the laptop development profile
 - Software license: selection pending an explicit governance decision
 
 Public visibility does not itself grant a software license. License selection
