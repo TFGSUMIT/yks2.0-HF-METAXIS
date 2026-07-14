@@ -82,15 +82,15 @@ class GitHubAPI:
         for milestone in milestones:
             if milestone["title"] == source_milestone["title"]:
                 return int(milestone["number"])
+        payload = {
+            "title": source_milestone["title"],
+            "state": source_milestone.get("state", "open"),
+            "description": source_milestone.get("description") or "",
+        }
+        if source_milestone.get("due_on"):
+            payload["due_on"] = source_milestone["due_on"]
         created = self.request(
-            "POST",
-            f"/repos/{repo}/milestones",
-            {
-                "title": source_milestone["title"],
-                "state": source_milestone.get("state", "open"),
-                "description": source_milestone.get("description") or "",
-                "due_on": source_milestone.get("due_on"),
-            },
+            "POST", f"/repos/{repo}/milestones", payload
         )
         return int(created["number"])
 
@@ -158,4 +158,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
