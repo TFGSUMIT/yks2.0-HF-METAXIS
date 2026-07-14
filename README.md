@@ -36,6 +36,10 @@ One-time installation is documented in
 and systemd contract moves to the target Proxmox/KVM -> Debian VM -> Docker
 stack without changing the app or brain adapter.
 
+The optional Tauri 2 second shell uses the same API and is isolated behind the
+`PROTOS-4` login/launcher path. See
+[`docs/nemashells-tauri.md`](docs/nemashells-tauri.md).
+
 ## HIGH/NOFORN hard gate
 
 HIGH/NOFORN is a hard, fail-closed route requirement. The OrbStack laptop
@@ -71,6 +75,7 @@ The Phase 0 gate will:
 | --- | --- |
 | src/metaxis | Provider-neutral harness contracts and CLI |
 | apps/nemashells-macos | Native presentation-only NemaShells application |
+| apps/nemashells-tauri | Tauri 2 presentation-only second shell |
 | deployment | OrbStack, systemd, Docker, and Proxmox profiles |
 | schemas/brain-contract | Machine-readable request and response envelopes |
 | configs/providers | Research-only provider profiles |

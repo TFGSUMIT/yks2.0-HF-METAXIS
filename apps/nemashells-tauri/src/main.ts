@@ -1,0 +1,172 @@
+import { fetch } from "@tauri-apps/plugin-http";
+
+const API = "http://127.0.0.1:4310";
+
+type OperatorState = {
+  service: { status: string; profile: string; transport: string };
+  operator_context: { cadence: string };
+  classification: { status: string; reasons: string[] };
+  model: {
+    primary_candidate: string;
+    sufficiency: string;
+    active_route: string;
+    external_api_allowed: boolean;
+  };
+  proof: { posture: string };
+  storage: {
+    backend: string;
+    durable: boolean;
+    credential_exposed_to_model: boolean;
+  };
+  next_safe_action: string;
+};
+
+type ThreadCreated = { id: string };
+type TurnCreated = {
+  id: string;
+  operator: string;
+  assistant: string;
+  route: string;
+};
+
+let threadId: string | undefined;
+let sending = false;
+
+function element<T extends HTMLElement>(id: string): T {
+  const value = document.getElementById(id);
+  if (!value) throw new Error(`missing UI element: ${id}`);
+  return value as T;
+}
+
+function setText(id: string, value: string): void {
+  element(id).textContent = value;
+}
+
+async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const response = await fetch(`${API}${path}`, {
+    ...init,
+    headers: { "Content-Type": "application/json", ...(init?.headers ?? {}) },
+  });
+  const value = (await response.json()) as T | { error?: string; message?: string };
+  if (!response.ok) {
+    const error = value as { error?: string; message?: string };
+    throw new Error(error.message || error.error || `METAXIS HTTP ${response.status}`);
+  }
+  return value as T;
+}
+
+function tags(values: string[]): void {
+  const target = element("readback-tags");
+  target.replaceChildren(
+    ...values.map((value) => {
+      const tag = document.createElement("span");
+      tag.textContent = value;
+      return tag;
+    }),
+  );
+}
+
+function renderState(state: OperatorState): void {
+  setText("service-status", state.service.status.toLowerCase());
+  setText("service-profile", state.service.profile);
+  setText("service-transport", state.service.transport);
+  setText("profile-label", state.service.profile);
+  setText("classification-pill", state.classification.status);
+  setText("classification-reason", state.classification.reasons[0] || "No denial reason supplied.");
+  const candidateParts = state.model.primary_candidate.split("/");
+  setText("brain-candidate", candidateParts[candidateParts.length - 1] || "—");
+  setText("brain-route", state.model.active_route);
+  setText("brain-quality", state.model.sufficiency.toLowerCase());
+  setText("brain-api", state.model.external_api_allowed ? "eligible" : "denied");
+  setText("storage-backend", state.storage.backend);
+  setText("storage-durable", state.storage.durable ? "yes" : "no");
+  setText("storage-credential", state.storage.credential_exposed_to_model ? "violation" : "never");
+  setText("proof-posture", state.proof.posture);
+  setText("next-action", state.next_safe_action);
+  tags([state.proof.posture, state.model.sufficiency.toLowerCase(), state.storage.backend, state.operator_context.cadence]);
+  element("service-dot").classList.add("online");
+}
+
+function renderError(error: unknown): void {
+  const message = error instanceof Error ? error.message : String(error);
+  setText("service-status", "unavailable");
+  setText("profile-label", "service unavailable");
+  setText("next-action", `Local METAXIS unavailable: ${message}. No external fallback was attempted.`);
+  element("service-dot").classList.remove("online");
+}
+
+async function refresh(): Promise<void> {
+  try {
+    renderState(await request<OperatorState>("/api/v1/operator-state"));
+  } catch (error) {
+    renderError(error);
+  }
+}
+
+function message(role: "operator" | "assistant", text: string, route?: string): void {
+  const article = document.createElement("article");
+  article.className = "message runtime-message";
+  const avatar = document.createElement("div");
+  avatar.className = `avatar ${role === "operator" ? "blue" : "mint"}`;
+  avatar.textContent = role === "operator" ? "YO" : "NS";
+  const body = document.createElement("div");
+  const title = document.createElement("h2");
+  title.textContent = role === "operator" ? "You" : `NemaShells · ${route || "METAXIS"}`;
+  const copy = document.createElement("p");
+  copy.textContent = text;
+  body.append(title, copy);
+  article.append(avatar, body);
+  element("conversation").append(article);
+  article.scrollIntoView({ behavior: "smooth", block: "end" });
+}
+
+async function submit(text: string): Promise<void> {
+  if (sending) return;
+  sending = true;
+  const send = element<HTMLButtonElement>("send");
+  send.disabled = true;
+  try {
+    if (!threadId) {
+      const thread = await request<ThreadCreated>("/api/v1/threads", {
+        method: "POST",
+        body: JSON.stringify({ title: "NemaShells Tauri task" }),
+      });
+      threadId = thread.id;
+    }
+    message("operator", text);
+    const turn = await request<TurnCreated>(`/api/v1/threads/${threadId}/turns`, {
+      method: "POST",
+      body: JSON.stringify({ text, classification: "DEVELOPMENT" }),
+    });
+    message("assistant", turn.assistant, turn.route);
+  } catch (error) {
+    renderError(error);
+  } finally {
+    sending = false;
+    send.disabled = false;
+  }
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  const input = element<HTMLTextAreaElement>("message-input");
+  element("composer").addEventListener("submit", (event) => {
+    event.preventDefault();
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = "";
+    void submit(text);
+  });
+  input.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      element<HTMLFormElement>("composer").requestSubmit();
+    }
+  });
+  element("refresh").addEventListener("click", () => void refresh());
+  element("new-task").addEventListener("click", () => {
+    threadId = undefined;
+    input.focus();
+  });
+  void refresh();
+  window.setInterval(() => void refresh(), 15_000);
+});

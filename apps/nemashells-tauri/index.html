@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <link rel="stylesheet" href="/src/styles.css" />
+    <title>NemaShells — Tauri</title>
+    <script type="module" src="/src/main.ts" defer></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark">NS</div>
+          <div><strong>NemaShells</strong><span>METAXIS · Tauri shell</span></div>
+        </div>
+        <button class="new-task" id="new-task" type="button">＋ New task</button>
+        <p class="eyebrow">WORKSPACE</p>
+        <nav>
+          <button class="nav-item active" type="button">◫ <span>Phase 0 delivery</span></button>
+          <button class="nav-item" type="button">◇ <span>HIGH / NOFORN gate</span></button>
+          <button class="nav-item" type="button">▤ <span>Proxmox profile</span></button>
+          <button class="nav-item" type="button">◉ <span>Model evaluation</span></button>
+        </nav>
+        <div class="sidebar-foot">
+          <span class="status-dot" id="service-dot"></span>
+          <div><strong id="profile-label">connecting</strong><span>PROTOS-4 · loopback</span></div>
+        </div>
+      </aside>
+
+      <main class="workspace">
+        <header class="workspace-header">
+          <div><p class="eyebrow">CAPABILITY #474 · STORY #475 · TASK #476</p><h1>Phase 0 delivery</h1></div>
+          <div class="header-actions"><span class="status-pill blocked" id="classification-pill">CONNECTING</span><button class="icon-button" id="refresh" type="button" aria-label="Refresh">↻</button></div>
+        </header>
+
+        <section class="conversation" id="conversation" aria-live="polite">
+          <article class="message">
+            <div class="avatar mint">NS</div><div><h2>NemaShells</h2><p>The Tauri 2 shell is connected to the provider-neutral METAXIS control plane.</p><div class="tag-row"><span>Tauri 2</span><span>loopback only</span><span>presentation only</span></div></div>
+          </article>
+          <article class="message">
+            <div class="avatar blue">YO</div><div><h2>Operator outcome</h2><p class="lead">Start PROTOS-4 → log in → open NemaShells Tauri</p><ul><li>Swift remains the known-good native fallback on PROTOS-3</li><li>Tauri provides the second cross-platform shell on PROTOS-4</li><li>Both shells use the same METAXIS API and policy gates</li></ul></div>
+          </article>
+          <article class="message" id="readback-message">
+            <div class="avatar violet">MX</div><div><h2>Deterministic readback</h2><p id="next-action">Connecting to METAXIS…</p><div class="tag-row" id="readback-tags"></div></div>
+          </article>
+        </section>
+
+        <form class="composer" id="composer">
+          <textarea id="message-input" rows="1" placeholder="Message NemaShells (development route)" aria-label="Message NemaShells"></textarea>
+          <button id="send" type="submit" aria-label="Send">↑</button>
+          <p>DEVELOPMENT · synthetic/public data only · consequential actions disabled</p>
+        </form>
+      </main>
+
+      <aside class="inspector">
+        <section><h2>◈ Runtime</h2><dl><div><dt>Service</dt><dd id="service-status">connecting</dd></div><div><dt>Profile</dt><dd id="service-profile">—</dd></div><div><dt>Transport</dt><dd id="service-transport">—</dd></div><div><dt>Surface</dt><dd>Tauri installed app</dd></div></dl></section>
+        <section><h2>⬡ Classification</h2><div class="panel warning"><span class="status-pill blocked">HIGH / NOFORN</span><p id="classification-reason">Waiting for deterministic policy readback.</p><strong>⊗ No public API fallback</strong></div></section>
+        <section><h2>▣ Brain</h2><dl><div><dt>Candidate</dt><dd id="brain-candidate">—</dd></div><div><dt>Active</dt><dd id="brain-route">—</dd></div><div><dt>Quality</dt><dd id="brain-quality">—</dd></div><div><dt>External API</dt><dd id="brain-api">denied</dd></div></dl></section>
+        <section><h2>◫ Dynamic storage</h2><dl><div><dt>Backend</dt><dd id="storage-backend">—</dd></div><div><dt>Durable</dt><dd id="storage-durable">—</dd></div><div><dt>Credential to model</dt><dd id="storage-credential">never</dd></div></dl></section>
+        <section><h2>✓ Proof</h2><dl><div><dt>Posture</dt><dd id="proof-posture">—</dd></div><div><dt>Production</dt><dd>not claimed</dd></div><div><dt>HIGH/NOFORN</dt><dd>blocked</dd></div></dl></section>
+      </aside>
+    </div>
+  </body>
+</html>
