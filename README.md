@@ -64,5 +64,11 @@ terms that its root issue has not authorized.
 
 - Ops authority: https://github.com/LittleYeti-Dev/yks2.0-ops-hub
 - METAXIS root: https://github.com/LittleYeti-Dev/yks2.0-ops-hub/issues/422
+- Local root mirror: https://github.com/LittleYeti-Dev/yks2.0-HF-METAXIS/issues/1
 - Research gate: https://github.com/LittleYeti-Dev/yks2.0-ops-hub/issues/423
 - Hugging Face: https://huggingface.co/yks-metaxis
+
+Issue 1 is a one-way mirror of YKS Ops issue 422. A scheduled workflow copies
+the title, body, state, assignees, milestone, and exact label set every 15
+minutes. Make root decisions in YKS Ops; direct edits to the mirror are
+overwritten.

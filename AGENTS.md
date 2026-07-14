@@ -6,6 +6,8 @@ AXIS owns mission-specific authorization and guardrails.
 ## Rules
 
 - Treat yks2.0-ops-hub issues 422 and 423 as the governing product sources.
+- Treat this repository's issue 1 as a generated one-way mirror of issue 422;
+  make root changes only in YKS Ops.
 - Do not claim production activation from scaffolding or research artifacts.
 - Keep model providers and runtimes behind the brain adapter contract.
 - Pin model and runtime versions before evaluation claims.
@@ -22,4 +24,3 @@ Run:
 
     python3 -m unittest discover -s tests -v
     python3 -m metaxis status
-
