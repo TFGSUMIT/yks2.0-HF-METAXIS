@@ -188,7 +188,9 @@ class CloudflareD1StateStore:
                 r.classification AS turn_classification,
                 r.operator_text,
                 r.assistant_text,
-                r.route
+                r.route,
+                r.verification_json,
+                r.brain_evidence_json
             FROM metaxis_threads AS t
             LEFT JOIN metaxis_turns AS r ON r.thread_id = t.id
             ORDER BY t.created_at ASC, r.created_at ASC
@@ -215,6 +217,8 @@ class CloudflareD1StateStore:
                         "operator": row["operator_text"],
                         "assistant": row["assistant_text"],
                         "route": row["route"],
+                        "verification": json.loads(row.get("verification_json") or "{}"),
+                        "brain_evidence": json.loads(row.get("brain_evidence_json") or "{}"),
                     }
                 )
         return list(threads.values())
@@ -230,7 +234,9 @@ class CloudflareD1StateStore:
                 r.classification AS turn_classification,
                 r.operator_text,
                 r.assistant_text,
-                r.route
+                r.route,
+                r.verification_json,
+                r.brain_evidence_json
             FROM metaxis_threads AS t
             LEFT JOIN metaxis_turns AS r ON r.thread_id = t.id
             WHERE t.id = ?1
@@ -257,6 +263,8 @@ class CloudflareD1StateStore:
                         "operator": row["operator_text"],
                         "assistant": row["assistant_text"],
                         "route": row["route"],
+                        "verification": json.loads(row.get("verification_json") or "{}"),
+                        "brain_evidence": json.loads(row.get("brain_evidence_json") or "{}"),
                     }
                 )
         return thread
@@ -314,7 +322,12 @@ class CloudflareD1StateStore:
         event_id = str(uuid.uuid4())
         created_at = str(turn["created_at"])
         event_payload = json.dumps(
-            {"route": turn["route"], "turn_id": turn["id"]},
+            {
+                "route": turn["route"],
+                "turn_id": turn["id"],
+                "verification": turn.get("verification", {}),
+                "brain_evidence": turn.get("brain_evidence", {}),
+            },
             separators=(",", ":"),
             sort_keys=True,
         )
@@ -324,7 +337,8 @@ class CloudflareD1StateStore:
                     "sql": (
                         "INSERT INTO metaxis_turns "
                         "(id, thread_id, created_at, classification, operator_text, "
-                        "assistant_text, route) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)"
+                        "assistant_text, route, verification_json, brain_evidence_json) "
+                        "VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)"
                     ),
                     "params": [
                         turn["id"],
@@ -334,6 +348,8 @@ class CloudflareD1StateStore:
                         turn["operator"],
                         turn["assistant"],
                         turn["route"],
+                        json.dumps(turn.get("verification", {}), separators=(",", ":"), sort_keys=True),
+                        json.dumps(turn.get("brain_evidence", {}), separators=(",", ":"), sort_keys=True),
                     ],
                 },
                 {

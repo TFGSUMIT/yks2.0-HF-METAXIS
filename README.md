@@ -45,7 +45,8 @@ The optional Tauri 2 second shell uses the same API and is isolated behind the
 
 HIGH/NOFORN is a hard, fail-closed route requirement. The OrbStack laptop
 profile accepts synthetic, public, or explicitly approved non-sensitive
-development data only. External model calls are disabled. A route cannot be
+development data only. External calls may be enabled only through a registered,
+cost-bounded DEVELOPMENT route. A route cannot be
 eligible for HIGH/NOFORN until U.S.-origin model provenance, U.S.-person-only
 administrative and workload access, approved U.S. placement, deny-by-default
 egress, disabled external telemetry, credential custody, immutable pins, and
@@ -83,6 +84,7 @@ The Phase 0 gate will:
 | configs/providers | Research-only provider profiles |
 | evals | Candidate register and repeatable evaluation design |
 | docs/architecture | Ownership boundaries and migration architecture |
+| docs/architecture/self-correction-harness.md | Structured repair, deterministic readback, and fail-closed action verification |
 | docs/environment.md | Environment-variable and secret-handling contract |
 | docs/huggingface-setup.md | Phase 0 Hugging Face toolchain and credential boundary |
 | docs/aws-bedrock-development.md | Bedrock Super route, availability fallback, and credential boundary |
@@ -91,6 +93,7 @@ The Phase 0 gate will:
 | docs/cloudflare-d1-validation-2026-07-14.md | Redacted D1 migration, isolation, and restart/recovery proof |
 | docs/functional-prototype-activation.md | No-spend-to-live activation gates and acceptance proof |
 | docs/protos-4-usability-validation-2026-07-14.md | Durable task, bounded context, live model, and negative proof |
+| docs/self-correction-validation-2026-07-14.md | Live positive, adversarial, persistence, and route-denial proof |
 | scripts | Repository automation and redacted environment readback |
 | tests | Contract and import checks |
 | assets | METAXIS identity assets |
@@ -98,13 +101,13 @@ The Phase 0 gate will:
 ## Current posture
 
 - Phase: 0 — research/discovery
-- Provider profile: local deterministic mock; public hosted inference blocked for HIGH/NOFORN
+- Provider profile: time-bounded AWS Bedrock DEVELOPMENT route with deterministic mock fallback; all public hosted inference blocked for HIGH/NOFORN
 - Reference model family: NVIDIA Nemotron, discovery-gated
 - First open runtime: vLLM, conformance-gated
 - Production inference: not activated
-- Endpoint spending: not authorized
+- Endpoint spending: Bedrock on-demand DEVELOPMENT calls authorized within the registered per-request ceiling; no standing endpoint
 - HIGH/NOFORN processing: blocked in the laptop development profile
-- Functional prototype: DEVELOPMENT gates passed for the installed shell, GitHub live read, one controlled inference proof, and D1 durability
+- Functional prototype: DEVELOPMENT gates passed for the installed shell, GitHub live read, verified/blocked inference paths, and D1 evidence durability
 - PROTOS-4 capabilities: `yeti-boot` and GitHub broker active; Hugging Face and Cloudflare loaded/gated
 - Software license: selection pending an explicit governance decision
 

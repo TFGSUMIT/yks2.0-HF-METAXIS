@@ -25,6 +25,8 @@ class MemoryStateStoreTests(unittest.TestCase):
             "operator": "hello",
             "assistant": "ready",
             "route": "mock-local-development",
+            "verification": {"status": "VERIFIED-LOCAL"},
+            "brain_evidence": {"provider": "metaxis"},
         }
         store.append_turn(thread["id"], turn)
 
@@ -93,6 +95,8 @@ class CloudflareD1StateStoreTests(unittest.TestCase):
                                 "operator_text": "hello",
                                 "assistant_text": "ready",
                                 "route": "mock-local-development",
+                                "verification_json": '{"status":"VERIFIED"}',
+                                "brain_evidence_json": '{"provider":"test"}',
                             }
                         ],
                     }
@@ -102,6 +106,7 @@ class CloudflareD1StateStoreTests(unittest.TestCase):
         threads = self.store(transport).list_threads()
         self.assertEqual(len(self.requests), 1)
         self.assertEqual(threads[0]["turns"][0]["assistant"], "ready")
+        self.assertEqual(threads[0]["turns"][0]["verification"]["status"], "VERIFIED")
 
     def test_get_thread_is_parameter_bound(self) -> None:
         def transport(request, timeout):
@@ -120,6 +125,8 @@ class CloudflareD1StateStoreTests(unittest.TestCase):
                         "operator_text": None,
                         "assistant_text": None,
                         "route": None,
+                        "verification_json": None,
+                        "brain_evidence_json": None,
                     }],
                 }],
             }
@@ -129,6 +136,25 @@ class CloudflareD1StateStoreTests(unittest.TestCase):
         self.assertEqual(body["params"], ["thread-1"])
         self.assertEqual(thread["id"], "thread-1")
         self.assertEqual(thread["turns"], [])
+
+    def test_append_persists_verification_and_brain_evidence(self) -> None:
+        turn = {
+            "id": "turn-1",
+            "created_at": "t1",
+            "classification": "DEVELOPMENT",
+            "operator": "hello",
+            "assistant": "VERIFIED",
+            "route": "test-route",
+            "verification": {"status": "VERIFIED", "snapshot_id": "abc"},
+            "brain_evidence": {"provider": "test", "cost_usd": 0.01},
+        }
+        self.store().append_turn("thread-1", turn)
+        body = json.loads(self.requests[0][0].data)
+        params = body["batch"][0]["params"]
+        self.assertEqual(json.loads(params[7])["status"], "VERIFIED")
+        self.assertEqual(json.loads(params[8])["provider"], "test")
+        event = json.loads(body["batch"][2]["params"][4])
+        self.assertEqual(event["verification"]["snapshot_id"], "abc")
 
     def test_rejected_query_fails_closed_without_echoing_secret(self) -> None:
         def rejected(request, timeout):

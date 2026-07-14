@@ -53,6 +53,8 @@ store. Never commit a populated `.env` file.
 | `METAXIS_BRAIN_MAX_INPUT_CHARS` | No | No | `100000` | Conservative input-character ceiling enforced before a Bedrock call. |
 | `METAXIS_BRAIN_MAX_REQUEST_COST_USD` | No | No | `0.01` | Estimated maximum per-request Bedrock cost ceiling enforced before network I/O. This is not an AWS account budget. |
 | `METAXIS_BRAIN_TIMEOUT_SECONDS` | No | No | `60` | Provider request timeout. |
+| `METAXIS_VERIFICATION_MAX_ATTEMPTS` | No | No | `2` | Bounded structured-draft attempts. Values are clamped to 1–3; the default permits one repair. |
+| `METAXIS_VERIFICATION_MAX_OUTPUT_TOKENS` | No | No | `1024` | Per-attempt verifier output ceiling, clamped to 256–2048 and still subject to the adapter ceiling and cost gate. |
 | `METAXIS_BRAIN_US_PERSON_ADMIN_ONLY` | For HIGH/NOFORN | No | `0` | Evidence-backed administrative-access control flag. |
 | `METAXIS_BRAIN_US_PERSON_USER_ONLY` | For HIGH/NOFORN | No | `0` | Evidence-backed workload-user control flag. |
 | `METAXIS_BRAIN_US_LOCATION_ONLY` | For HIGH/NOFORN | No | `0` | Evidence-backed placement flag. |

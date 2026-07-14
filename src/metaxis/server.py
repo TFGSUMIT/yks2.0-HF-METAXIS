@@ -22,6 +22,17 @@ from .storage import (
     StorageUnavailableError,
     state_store_from_environment,
 )
+from .verification import (
+    ControlPlaneSnapshot,
+    DraftParseError,
+    ValidationIssue,
+    output_contract,
+    parse_draft,
+    render_blocked,
+    render_verified,
+    repair_instruction,
+    validate_draft,
+)
 
 
 SYSTEM_PROMPT = """You are NemaShells, the conversational surface for the METAXIS provider-neutral agentic harness. This is a DEVELOPMENT-only session. Use only synthetic, public, or explicitly approved non-sensitive information. Never claim HIGH/NOFORN eligibility, production activation, tool execution, GitHub writes, or consequential action. Never request or repeat credentials. State clearly when an operation is unavailable through the current presentation-only surface."""
@@ -153,7 +164,38 @@ class RuntimeState:
     def get_thread(self, thread_id: str) -> dict[str, Any] | None:
         return self._store.get_thread(thread_id)
 
-    def _system_context(self) -> str:
+    def _model_repository(self) -> str:
+        config = getattr(self._adapter, "config", None)
+        route = getattr(config, "route", None)
+        repository = getattr(route, "model_repository", None)
+        if isinstance(repository, str) and repository.strip():
+            return repository
+        if self._adapter.adapter_id == "mock-local-development":
+            return "local/mock-brain"
+        return "unregistered"
+
+    def _control_plane_snapshot(self) -> ControlPlaneSnapshot:
+        noforn = evaluate_route(DEVELOPMENT_ROUTE, Classification.HIGH_NOFORN)
+        return ControlPlaneSnapshot(
+            facts={
+                "model.route": self._adapter.adapter_id,
+                "model.external_inference": self._adapter.adapter_id
+                != "mock-local-development",
+                "model.repository": self._model_repository(),
+                "storage.backend": self._store.backend_id,
+                "storage.durable": self._store.durable,
+                "storage.application_writes": True,
+                "github.mode": "metadata-read-only",
+                "github.writes_allowed": False,
+                "classification.high_noforn": noforn.status,
+                "actions.consequential_allowed": False,
+                "model.tools_available": False,
+                "repository.branch_prefix": "codex/",
+            },
+            approved_action_ids=(),
+        )
+
+    def _system_context(self, snapshot: ControlPlaneSnapshot) -> str:
         external = self._adapter.adapter_id != "mock-local-development"
         return "\n".join(
             [
@@ -168,10 +210,17 @@ class RuntimeState:
                 "- The model has no tools and cannot execute the next action itself.",
                 "- HIGH/NOFORN and consequential actions remain blocked.",
                 "- Any older statement that no external model was called applies only to that earlier deterministic local-readback turn, not to this request.",
+                "",
+                output_contract(snapshot),
             ]
         )
 
-    def _brain_messages(self, thread_id: str, text: str) -> tuple[dict[str, str], ...]:
+    def _brain_messages(
+        self,
+        thread_id: str,
+        text: str,
+        snapshot: ControlPlaneSnapshot,
+    ) -> tuple[dict[str, str], ...]:
         thread = self._store.get_thread(thread_id)
         if thread is None:
             return ({"role": "user", "content": text},)
@@ -190,10 +239,32 @@ class RuntimeState:
             history[0:0] = pair
             characters += pair_characters
         return (
-            {"role": "system", "content": self._system_context()},
+            {"role": "system", "content": self._system_context(snapshot)},
             *history,
             {"role": "user", "content": text},
         )
+
+    @staticmethod
+    def _aggregate_brain_evidence(responses: list[Any]) -> dict[str, Any]:
+        last = responses[-1]
+
+        def total(field: str) -> int | float | None:
+            values = [getattr(response, field) for response in responses]
+            if not values or any(value is None for value in values):
+                return None
+            return sum(values)
+
+        return {
+            "provider": last.provenance.provider,
+            "model_repository": last.provenance.model_repository,
+            "model_revision": last.provenance.model_revision,
+            "runtime": last.provenance.runtime,
+            "runtime_version": last.provenance.runtime_version,
+            "input_tokens": total("input_tokens"),
+            "output_tokens": total("output_tokens"),
+            "latency_ms": total("latency_ms"),
+            "cost_usd": total("cost_usd"),
+        }
 
     def add_turn(
         self, thread_id: str, text: str, classification: Classification
@@ -219,6 +290,11 @@ class RuntimeState:
                     self.capability_status,
                 ),
                 "route": "yeti-boot-local-readback",
+                "verification": {
+                    "status": "VERIFIED-LOCAL",
+                    "mode": "deterministic-local-readback",
+                    "attempts": 0,
+                },
             }
             self._store.append_turn(thread_id, turn)
             return HTTPStatus.CREATED, turn
@@ -230,39 +306,109 @@ class RuntimeState:
                 "operator": text,
                 "assistant": _github_identity_brief(self.github_status),
                 "route": "github-readback-local",
+                "verification": {
+                    "status": "VERIFIED-LOCAL",
+                    "mode": "deterministic-local-readback",
+                    "attempts": 0,
+                },
             }
             self._store.append_turn(thread_id, turn)
             return HTTPStatus.CREATED, turn
-        response = self._adapter.generate(
-            BrainRequest(
-                request_id=str(uuid.uuid4()),
-                messages=self._brain_messages(thread_id, text),
-                authority_context={"classification": classification.value},
-            )
+        snapshot = self._control_plane_snapshot()
+        base_messages = self._brain_messages(thread_id, text, snapshot)
+        max_attempts = min(
+            3,
+            max(1, int(os.environ.get("METAXIS_VERIFICATION_MAX_ATTEMPTS", "2"))),
         )
-        if response.error:
-            return HTTPStatus.BAD_GATEWAY, {
-                "error": response.error.code,
-                "message": response.error.message,
-                "retryable": response.error.retryable,
+        max_output_tokens = min(
+            2048,
+            max(
+                256,
+                int(os.environ.get("METAXIS_VERIFICATION_MAX_OUTPUT_TOKENS", "1024")),
+            ),
+        )
+        responses: list[Any] = []
+        issues: tuple[ValidationIssue, ...] = ()
+        messages = base_messages
+        for attempt in range(1, max_attempts + 1):
+            response = self._adapter.generate(
+                BrainRequest(
+                    request_id=str(uuid.uuid4()),
+                    messages=messages,
+                    max_output_tokens=max_output_tokens,
+                    authority_context={"classification": classification.value},
+                )
+            )
+            if response.error:
+                return HTTPStatus.BAD_GATEWAY, {
+                    "error": response.error.code,
+                    "message": response.error.message,
+                    "retryable": response.error.retryable,
+                }
+            responses.append(response)
+
+            if self._adapter.adapter_id == "mock-local-development":
+                verification = {
+                    "status": "VERIFIED-LOCAL",
+                    "mode": "deterministic-mock",
+                    "attempts": 1,
+                    "snapshot_id": snapshot.snapshot_id,
+                    "issues": [],
+                }
+                assistant = response.text
+                break
+
+            try:
+                candidate = parse_draft(response.text)
+            except DraftParseError as error:
+                issues = (ValidationIssue("invalid_draft_schema", str(error)),)
+            else:
+                validation = validate_draft(candidate, snapshot)
+                issues = validation.issues
+                if validation.valid:
+                    verification = {
+                        "status": "VERIFIED",
+                        "mode": "structured-repair-v1",
+                        "attempts": attempt,
+                        "snapshot_id": snapshot.snapshot_id,
+                        "issues": [],
+                    }
+                    assistant = render_verified(candidate, snapshot, attempt)
+                    break
+
+            if attempt < max_attempts:
+                messages = (
+                    base_messages[0],
+                    {
+                        "role": "user",
+                        "content": "\n\n".join(
+                            (
+                                str(base_messages[-1]["content"]),
+                                repair_instruction(snapshot, issues),
+                            )
+                        ),
+                    },
+                )
+        else:
+            verification = {
+                "status": "BLOCKED",
+                "mode": "structured-repair-v1",
+                "attempts": max_attempts,
+                "snapshot_id": snapshot.snapshot_id,
+                "issues": [issue.to_dict() for issue in issues],
             }
+            assistant = render_blocked(snapshot, max_attempts, issues)
+
+        last_response = responses[-1]
         turn = {
             "id": str(uuid.uuid4()),
             "created_at": _now(),
             "classification": classification.value,
             "operator": text,
-            "assistant": response.text,
-            "route": response.provenance.route,
-            "brain_evidence": {
-                "provider": response.provenance.provider,
-                "model_repository": response.provenance.model_repository,
-                "model_revision": response.provenance.model_revision,
-                "runtime": response.provenance.runtime,
-                "runtime_version": response.provenance.runtime_version,
-                "input_tokens": response.input_tokens,
-                "output_tokens": response.output_tokens,
-                "cost_usd": response.cost_usd,
-            },
+            "assistant": assistant,
+            "route": last_response.provenance.route,
+            "brain_evidence": self._aggregate_brain_evidence(responses),
+            "verification": verification,
         }
         self._store.append_turn(thread_id, turn)
         return HTTPStatus.CREATED, turn
@@ -317,6 +463,18 @@ def operator_state() -> dict[str, Any]:
             "active_route": STATE._adapter.adapter_id,
             "external_api_allowed": STATE._adapter.adapter_id
             != "mock-local-development",
+        },
+        "verification": {
+            "mode": "structured-repair-v1",
+            "max_attempts": min(
+                3,
+                max(
+                    1,
+                    int(os.environ.get("METAXIS_VERIFICATION_MAX_ATTEMPTS", "2")),
+                ),
+            ),
+            "registered_claims": len(STATE._control_plane_snapshot().facts),
+            "write_actions_registered": 0,
         },
         "proof": {
             "posture": "manual-placeholder",
@@ -403,11 +561,18 @@ class MetaxisHandler(BaseHTTPRequestHandler):
                 return
             match = re.fullmatch(r"/api/v1/threads/([^/]+)/turns", self.path)
             if match:
+                text = value.get("text")
+                if not isinstance(text, str) or not text.strip():
+                    self._send(
+                        HTTPStatus.BAD_REQUEST,
+                        {"error": "bad_request", "message": "text must be a non-empty string"},
+                    )
+                    return
                 classification = Classification(
                     str(value.get("classification", Classification.DEVELOPMENT.value))
                 )
                 status, response = STATE.add_turn(
-                    match.group(1), str(value.get("text", "")), classification
+                    match.group(1), text.strip(), classification
                 )
                 self._send(status, response)
                 return

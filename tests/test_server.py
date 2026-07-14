@@ -19,9 +19,32 @@ class RecordingAdapter:
 
     def generate(self, request):
         self.requests.append(request)
+        marker = "METAXIS_CONTROL_PLANE_SNAPSHOT_JSON="
+        line = next(
+            value
+            for value in str(request.messages[0]["content"]).splitlines()
+            if value.startswith(marker)
+        )
+        snapshot = json.loads(line.removeprefix(marker))
+        draft = json.dumps(
+            {
+                "schema": "metaxis-draft/v1",
+                "answer": "recorded",
+                "claims": [
+                    {
+                        "fact": key,
+                        "value": value,
+                        "source": "metaxis-control-plane",
+                    }
+                    for key, value in snapshot["facts"].items()
+                ],
+                "proposed_actions": [],
+                "non_claims": [],
+            }
+        )
         return BrainResponse(
             request_id=request.request_id,
-            text="recorded",
+            text=draft,
             provenance=BrainProvenance(
                 provider="test",
                 model_repository="test/model",
@@ -164,6 +187,18 @@ class LocalServerTests(unittest.TestCase):
         raised.exception.close()
         self.assertEqual(value["error"], "route_blocked")
 
+    def test_blank_or_misnamed_turn_is_rejected(self) -> None:
+        with self.request("/api/v1/threads", {"title": "invalid turn"}) as response:
+            thread = json.load(response)
+        for payload in ({"text": "   "}, {"content": "wrong field"}):
+            with self.assertRaises(urllib.error.HTTPError) as raised:
+                self.request(
+                    f"/api/v1/threads/{thread['id']}/turns",
+                    payload,
+                )
+            self.assertEqual(raised.exception.code, 400)
+            raised.exception.close()
+
     def test_thread_can_be_loaded_by_id(self) -> None:
         with self.request("/api/v1/threads", {"title": "resume me"}) as response:
             thread = json.load(response)
@@ -192,9 +227,79 @@ class ConversationContextTests(unittest.TestCase):
         self.assertIn("does not make D1 itself read-only", messages[0]["content"])
         self.assertEqual(messages[-3:], (
             {"role": "user", "content": "first"},
-            {"role": "assistant", "content": "recorded"},
+            {"role": "assistant", "content": state.get_thread(thread["id"])["turns"][0]["assistant"]},
             {"role": "user", "content": "second"},
         ))
+
+    def test_invalid_external_draft_is_repaired_once(self) -> None:
+        class RepairingAdapter(RecordingAdapter):
+            def __init__(self):
+                super().__init__()
+                self.calls = 0
+
+            def generate(self, request):
+                self.calls += 1
+                if self.calls == 1:
+                    self.requests.append(request)
+                    return BrainResponse(
+                        request_id=request.request_id,
+                        text="not json",
+                        provenance=BrainProvenance(
+                            provider="test",
+                            model_repository="test/model",
+                            model_revision="revision",
+                            runtime="test-runtime",
+                            runtime_version="1",
+                            route=self.adapter_id,
+                        ),
+                    )
+                return super().generate(request)
+
+        state = RuntimeState(store=MemoryStateStore())
+        adapter = RepairingAdapter()
+        state._adapter = adapter
+        thread = state.create_thread("repair")
+        status, turn = state.add_turn(
+            thread["id"], "repair this", Classification.DEVELOPMENT
+        )
+        self.assertEqual(status, 201)
+        self.assertEqual(turn["verification"]["status"], "VERIFIED")
+        self.assertEqual(turn["verification"]["attempts"], 2)
+        self.assertTrue(turn["assistant"].startswith("VERIFIED"))
+        self.assertIn("METAXIS rejected", adapter.requests[-1].messages[-1]["content"])
+
+    def test_repair_exhaustion_fails_closed_and_persists_block(self) -> None:
+        class InvalidAdapter(RecordingAdapter):
+            def generate(self, request):
+                self.requests.append(request)
+                return BrainResponse(
+                    request_id=request.request_id,
+                    text="not json",
+                    provenance=BrainProvenance(
+                        provider="test",
+                        model_repository="test/model",
+                        model_revision="revision",
+                        runtime="test-runtime",
+                        runtime_version="1",
+                        route=self.adapter_id,
+                    ),
+                )
+
+        state = RuntimeState(store=MemoryStateStore())
+        adapter = InvalidAdapter()
+        state._adapter = adapter
+        thread = state.create_thread("blocked")
+        status, turn = state.add_turn(
+            thread["id"], "invent something", Classification.DEVELOPMENT
+        )
+        self.assertEqual(status, 201)
+        self.assertEqual(turn["verification"]["status"], "BLOCKED")
+        self.assertTrue(turn["assistant"].startswith("BLOCKED"))
+        self.assertEqual(len(adapter.requests), 2)
+        self.assertEqual(
+            state.get_thread(thread["id"])["turns"][0]["verification"]["status"],
+            "BLOCKED",
+        )
 
 
 if __name__ == "__main__":

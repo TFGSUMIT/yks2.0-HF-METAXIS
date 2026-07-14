@@ -30,11 +30,18 @@ does not receive the D1, GitHub, or AWS credential; raw adapter configuration;
 Docker metadata; or action authority. A provider failure appears as a safe
 turn-level error and does not mark the local control plane unhealthy.
 
+The native PROTOS-3 NemaShells surface is now the preferred operator shell.
+External turns pass through the structured repair loop documented in
+`docs/architecture/self-correction-harness.md`. Registered facts are rendered
+deterministically; free-form model synthesis is withheld until a semantic
+verifier is separately evaluated. Verification and aggregate brain evidence
+are durable D1 turn fields.
+
 ## Current readback
 
 | Surface | Current state | Activation result required |
 | --- | --- | --- |
-| Installed Tauri 2 shell | Running through `PROTOS-4`; loopback-only | Retain health-gated `yetis live` boot |
+| Installed native shell | NemaShells running through `PROTOS-3`; loopback-only | Retain health-gated `nemashells` boot; Tauri remains a secondary lane |
 | Capability pack | `yeti-boot`, GitHub broker, and Cloudflare D1 adapter active; Hugging Face loaded/gated | Retain adapter gates and deny general plugin writes |
 | GitHub | Live bounded read of both governed repositories; writes denied | Passed; retain repository-scoped read credential boundary |
 | Brain | Nemotron Super active for the bounded operator session ending 2026-07-14T20:20:05Z | DEVELOPMENT only; renew or shut down explicitly |

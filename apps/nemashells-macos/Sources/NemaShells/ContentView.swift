@@ -129,12 +129,14 @@ struct ContentView: View {
                         VStack(alignment: .leading, spacing: 12) {
                             Text("The local METAXIS plane is ready for development.")
                                 .font(.body.weight(.medium))
-                            Text("This installed application is connected to the Docker service inside OrbStack. External model calls are disabled; HIGH/NOFORN remains fail-closed until its complete Proxmox execution profile is accepted.")
+                            Text(model.state?.model.externalApiAllowed == true
+                                 ? "This installed application is connected to the loopback METAXIS service. External DEVELOPMENT inference is active through the registered route; HIGH/NOFORN remains fail-closed."
+                                 : "This installed application is connected to the loopback METAXIS service. External model calls are disabled; HIGH/NOFORN remains fail-closed.")
                                 .foregroundStyle(.secondary)
                             HStack {
                                 Tag(text: "native app")
                                 Tag(text: "loopback only")
-                                Tag(text: "mock brain")
+                                Tag(text: model.state?.model.activeRoute ?? "connecting")
                             }
                         }
                     }
@@ -177,7 +179,11 @@ struct ContentView: View {
                         MessageRow(role: "YO", name: "You", tint: .blue) {
                             Text(turn.operatorText)
                         }
-                        MessageRow(role: "NS", name: "NemaShells · \(turn.route)", tint: .mint) {
+                        MessageRow(
+                            role: "NS",
+                            name: "NemaShells · \(turn.route) · \(turn.verificationStatus ?? "UNVERIFIED")",
+                            tint: .mint
+                        ) {
                             Text(turn.assistantText)
                         }
                     }
@@ -252,10 +258,10 @@ struct ContentView: View {
 
                 InspectorHeader(title: "Brain", icon: "cpu")
                 ReadbackCard(rows: [
-                    ("Candidate", "Nemotron 3 Super 120B-A12B"),
+                    ("Candidate", model.state?.model.primaryCandidate.split(separator: "/").last.map(String.init) ?? "—"),
                     ("Active", model.state?.model.activeRoute ?? "—"),
                     ("Quality", model.state?.model.sufficiency ?? "—"),
-                    ("External API", "denied")
+                    ("External API", model.state?.model.externalApiAllowed == true ? "active · DEVELOPMENT" : "denied")
                 ])
 
                 InspectorHeader(title: "Dynamic storage", icon: "cylinder.split.1x2")

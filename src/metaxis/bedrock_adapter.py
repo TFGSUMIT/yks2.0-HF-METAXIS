@@ -171,6 +171,19 @@ class BedrockAdapter:
             for message in request.messages
             if message.get("role") in {"user", "assistant"}
         ]
+        # The registered NVIDIA Bedrock route accepts the Converse `system`
+        # field but does not reliably apply it to generation.  Put the same
+        # control-plane contract in the first user turn so the provider sees
+        # it.  This is a provider compatibility shim; the server remains the
+        # authority and still verifies every returned claim.
+        if system and messages and messages[0]["role"] == "user":
+            directive = "\n\n".join(block["text"] for block in system)
+            operator_text = messages[0]["content"][0]["text"]
+            messages[0]["content"][0]["text"] = (
+                f"METAXIS CONTROL-PLANE DIRECTIVE (authoritative):\n{directive}\n\n"
+                f"OPERATOR REQUEST:\n{operator_text}"
+            )
+            system = []
         if not messages:
             return BrainResponse(
                 request_id=request.request_id,

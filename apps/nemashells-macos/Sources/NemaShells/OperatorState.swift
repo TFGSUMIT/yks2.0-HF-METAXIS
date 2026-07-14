@@ -77,6 +77,7 @@ final class AppModel: ObservableObject {
         let operatorText: String
         let assistantText: String
         let route: String
+        let verificationStatus: String?
     }
 
     private struct ThreadCreated: Decodable {
@@ -84,10 +85,16 @@ final class AppModel: ObservableObject {
     }
 
     private struct TurnCreated: Decodable {
+        struct Verification: Decodable {
+            let status: String
+            let attempts: Int
+        }
+
         let id: String
         let `operator`: String
         let assistant: String
         let route: String
+        let verification: Verification?
     }
 
     @Published private(set) var state: OperatorState?
@@ -144,7 +151,8 @@ final class AppModel: ObservableObject {
                     id: turn.id,
                     operatorText: turn.operator,
                     assistantText: turn.assistant,
-                    route: turn.route
+                    route: turn.route,
+                    verificationStatus: turn.verification?.status
                 )
             )
             draft = ""

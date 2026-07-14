@@ -106,6 +106,24 @@ class BedrockAdapterTests(unittest.TestCase):
             self.client.calls[0]["modelId"], "nvidia.nemotron-super-3-120b"
         )
 
+    def test_system_contract_is_promoted_for_registered_nvidia_route(self) -> None:
+        response = self.adapter.generate(
+            self.request(
+                messages=(
+                    {"role": "system", "content": "return registered JSON"},
+                    {"role": "user", "content": "report status"},
+                )
+            )
+        )
+
+        self.assertIsNone(response.error)
+        call = self.client.calls[0]
+        self.assertNotIn("system", call)
+        first_text = call["messages"][0]["content"][0]["text"]
+        self.assertIn("METAXIS CONTROL-PLANE DIRECTIVE", first_text)
+        self.assertIn("return registered JSON", first_text)
+        self.assertIn("OPERATOR REQUEST:\nreport status", first_text)
+
     def test_high_noforn_is_denied_before_client_call(self) -> None:
         response = self.adapter.generate(
             self.request(authority_context={"classification": "HIGH/NOFORN"})
