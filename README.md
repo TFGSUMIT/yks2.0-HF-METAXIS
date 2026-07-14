@@ -97,6 +97,7 @@ The Phase 0 gate will:
 | scripts | Repository automation and redacted environment readback |
 | tests | Contract and import checks |
 | assets | METAXIS identity assets |
+| assets/brand | Versioned METAXIS lockup, skin projection, and artifact metadata |
 
 ## Current posture
 

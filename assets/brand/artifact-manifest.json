@@ -1,0 +1,49 @@
+{
+  "manifest_id": "MTX-BRAND-ARTIFACTS",
+  "owning_product": "METAXIS",
+  "authority_issue": "https://github.com/LittleYeti-Dev/yks2.0-ops-hub/issues/422",
+  "product_manifest": "https://github.com/LittleYeti-Dev/yks2.0-ops-hub/blob/codex/metaxis-core-product/canon/products/product-manifest.md",
+  "proof_posture": "manual-placeholder",
+  "artifacts": [
+    {
+      "artifact_id": "MTX-ART-BRAND-20260714-001",
+      "name": "METAXIS product lockup v0.1",
+      "status": "current-draft",
+      "files": [
+        "assets/brand/metaxis-product-lockup-v0.1.svg",
+        "assets/brand/metaxis-product-lockup-v0.1.png"
+      ],
+      "png_sha256": "52c225a7f7fda416af098df464f2f282afbf31a356a84d8f452ef3d6685207e2",
+      "classification": "operations",
+      "dependency_role": "operator-artifact",
+      "product_role": "primary product identity",
+      "brand_relationship": "METAXIS is the product; SkipJack is the parent brand.",
+      "motion_contract": {
+        "idle": "static unequal-height seven-bar signal",
+        "processing": "2.6 second staggered undulation",
+        "reduced_motion": "static unequal-height seven-bar signal"
+      },
+      "source_of_truth_rule": "This artifact records the operator-selected design direction. YKS Ops issue 422, the YKS product manifest, and later accepted brand canon outrank the rendering.",
+      "provenance": "Operator-selected OpenAI-generated concept refined against the user-owned Non Sequitur brand surface on 2026-07-14; SVG is a repository-native implementation specification.",
+      "license_posture": "Original/user-owned brand treatment; no font binaries are embedded. Inter is referenced by family name and must be separately packaged and license-recorded before distribution."
+    },
+    {
+      "artifact_id": "MTX-ART-UI-20260714-002",
+      "name": "NemaShells METAXIS skin mockup v0.1",
+      "status": "current-draft",
+      "files": [
+        "assets/brand/nemashells-skin-mockup-v0.1.png"
+      ],
+      "png_sha256": "d5657e097ee7e9e38928a19a2c868b52ca05e8cb6babb735efcc39f8cfe02fbd",
+      "classification": "operations",
+      "dependency_role": "visual-projection",
+      "depends_on": [
+        "MTX-ART-BRAND-20260714-001"
+      ],
+      "footer_endorsement": "Powered by SkipJack",
+      "source_of_truth_rule": "Visual design projection only; implementation, tests, YKS Ops authority, D1, TESTIMONIUM, ACTA, and operator rulings outrank this mockup.",
+      "provenance": "Operator-directed OpenAI-generated NemaShells skin mockup dated 2026-07-14."
+    }
+  ],
+  "schema_version": "1.0.0"
+}
