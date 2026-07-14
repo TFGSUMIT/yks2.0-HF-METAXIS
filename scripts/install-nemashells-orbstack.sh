@@ -37,6 +37,12 @@ docker run -d \
   --env METAXIS_EXTERNAL_MODEL_CALLS=0 \
   --env METAXIS_EXTERNAL_TELEMETRY=0 \
   --env "METAXIS_OPERATOR_CADENCE=5.6 sol" \
+  --env "METAXIS_STATE_BACKEND=${METAXIS_STATE_BACKEND:-memory}" \
+  --env "CLOUDFLARE_ACCOUNT_ID=${CLOUDFLARE_ACCOUNT_ID:-}" \
+  --env "METAXIS_D1_DATABASE_ID=${METAXIS_D1_DATABASE_ID:-}" \
+  --env "CLOUDFLARE_D1_API_TOKEN=${CLOUDFLARE_D1_API_TOKEN:-}" \
+  --env "METAXIS_D1_TIMEOUT_SECONDS=${METAXIS_D1_TIMEOUT_SECONDS:-10}" \
+  --env "METAXIS_D1_API_BASE=${METAXIS_D1_API_BASE:-https://api.cloudflare.com/client/v4}" \
   "metaxis:${REVISION}" >/dev/null
 
 orb -m "$MACHINE" sh "$ROOT/deployment/orbstack/install-guest.sh" "$ROOT"
