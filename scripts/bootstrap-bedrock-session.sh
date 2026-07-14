@@ -81,6 +81,7 @@ aws iam create-access-key \
   --output json >"$ACCESS_FILE"
 
 ACCESS_KEY_ID=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["AccessKey"]["AccessKeyId"])' "$ACCESS_FILE")
+AWS_ACCESS_KEY_ID=$ACCESS_KEY_ID
 AWS_SECRET_ACCESS_KEY=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["AccessKey"]["SecretAccessKey"])' "$ACCESS_FILE")
 unset AWS_SESSION_TOKEN
 export AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY
