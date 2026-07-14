@@ -54,7 +54,11 @@ set -- docker run -d \
   --env "METAXIS_BRAIN_DEVELOPER_COUNTRY=${METAXIS_BRAIN_DEVELOPER_COUNTRY:-US}" \
   --env "METAXIS_BRAIN_PLACEMENT=${METAXIS_BRAIN_PLACEMENT:-}" \
   --env "METAXIS_BRAIN_MAX_OUTPUT_TOKENS=${METAXIS_BRAIN_MAX_OUTPUT_TOKENS:-4096}" \
+  --env "METAXIS_BRAIN_MAX_INPUT_CHARS=${METAXIS_BRAIN_MAX_INPUT_CHARS:-100000}" \
+  --env "METAXIS_BRAIN_MAX_REQUEST_COST_USD=${METAXIS_BRAIN_MAX_REQUEST_COST_USD:-0.01}" \
   --env "METAXIS_BRAIN_TIMEOUT_SECONDS=${METAXIS_BRAIN_TIMEOUT_SECONDS:-60}" \
+  --env "METAXIS_AWS_REGION=${METAXIS_AWS_REGION:-us-east-1}" \
+  --env "METAXIS_BEDROCK_MODEL_ID=${METAXIS_BEDROCK_MODEL_ID:-nvidia.nemotron-super-3-120b}" \
   --env "METAXIS_BRAIN_US_PERSON_ADMIN_ONLY=${METAXIS_BRAIN_US_PERSON_ADMIN_ONLY:-0}" \
   --env "METAXIS_BRAIN_US_PERSON_USER_ONLY=${METAXIS_BRAIN_US_PERSON_USER_ONLY:-0}" \
   --env "METAXIS_BRAIN_US_LOCATION_ONLY=${METAXIS_BRAIN_US_LOCATION_ONLY:-0}" \
@@ -69,6 +73,10 @@ if [ -n "${CLOUDFLARE_D1_API_TOKEN:-}" ]; then
 fi
 if [ -n "${METAXIS_BRAIN_API_KEY:-}" ]; then
   printf '%s\n' 'OrbStack deployment rejects METAXIS_BRAIN_API_KEY; use METAXIS_BRAIN_API_KEY_FILE.' >&2
+  exit 1
+fi
+if [ -n "${AWS_ACCESS_KEY_ID:-}" ] || [ -n "${AWS_SECRET_ACCESS_KEY:-}" ] || [ -n "${AWS_SESSION_TOKEN:-}" ]; then
+  printf '%s\n' 'OrbStack deployment rejects direct AWS credential variables; use METAXIS_AWS_CREDENTIALS_FILE.' >&2
   exit 1
 fi
 
@@ -100,6 +108,20 @@ if [ -n "${METAXIS_BRAIN_API_KEY_FILE:-}" ]; then
   set -- "$@" \
     --mount "type=bind,src=${METAXIS_BRAIN_API_KEY_FILE},dst=/run/secrets/metaxis_brain_api_key,readonly" \
     --env METAXIS_BRAIN_API_KEY_FILE=/run/secrets/metaxis_brain_api_key
+fi
+
+if [ "${METAXIS_BRAIN_MODE:-mock}" = "aws-bedrock" ]; then
+  test -n "${METAXIS_AWS_CREDENTIALS_FILE:-}" || {
+    printf '%s\n' 'aws-bedrock mode requires METAXIS_AWS_CREDENTIALS_FILE.' >&2
+    exit 1
+  }
+  test -f "$METAXIS_AWS_CREDENTIALS_FILE" || {
+    printf '%s\n' 'METAXIS_AWS_CREDENTIALS_FILE is not a regular file.' >&2
+    exit 1
+  }
+  set -- "$@" \
+    --mount "type=bind,src=${METAXIS_AWS_CREDENTIALS_FILE},dst=/run/secrets/metaxis_aws_credentials,readonly" \
+    --env METAXIS_AWS_CREDENTIALS_FILE=/run/secrets/metaxis_aws_credentials
 fi
 
 "$@" "metaxis:${REVISION}" >/dev/null

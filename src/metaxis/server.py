@@ -183,6 +183,16 @@ class RuntimeState:
             "operator": text,
             "assistant": response.text,
             "route": response.provenance.route,
+            "brain_evidence": {
+                "provider": response.provenance.provider,
+                "model_repository": response.provenance.model_repository,
+                "model_revision": response.provenance.model_revision,
+                "runtime": response.provenance.runtime,
+                "runtime_version": response.provenance.runtime_version,
+                "input_tokens": response.input_tokens,
+                "output_tokens": response.output_tokens,
+                "cost_usd": response.cost_usd,
+            },
         }
         self._store.append_turn(thread_id, turn)
         return HTTPStatus.CREATED, turn

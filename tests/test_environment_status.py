@@ -21,6 +21,8 @@ class EnvironmentStatusTests(unittest.TestCase):
         self.assertFalse(status["github_broker"]["writes_allowed"])
         self.assertEqual(status["brain"]["mode"], "mock")
         self.assertFalse(status["brain"]["external_calls_enabled"])
+        self.assertFalse(status["brain"]["aws_credentials_file_configured"])
+        self.assertEqual(status["brain"]["max_request_cost_usd"], "0.01")
         self.assertEqual(
             status["brain"]["candidate"],
             "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16",

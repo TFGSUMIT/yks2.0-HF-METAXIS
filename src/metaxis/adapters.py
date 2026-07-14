@@ -148,7 +148,14 @@ class OpenAICompatibleAdapter:
 def adapter_from_environment():
     """Return mock by default; external routing requires explicit complete config."""
 
-    if os.environ.get("METAXIS_BRAIN_MODE", "mock") != "openai-compatible":
+    mode = os.environ.get("METAXIS_BRAIN_MODE", "mock")
+    if mode == "aws-bedrock":
+        if os.environ.get("METAXIS_EXTERNAL_MODEL_CALLS") != "1":
+            return MockBrainAdapter()
+        from .bedrock_adapter import adapter_from_bedrock_environment
+
+        return adapter_from_bedrock_environment()
+    if mode != "openai-compatible":
         return MockBrainAdapter()
     if os.environ.get("METAXIS_EXTERNAL_MODEL_CALLS") != "1":
         return MockBrainAdapter()

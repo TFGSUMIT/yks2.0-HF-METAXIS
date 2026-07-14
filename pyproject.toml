@@ -23,6 +23,7 @@ metaxis = "metaxis.cli:main"
 
 [project.optional-dependencies]
 huggingface = ["huggingface_hub==1.23.0"]
+aws = ["boto3==1.43.47"]
 
 [tool.setuptools]
 package-dir = {"" = "src"}

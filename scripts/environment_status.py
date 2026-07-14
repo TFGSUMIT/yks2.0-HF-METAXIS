@@ -86,6 +86,16 @@ def build_environment_status(environ: Mapping[str, str]) -> dict[str, object]:
             "api_key_file_configured": bool(
                 environ.get("METAXIS_BRAIN_API_KEY_FILE")
             ),
+            "aws_region": environ.get("METAXIS_AWS_REGION", "us-east-1"),
+            "bedrock_model_id": environ.get(
+                "METAXIS_BEDROCK_MODEL_ID", "nvidia.nemotron-super-3-120b"
+            ),
+            "aws_credentials_file_configured": bool(
+                environ.get("METAXIS_AWS_CREDENTIALS_FILE")
+            ),
+            "max_request_cost_usd": environ.get(
+                "METAXIS_BRAIN_MAX_REQUEST_COST_USD", "0.01"
+            ),
             "candidate": environ.get(
                 "METAXIS_BRAIN_MODEL",
                 "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16",

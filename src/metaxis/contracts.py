@@ -83,6 +83,7 @@ class BrainResponse:
     input_tokens: int | None = None
     output_tokens: int | None = None
     latency_ms: float | None = None
+    cost_usd: float | None = None
     error: BrainError | None = None
 
 
@@ -96,4 +97,3 @@ class BrainAdapter(Protocol):
 
     def generate(self, request: BrainRequest) -> BrainResponse:
         """Generate a normalized response or a normalized failure."""
-

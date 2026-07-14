@@ -1,0 +1,49 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Least-privilege DEVELOPMENT invocation role for METAXIS Nemotron Super
+
+Parameters:
+  TrustedPrincipalArn:
+    Type: String
+    Description: Exact IAM principal allowed to assume the role; root is accepted only for bootstrap.
+  ModelId:
+    Type: String
+    Default: nvidia.nemotron-super-3-120b
+    AllowedValues:
+      - nvidia.nemotron-super-3-120b
+
+Resources:
+  BedrockDevelopmentRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: METAXISBedrockDevelopmentRole
+      Description: DEVELOPMENT-only invocation of the pinned METAXIS Bedrock candidate
+      MaxSessionDuration: 3600
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !Ref TrustedPrincipalArn
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: InvokePinnedNemotronSuper
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: InvokePinnedModelOnly
+                Effect: Allow
+                Action:
+                  - bedrock:InvokeModel
+                  - bedrock:InvokeModelWithResponseStream
+                Resource: !Sub arn:${AWS::Partition}:bedrock:${AWS::Region}::foundation-model/${ModelId}
+      Tags:
+        - Key: yks:product
+          Value: metaxis
+        - Key: yks:classification
+          Value: development
+        - Key: yks:authority
+          Value: "474-475-476"
+
+Outputs:
+  RoleArn:
+    Value: !GetAtt BedrockDevelopmentRole.Arn

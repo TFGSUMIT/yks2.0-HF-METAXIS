@@ -21,7 +21,7 @@ RUN groupadd --gid 10001 metaxis \
 WORKDIR /opt/metaxis
 COPY pyproject.toml README.md ./
 COPY src ./src
-RUN python -m pip install --no-cache-dir .
+RUN python -m pip install --no-cache-dir '.[aws]'
 
 USER 10001:10001
 EXPOSE 4310

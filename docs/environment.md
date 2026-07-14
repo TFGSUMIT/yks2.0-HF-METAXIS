@@ -38,7 +38,7 @@ store. Never commit a populated `.env` file.
 | `CLOUDFLARE_D1_API_TOKEN_FILE` | Preferred for D1; required by OrbStack | Yes-bearing path | None | Absolute owner-only token file mounted read-only; takes precedence over the direct-process token variable. |
 | `METAXIS_D1_TIMEOUT_SECONDS` | No | No | `10` | D1 query timeout at the METAXIS adapter boundary. |
 | `METAXIS_D1_API_BASE` | No | No | `https://api.cloudflare.com/client/v4` | Cloudflare API base; override only for an authorized test double. |
-| `METAXIS_BRAIN_MODE` | No | No | `mock` | Selects deterministic mock or `openai-compatible`; external routing still requires the separate call flag. |
+| `METAXIS_BRAIN_MODE` | No | No | `mock` | Selects deterministic mock, `openai-compatible`, or `aws-bedrock`; external routing still requires the separate call flag. |
 | `METAXIS_EXTERNAL_MODEL_CALLS` | For live inference | No | `0` | Final explicit live-call gate; only `1` enables adapter construction. |
 | `METAXIS_BRAIN_URL` | For live inference | No | None | Registered OpenAI-compatible endpoint base URL. |
 | `METAXIS_BRAIN_API_KEY` | Direct-process compatibility only | Yes | None | Inference-only key; the OrbStack installer rejects this environment form. |
@@ -50,6 +50,8 @@ store. Never commit a populated `.env` file.
 | `METAXIS_BRAIN_DEVELOPER_COUNTRY` | For route evaluation | No | `unknown` in Python; `US` in laptop installer | Provenance control input; not sufficient by itself. |
 | `METAXIS_BRAIN_PLACEMENT` | For route evaluation | No | `unknown` | Registered workload placement. |
 | `METAXIS_BRAIN_MAX_OUTPUT_TOKENS` | No | No | `4096` | Hard output-token ceiling enforced before the call. |
+| `METAXIS_BRAIN_MAX_INPUT_CHARS` | No | No | `100000` | Conservative input-character ceiling enforced before a Bedrock call. |
+| `METAXIS_BRAIN_MAX_REQUEST_COST_USD` | No | No | `0.01` | Estimated maximum per-request Bedrock cost ceiling enforced before network I/O. This is not an AWS account budget. |
 | `METAXIS_BRAIN_TIMEOUT_SECONDS` | No | No | `60` | Provider request timeout. |
 | `METAXIS_BRAIN_US_PERSON_ADMIN_ONLY` | For HIGH/NOFORN | No | `0` | Evidence-backed administrative-access control flag. |
 | `METAXIS_BRAIN_US_PERSON_USER_ONLY` | For HIGH/NOFORN | No | `0` | Evidence-backed workload-user control flag. |
@@ -58,6 +60,10 @@ store. Never commit a populated `.env` file.
 | `METAXIS_BRAIN_EXTERNAL_TELEMETRY_DISABLED` | For HIGH/NOFORN | No | `0` | Evidence-backed telemetry-control flag. |
 | `METAXIS_BRAIN_CUSTODY_APPROVED` | For HIGH/NOFORN | No | `0` | Evidence-backed credential-custody flag. |
 | `METAXIS_HIGH_NOFORN_AUTHORITY_RECORD` | For HIGH/NOFORN | No | None | Authority record required in addition to all technical controls. |
+| `METAXIS_AWS_REGION` | For Bedrock | No | `us-east-1` | Registered DEVELOPMENT region; other regions fail startup. |
+| `METAXIS_BEDROCK_MODEL_ID` | For Bedrock | No | `nvidia.nemotron-super-3-120b` | Exact Bedrock model ID allowed by the adapter and IAM policy. |
+| `METAXIS_AWS_ROLE_ARN` | For exporting a Bedrock session | No | None | Exact least-privilege role created by the reviewed CloudFormation stack. |
+| `METAXIS_AWS_CREDENTIALS_FILE` | For Bedrock | Yes-bearing path | None | Owner-only file containing a one-hour session issued to `METAXISBedrockDevelopmentRole`, mounted read-only into OrbStack. Root or unrelated credentials are rejected. |
 
 The GitHub Actions secret `YKS_OPS_SYNC_TOKEN` is repository configuration,
 not a process variable consumed by Python. The workflow exposes it to the
@@ -76,6 +82,14 @@ Metadata read permission. The broker exposes a bounded repository snapshot,
 never the token or raw permission object, and provides no write method. An
 invalid configured secret file fails startup instead of falling back to an
 environment credential.
+
+The Bedrock route is similarly fail closed. Direct `AWS_ACCESS_KEY_ID`,
+`AWS_SECRET_ACCESS_KEY`, and `AWS_SESSION_TOKEN` variables are rejected by the
+OrbStack installer. The adapter accepts only an owner-only credential file
+whose STS principal records the named METAXIS invocation role. The role grants
+only invocation of the pinned Nemotron Super model. Removing the runtime
+container, credential file, and CloudFormation stack is the enforceable
+off-state; Bedrock has no separate persistent billing toggle.
 
 ## L2 Credential Mesh Binding
 
