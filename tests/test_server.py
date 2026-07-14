@@ -56,6 +56,21 @@ class LocalServerTests(unittest.TestCase):
             turn = json.load(response)
         self.assertEqual(turn["route"], "mock-local-development")
 
+    def test_yetis_live_uses_deterministic_boot_route(self) -> None:
+        for trigger in ("Yetis live", "Yeti’s live", "Yeti live", "Yeti's life"):
+            with self.subTest(trigger=trigger):
+                with self.request("/api/v1/threads", {"title": "boot"}) as response:
+                    thread = json.load(response)
+                with self.request(
+                    f"/api/v1/threads/{thread['id']}/turns",
+                    {"text": trigger, "classification": "DEVELOPMENT"},
+                ) as response:
+                    turn = json.load(response)
+                self.assertEqual(turn["route"], "yeti-boot-local-readback")
+                self.assertIn("YKS Ops Live Brief", turn["assistant"])
+                self.assertIn("HIGH/NOFORN remains blocked", turn["assistant"])
+                self.assertIn("No external model was called", turn["assistant"])
+
     def test_high_noforn_turn_is_denied(self) -> None:
         with self.request("/api/v1/threads", {"title": "denial"}) as response:
             thread = json.load(response)

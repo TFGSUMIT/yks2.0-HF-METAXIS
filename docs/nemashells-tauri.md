@@ -55,6 +55,12 @@ yetis live
 Every form dispatches to the same `nemashells-tauri` health-gated launcher; it
 does not bypass METAXIS or introduce another service.
 
+Inside the NemaShells conversation, `Yeti's live`, `Yeti live`, `Yetis live`,
+and `Yeti's life` are deterministic boot triggers. They return a local YKS Ops
+live brief on route `yeti-boot-local-readback` without invoking a model. The
+brief reports when live GitHub, Project 18, workflow, or D1 refresh is
+unavailable to the isolated runtime instead of fabricating current state.
+
 The shell displays the active model route, HIGH/NOFORN denial, storage backend,
 durability posture, and proof state. A successful mock response proves the UI
 and local API path only; it does not prove live model or D1 activation.

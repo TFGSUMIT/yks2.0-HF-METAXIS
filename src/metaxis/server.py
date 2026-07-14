@@ -25,6 +25,46 @@ def _now() -> str:
     return datetime.now(UTC).isoformat()
 
 
+def _is_yeti_live_trigger(text: str) -> bool:
+    normalized = text.strip().lower().replace("’", "'")
+    normalized = re.sub(r"[^a-z']+", " ", normalized).strip()
+    return normalized in {
+        "yeti live",
+        "yetis live",
+        "yeti's live",
+        "yeti's life",
+    }
+
+
+def _yeti_live_brief(storage_status: dict[str, Any]) -> str:
+    return "\n".join(
+        [
+            "YKS Ops Live Brief",
+            "",
+            "1. Control-plane state",
+            "- NemaShells Tauri is live on PROTOS-4 through the loopback-only METAXIS service.",
+            "- Surface: cGunther-compatible local development shell; authority effect: none.",
+            f"- Storage: {storage_status['backend']}; durable: {str(storage_status['durable']).lower()}.",
+            "- HIGH/NOFORN remains blocked.",
+            "",
+            "2. Root roadmap state",
+            "- Authority remains YKS Ops root #422 and SAFe chain #474 -> #475 -> #476.",
+            "- PROTOS-3 is the Swift lane; PROTOS-4 is the Tauri 2 presentation lane.",
+            "",
+            "3. CI/CD and automation",
+            "- This isolated runtime does not hold GitHub or Cloudflare credentials.",
+            "- Live repository, Project 18, workflow, and D1 refresh require the governed cGunther host path.",
+            "",
+            "4. Canon and architecture drift",
+            "- GitHub, D1, and canon remain the durable body; NemaShells is presentation only.",
+            "- No external model was called and no consequential action was authorized.",
+            "",
+            "5. Recommended next ops move",
+            "- Continue with synthetic/public DEVELOPMENT work, or activate an approved model route after its gates pass.",
+        ]
+    )
+
+
 class RuntimeState:
     """Orchestrate policy, brain calls, and a provider-neutral state store."""
 
@@ -49,6 +89,17 @@ class RuntimeState:
             }
         if not self._store.thread_exists(thread_id):
             return HTTPStatus.NOT_FOUND, {"error": "thread_not_found"}
+        if _is_yeti_live_trigger(text):
+            turn = {
+                "id": str(uuid.uuid4()),
+                "created_at": _now(),
+                "classification": classification.value,
+                "operator": text,
+                "assistant": _yeti_live_brief(self.storage_status),
+                "route": "yeti-boot-local-readback",
+            }
+            self._store.append_turn(thread_id, turn)
+            return HTTPStatus.CREATED, turn
         response = self._adapter.generate(
             BrainRequest(
                 request_id=str(uuid.uuid4()),
