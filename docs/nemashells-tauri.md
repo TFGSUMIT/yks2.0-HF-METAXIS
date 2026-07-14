@@ -1,6 +1,6 @@
 # NemaShells Tauri 2 shell
 
-Status: Phase 0 second-shell implementation  
+Status: Phase 0 second-shell implementation
 Authority: YKS Ops #474 → #475 → #476
 
 NemaShells Tauri is a second, presentation-only desktop shell for METAXIS. It
