@@ -1,0 +1,38 @@
+import io
+import os
+import unittest
+from contextlib import redirect_stdout
+from unittest.mock import patch
+
+from scripts.environment_status import build_environment_status, main
+
+
+class EnvironmentStatusTests(unittest.TestCase):
+    def test_defaults_are_honest_about_missing_live_sync_inputs(self) -> None:
+        status = build_environment_status({})
+
+        self.assertEqual(status["source_issue"], "422")
+        self.assertEqual(status["target_issue"], "1")
+        self.assertIsNone(status["target_repo"])
+        self.assertFalse(status["sync_ready"])
+
+    def test_secret_value_is_never_returned_or_printed(self) -> None:
+        secret = "never-print-this-token"
+        environ = {
+            "GH_TOKEN": secret,
+            "METAXIS_TARGET_REPO": "LittleYeti-Dev/yks2.0-HF-METAXIS",
+        }
+
+        status = build_environment_status(environ)
+        self.assertTrue(status["credential"]["configured"])
+        self.assertEqual(status["credential"]["selected_variable"], "GH_TOKEN")
+        self.assertNotIn(secret, repr(status))
+
+        output = io.StringIO()
+        with patch.dict(os.environ, environ, clear=True), redirect_stdout(output):
+            self.assertEqual(main(), 0)
+        self.assertNotIn(secret, output.getvalue())
+
+
+if __name__ == "__main__":
+    unittest.main()

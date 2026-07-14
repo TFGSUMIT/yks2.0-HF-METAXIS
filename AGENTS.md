@@ -3,6 +3,32 @@
 METAXIS is the provider-neutral agentic harness. It owns reusable autonomy;
 AXIS owns mission-specific authorization and guardrails.
 
+## Operating Boundary
+
+- The operator works from `PROD 0 YKS Ops Hub`. YKS Ops owns intent,
+  authorization, requirements, roadmap state, governance, proof/readback, and
+  links to implementation artifacts.
+- This repository is the canonical home for all METAXIS source code, schemas,
+  configurations, tests, evaluations, prototypes, architecture sources, design
+  files, diagrams, UI assets, and rendered or exported design artifacts.
+- Do not place or duplicate canonical METAXIS implementation or design
+  artifacts in YKS Ops. Keep concise governance summaries and artifact links
+  there; make implementation and design changes here.
+- Root product authority remains YKS Ops issue 422. Phase 0 research authority
+  remains issue 423. This repository's issue 1 remains a read-only mirror.
+
+## Artifact Placement
+
+- Keep executable implementation in `src/`, `scripts/`, `schemas/`, `configs/`,
+  `evals/`, and `tests/` as appropriate.
+- Keep canonical architecture and design sources in `docs/architecture/`.
+- Keep reusable identity and visual assets in `assets/`.
+- Keep generated or rendered design deliverables in `artifacts/design/` when
+  that structure is needed.
+- Record the authority issue or requirement, proof posture, provenance, and
+  source-versus-rendered status for material artifacts.
+- Before persistent edits, create or use an authority-linked `codex/*` branch.
+
 ## Boot Protocol
 
 1. Read `README.md`, this file, and `docs/codex-project.md`.
@@ -29,9 +55,16 @@ AXIS owns mission-specific authorization and guardrails.
 - Preserve evaluation, replay, recovery, and evidence hooks in every adapter.
 - AXIS may declare mission overrides but must not fork the METAXIS core.
 
+## Handoff
+
+Report the active branch, changed artifacts, authority links, validation
+result, proof posture, and any YKS Ops link/readback update needed to keep the
+control plane current.
+
 ## Verification
 
 Run:
 
     python3 -m unittest discover -s tests -v
     python3 -m metaxis status
+    python3 scripts/environment_status.py

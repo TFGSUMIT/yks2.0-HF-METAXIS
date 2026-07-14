@@ -43,6 +43,8 @@ The Phase 0 gate will:
 | configs/providers | Research-only provider profiles |
 | evals | Candidate register and repeatable evaluation design |
 | docs/architecture | Ownership boundaries and migration architecture |
+| docs/environment.md | Environment-variable and secret-handling contract |
+| scripts | Repository automation and redacted environment readback |
 | tests | Contract and import checks |
 | assets | METAXIS identity assets |
 
