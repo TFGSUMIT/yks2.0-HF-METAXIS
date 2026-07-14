@@ -18,15 +18,15 @@ The script does not install Homebrew, npm, Rust, Docker Desktop, or global
 Python packages on macOS. It builds the checked-in Swift application with the
 Apple toolchain already present, installs it under `~/Applications`, builds the
 pinned `metaxis:<revision>` image on OrbStack's managed Docker engine, enables
-container restart, and installs the `nemashells` launcher inside Ubuntu.
+container restart, and installs the `nemashells` launcher inside `PROTOS-3`.
 The guest launcher reaches the loopback-published service through OrbStack's
 private `host.internal` bridge; it is not exposed on the LAN.
 
 ## Normal operation
 
 ```sh
-orb start ubuntu
-orb -m ubuntu
+orb start PROTOS-3
+orb -m PROTOS-3
 nemashells
 ```
 
@@ -39,7 +39,7 @@ browser.
 - Mac: presentation-only native app; no model, credentials, workspaces, or
   durable runtime authority.
 - OrbStack managed Docker: development runtime and container lifecycle.
-- OrbStack Ubuntu: isolated login and native-app launcher.
+- OrbStack `PROTOS-3` (Ubuntu): isolated login and native-app launcher.
 - Container: non-root, read-only root filesystem, dropped capabilities,
   no-new-privileges, loopback-only published port, external model calls off.
 - Data: synthetic/public/explicitly approved non-sensitive development data

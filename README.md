@@ -26,8 +26,8 @@ uses Ubuntu as the isolated login/launcher shell, and keeps presentation state
 only in the installed macOS app. The normal journey is:
 
 ```sh
-orb start ubuntu
-orb -m ubuntu
+orb start PROTOS-3
+orb -m PROTOS-3
 nemashells
 ```
 

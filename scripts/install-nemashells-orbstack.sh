@@ -2,7 +2,7 @@
 set -eu
 
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
-MACHINE=${METAXIS_ORBSTACK_MACHINE:-ubuntu}
+MACHINE=${METAXIS_ORBSTACK_MACHINE:-PROTOS-3}
 REVISION=$(git -C "$ROOT" rev-parse --short=12 HEAD 2>/dev/null || printf 'development')
 command -v orb >/dev/null 2>&1 || {
   printf '%s\n' 'OrbStack command `orb` is required.' >&2
