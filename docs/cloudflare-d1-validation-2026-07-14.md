@@ -44,7 +44,10 @@ reinstalling the runtime with `METAXIS_STATE_BACKEND=memory`.
 
 ## Restart/recovery proof
 
-- Container image: `metaxis:456ffa0155ef`
+- Initial proof image: `metaxis:456ffa0155ef`
+- Final installed image: `metaxis:096411074a30`
+- Final local image ID:
+  `sha256:f821a42bb1666e7100544b44d21b03bad3784c1af8376aea31ad5a9244e89fb1`
 - Brain: `mock-local-development`
 - External model calls: disabled
 - Storage: `cloudflare-d1`, durable
@@ -56,6 +59,10 @@ reinstalling the runtime with `METAXIS_STATE_BACKEND=memory`.
 After `docker restart nemashells-metaxis`, `GET /api/v1/threads` returned the
 same thread and one turn. The assistant response confirmed that no external
 model was called and no consequential action was authorized.
+
+The final installed image recovered the proof again. A subsequent
+`yetis live` readback reported `cloudflare-d1; durable: true` and
+`3 active / 4 loaded; writes denied` through `yeti-boot-local-readback`.
 
 A `HIGH/NOFORN` turn against the recovered thread returned HTTP `403` with
 `route_blocked`. D1 counts remained at `2` turns and `4` state events before
