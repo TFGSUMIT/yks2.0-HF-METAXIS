@@ -31,10 +31,12 @@ tar -C "$ROOT" \
 
 REMOTE_BASE=".cache/nemashells-bootstrap"
 REMOTE_ARCHIVE="${REMOTE_BASE}/$(basename "$ARCHIVE")"
-orb -m "$MACHINE" mkdir -p "$REMOTE_BASE"
+REMOTE_HOME=$(orb -m "$MACHINE" sh -lc 'printf %s "$HOME"')
+REMOTE_SOURCE="${REMOTE_HOME}/${REMOTE_BASE}/source-${REVISION}"
+orb -m "$MACHINE" mkdir -p "${REMOTE_HOME}/${REMOTE_BASE}"
 orb push -m "$MACHINE" "$ARCHIVE" "$REMOTE_BASE/"
-orb -m "$MACHINE" sh -lc "rm -rf '${REMOTE_BASE}/source-${REVISION}' && mkdir -p '${REMOTE_BASE}/source-${REVISION}' && tar -xzf '${REMOTE_ARCHIVE}' -C '${REMOTE_BASE}/source-${REVISION}'"
-orb -m "$MACHINE" sh "${REMOTE_BASE}/source-${REVISION}/deployment/orbstack/install-guest.sh" "${REMOTE_BASE}/source-${REVISION}" "$REVISION"
+orb -m "$MACHINE" sh -lc "rm -rf '${REMOTE_SOURCE}' && mkdir -p '${REMOTE_SOURCE}' && tar -xzf '${REMOTE_HOME}/${REMOTE_ARCHIVE}' -C '${REMOTE_SOURCE}'"
+orb -m "$MACHINE" sh "${REMOTE_SOURCE}/deployment/orbstack/install-guest.sh" "$REMOTE_SOURCE" "$REVISION"
 
 printf '%s\n' 'NemaShells installation complete.'
 printf '%s\n' "Normal use: orb start ${MACHINE}; orb -m ${MACHINE}; nemashells"

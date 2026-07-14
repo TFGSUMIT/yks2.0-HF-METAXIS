@@ -4,7 +4,7 @@ set -eu
 SOURCE_DIR=${1:?usage: install-guest.sh SOURCE_DIR [REVISION]}
 REVISION=${2:-development}
 RELEASE_DIR="/opt/metaxis/releases/${REVISION}"
-IMAGE="metaxis/nemashells:${REVISION}"
+IMAGE="metaxis:${REVISION}"
 
 sudo apt-get update
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends docker.io curl ca-certificates

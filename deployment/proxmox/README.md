@@ -8,7 +8,7 @@ moving the virtualization boundary to the YKS production-standard stack:
 The VM baseline must provide Docker Engine, systemd, a loopback-only published
 port for the service, approved administration, snapshot/restore, storage,
 logging, time sync, and network policy. Copy a release into `/opt/metaxis`,
-build or load the pinned `metaxis/nemashells:<revision>` image, install
+build or load the pinned `metaxis:<revision>` image, install
 `deployment/systemd/nemashells.service`, and set the exact image in
 `/etc/metaxis/nemashells.env`.
 
