@@ -3,6 +3,17 @@
 METAXIS is the provider-neutral agentic harness. It owns reusable autonomy;
 AXIS owns mission-specific authorization and guardrails.
 
+## Boot Protocol
+
+1. Read `README.md`, this file, and `docs/codex-project.md`.
+2. Inspect `git status -sb`, the latest commit, and the configured remote.
+3. Run `python3 -m unittest discover -s tests -v` with `PYTHONPATH=src:.` when
+   the checked-in local environment has not already run the suite.
+4. Read implementation issue #1 for the mirrored root posture and follow its
+   YKS Ops authority link before changing scope.
+5. Report the Phase 0 posture, active branch/worktree, validation state, and
+   next authority-linked action.
+
 ## Rules
 
 - Treat yks2.0-ops-hub issues 422 and 423 as the governing product sources.

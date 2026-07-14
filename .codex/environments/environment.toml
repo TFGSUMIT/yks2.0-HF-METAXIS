@@ -1,0 +1,10 @@
+version = 1
+name = "PROD 0.1 YKS METAXIS"
+
+[setup]
+script = """
+python3 -m venv .venv
+.venv/bin/python -m pip install --editable .
+.venv/bin/python -m unittest discover -s tests -v
+"""
+
