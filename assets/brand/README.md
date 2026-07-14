@@ -7,6 +7,7 @@ corresponding NemaShells skin projection.
 | --- | --- | --- | --- |
 | `MTX-ART-BRAND-20260714-001` | `metaxis-product-lockup-v0.1.svg` and `metaxis-product-lockup-v0.1.png` | Primary METAXIS product identity | current draft / manual-placeholder |
 | `MTX-ART-UI-20260714-002` | `nemashells-skin-mockup-v0.1.png` | NemaShells visual projection using the selected identity | current draft / manual-placeholder |
+| `MTX-ART-UI-20260714-003` | `nemashells-modular-workspace-mockup-v0.1.png` | Codex-inspired modular NemaShells operator-workspace projection | current draft / manual-placeholder |
 
 ## Identity hierarchy
 
@@ -28,6 +29,22 @@ preserves the unequal-height resting mark.
 Using the SVG through an `<img>` element cannot toggle the internal state.
 Surfaces that need stateful motion must inline the SVG or reproduce the motion
 contract in native UI code.
+
+## Interaction contract
+
+- **NemaShells** is the installed operator console and application shell.
+- **METAXIS** is the provider-neutral agentic harness behind the console.
+- **SkipJack** supplies the parent brand and skin; it does not become runtime
+  authority.
+- The target UI substrate is a React and TypeScript component system with
+  rearrangeable, collapsible, pinnable, resizable cards and saved layouts.
+- The component system, design tokens, state contracts, and workflows remain
+  independent from the desktop package.
+- Chromium/Electron is the preferred reference-package evaluation target for
+  Codex-like rendering consistency. Tauri 2 remains the working lightweight
+  fallback until an evidence-backed package decision is accepted.
+- Every card must distinguish live, synthetic/mock, stale, denied, and
+  unavailable data. A design mockup never proves operational state.
 
 ## Authority and provenance
 

@@ -43,6 +43,34 @@
       "footer_endorsement": "Powered by SkipJack",
       "source_of_truth_rule": "Visual design projection only; implementation, tests, YKS Ops authority, D1, TESTIMONIUM, ACTA, and operator rulings outrank this mockup.",
       "provenance": "Operator-directed OpenAI-generated NemaShells skin mockup dated 2026-07-14."
+    },
+    {
+      "artifact_id": "MTX-ART-UI-20260714-003",
+      "name": "NemaShells modular operator workspace mockup v0.1",
+      "status": "current-draft",
+      "files": [
+        "assets/brand/nemashells-modular-workspace-mockup-v0.1.png"
+      ],
+      "png_sha256": "c82ab1cef1102ce5a9057f4fa58497053496d0fbdd9b27fa51ecf26174a2d306",
+      "classification": "operations",
+      "dependency_role": "interaction-design-projection",
+      "depends_on": [
+        "MTX-ART-BRAND-20260714-001",
+        "MTX-ART-UI-20260714-002"
+      ],
+      "operator_console": "NemaShells",
+      "harness": "METAXIS",
+      "parent_brand": "SkipJack",
+      "interaction_contract": {
+        "ui_substrate": "React and TypeScript component system",
+        "workspace": "rearrangeable, collapsible, pinnable, resizable cards",
+        "reference_package": "Chromium/Electron evaluation target",
+        "fallback_package": "Tauri 2 remains available until an evidence-backed package decision",
+        "authority_effect": "none; presentation only"
+      },
+      "footer_endorsement": "Powered by SkipJack",
+      "source_of_truth_rule": "Interaction-design projection only. Every rendered operational value must be supplied by deterministic METAXIS state or labeled synthetic/mock/stale; the image itself proves no runtime state, implementation, package selection, or authorization.",
+      "provenance": "Operator-approved OpenAI-generated modular NemaShells workspace concept dated 2026-07-14, derived from MTX-ART-UI-20260714-002."
     }
   ],
   "schema_version": "1.0.0"
