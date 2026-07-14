@@ -3,17 +3,12 @@ set -eu
 
 SERVICE_URL="${METAXIS_URL:-http://127.0.0.1:4310}"
 
-if ! systemctl is-active --quiet nemashells.service; then
-  printf '%s\n' 'NemaShells service is not active; attempting start.'
-  sudo systemctl start nemashells.service
-fi
-
 attempt=0
 while ! curl --fail --silent --show-error "${SERVICE_URL}/healthz" >/dev/null 2>&1; do
   attempt=$((attempt + 1))
   if [ "$attempt" -ge 20 ]; then
     printf '%s\n' 'NemaShells service failed its health gate.' >&2
-    sudo systemctl --no-pager --full status nemashells.service >&2 || true
+    printf '%s\n' 'Start OrbStack Docker and rerun the one-time installer from macOS.' >&2
     exit 1
   fi
   sleep 0.25

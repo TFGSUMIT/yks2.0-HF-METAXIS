@@ -21,8 +21,9 @@ execution.
 ## NemaShells installed application
 
 NemaShells is the native METAXIS operator application. The laptop profile runs
-the METAXIS service as a hardened Docker workload inside OrbStack Ubuntu while
-the installed macOS app holds presentation state only. The normal journey is:
+the METAXIS service as a hardened workload on OrbStack's managed Docker engine,
+uses Ubuntu as the isolated login/launcher shell, and keeps presentation state
+only in the installed macOS app. The normal journey is:
 
 ```sh
 orb start ubuntu

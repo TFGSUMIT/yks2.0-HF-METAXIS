@@ -4,12 +4,12 @@ set -eu
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 MACHINE=${METAXIS_ORBSTACK_MACHINE:-ubuntu}
 REVISION=$(git -C "$ROOT" rev-parse --short=12 HEAD 2>/dev/null || printf 'development')
-mkdir -p "$ROOT/.build"
-TMP=$(mktemp -d "$ROOT/.build/nemashells-bootstrap.XXXXXX")
-trap 'rm -rf "$TMP"' EXIT HUP INT TERM
-
 command -v orb >/dev/null 2>&1 || {
   printf '%s\n' 'OrbStack command `orb` is required.' >&2
+  exit 1
+}
+command -v docker >/dev/null 2>&1 || {
+  printf '%s\n' 'OrbStack-managed Docker command `docker` is required.' >&2
   exit 1
 }
 
@@ -20,21 +20,38 @@ ditto "$APP" "$HOME/Applications/NemaShells.app"
 
 orb start "$MACHINE" >/dev/null
 
-ARCHIVE="$TMP/metaxis-${REVISION}.tar.gz"
-tar -C "$ROOT" \
-  --exclude=.git \
-  --exclude=.venv \
-  --exclude=.build \
-  --exclude='__pycache__' \
-  --exclude='*.pyc' \
-  --exclude=.env \
-  -czf "$ARCHIVE" .
+docker build --build-arg "METAXIS_REVISION=${REVISION}" --tag "metaxis:${REVISION}" "$ROOT"
+docker rm -f nemashells-metaxis >/dev/null 2>&1 || true
+docker run -d \
+  --name nemashells-metaxis \
+  --restart unless-stopped \
+  --read-only \
+  --tmpfs /tmp:rw,noexec,nosuid,size=16m \
+  --cap-drop ALL \
+  --security-opt no-new-privileges:true \
+  --pids-limit 128 \
+  --memory 512m \
+  --publish 127.0.0.1:4310:4310 \
+  --env METAXIS_PROFILE=orbstack-development \
+  --env METAXIS_DATA_CLASSIFICATION=DEVELOPMENT \
+  --env METAXIS_EXTERNAL_MODEL_CALLS=0 \
+  --env METAXIS_EXTERNAL_TELEMETRY=0 \
+  --env "METAXIS_OPERATOR_CADENCE=5.6 sol" \
+  "metaxis:${REVISION}" >/dev/null
 
-REMOTE_ARCHIVE="/var/tmp/$(basename "$ARCHIVE")"
-REMOTE_SOURCE="/var/tmp/nemashells-source-${REVISION}"
-orb -m "$MACHINE" sh -lc "rm -rf '${REMOTE_SOURCE}' && mkdir -p '${REMOTE_SOURCE}' && cp '${ARCHIVE}' '${REMOTE_ARCHIVE}' && tar -xzf '${REMOTE_ARCHIVE}' -C '${REMOTE_SOURCE}'"
-orb -m "$MACHINE" sh "${REMOTE_SOURCE}/deployment/orbstack/install-guest.sh" "$REMOTE_SOURCE" "$REVISION"
-orb -m "$MACHINE" sh -lc "rm -rf '${REMOTE_SOURCE}' '${REMOTE_ARCHIVE}'"
+orb -m "$MACHINE" sh "$ROOT/deployment/orbstack/install-guest.sh" "$ROOT"
+
+attempt=0
+while ! curl --fail --silent --show-error http://127.0.0.1:4310/healthz >/dev/null 2>&1; do
+  attempt=$((attempt + 1))
+  if [ "$attempt" -ge 40 ]; then
+    docker logs nemashells-metaxis >&2 || true
+    exit 1
+  fi
+  sleep 0.25
+done
+
+orb -m "$MACHINE" curl --fail --silent --show-error http://127.0.0.1:4310/healthz >/dev/null
 
 printf '%s\n' 'NemaShells installation complete.'
 printf '%s\n' "Normal use: orb start ${MACHINE}; orb -m ${MACHINE}; nemashells"
