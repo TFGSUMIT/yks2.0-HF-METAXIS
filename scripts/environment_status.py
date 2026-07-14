@@ -51,6 +51,18 @@ def build_environment_status(environ: Mapping[str, str]) -> dict[str, object]:
             "env_token_configured": bool(environ.get("HF_TOKEN")),
             "token_path_configured": bool(environ.get("HF_TOKEN_PATH")),
         },
+        "state_store": {
+            "backend": environ.get("METAXIS_STATE_BACKEND", "memory"),
+            "cloudflare_account_configured": bool(
+                environ.get("CLOUDFLARE_ACCOUNT_ID")
+            ),
+            "d1_database_configured": bool(
+                environ.get("METAXIS_D1_DATABASE_ID")
+            ),
+            "d1_token_configured": bool(
+                environ.get("CLOUDFLARE_D1_API_TOKEN")
+            ),
+        },
         "pythonpath": {
             "configured": bool(environ.get("PYTHONPATH")),
             "effective": environ.get("PYTHONPATH", RECOMMENDED_PYTHONPATH),

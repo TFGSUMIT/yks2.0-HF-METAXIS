@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import json
 import re
-import threading
 import uuid
 from datetime import UTC, datetime
 from http import HTTPStatus
@@ -15,6 +14,11 @@ from . import __version__
 from .adapters import adapter_from_environment
 from .contracts import BrainRequest
 from .policy import Classification, DEVELOPMENT_ROUTE, evaluate_route
+from .storage import (
+    StateStore,
+    StorageUnavailableError,
+    state_store_from_environment,
+)
 
 
 def _now() -> str:
@@ -22,65 +26,60 @@ def _now() -> str:
 
 
 class RuntimeState:
-    """Small in-memory development state; durable state is not claimed."""
+    """Orchestrate policy, brain calls, and a provider-neutral state store."""
 
-    def __init__(self) -> None:
-        self._lock = threading.RLock()
-        self._threads: dict[str, dict[str, Any]] = {}
+    def __init__(self, store: StateStore | None = None) -> None:
+        self._store = store or state_store_from_environment()
         self._adapter = adapter_from_environment()
 
     def list_threads(self) -> list[dict[str, Any]]:
-        with self._lock:
-            return list(self._threads.values())
+        return self._store.list_threads()
 
     def create_thread(self, title: str) -> dict[str, Any]:
-        with self._lock:
-            thread_id = str(uuid.uuid4())
-            value = {
-                "id": thread_id,
-                "title": title.strip() or "New task",
-                "created_at": _now(),
-                "turns": [],
-            }
-            self._threads[thread_id] = value
-            return value
+        return self._store.create_thread(title)
 
     def add_turn(
         self, thread_id: str, text: str, classification: Classification
     ) -> tuple[HTTPStatus, dict[str, Any]]:
-        with self._lock:
-            thread = self._threads.get(thread_id)
-            if thread is None:
-                return HTTPStatus.NOT_FOUND, {"error": "thread_not_found"}
-            decision = evaluate_route(DEVELOPMENT_ROUTE, classification)
-            if not decision.eligible:
-                return HTTPStatus.FORBIDDEN, {
-                    "error": "route_blocked",
-                    "decision": decision.to_dict(),
-                }
-            response = self._adapter.generate(
-                BrainRequest(
-                    request_id=str(uuid.uuid4()),
-                    messages=({"role": "user", "content": text},),
-                    authority_context={"classification": classification.value},
-                )
-            )
-            if response.error:
-                return HTTPStatus.BAD_GATEWAY, {
-                    "error": response.error.code,
-                    "message": response.error.message,
-                    "retryable": response.error.retryable,
-                }
-            turn = {
-                "id": str(uuid.uuid4()),
-                "created_at": _now(),
-                "classification": classification.value,
-                "operator": text,
-                "assistant": response.text,
-                "route": response.provenance.route,
+        decision = evaluate_route(DEVELOPMENT_ROUTE, classification)
+        if not decision.eligible:
+            return HTTPStatus.FORBIDDEN, {
+                "error": "route_blocked",
+                "decision": decision.to_dict(),
             }
-            thread["turns"].append(turn)
-            return HTTPStatus.CREATED, turn
+        if not self._store.thread_exists(thread_id):
+            return HTTPStatus.NOT_FOUND, {"error": "thread_not_found"}
+        response = self._adapter.generate(
+            BrainRequest(
+                request_id=str(uuid.uuid4()),
+                messages=({"role": "user", "content": text},),
+                authority_context={"classification": classification.value},
+            )
+        )
+        if response.error:
+            return HTTPStatus.BAD_GATEWAY, {
+                "error": response.error.code,
+                "message": response.error.message,
+                "retryable": response.error.retryable,
+            }
+        turn = {
+            "id": str(uuid.uuid4()),
+            "created_at": _now(),
+            "classification": classification.value,
+            "operator": text,
+            "assistant": response.text,
+            "route": response.provenance.route,
+        }
+        self._store.append_turn(thread_id, turn)
+        return HTTPStatus.CREATED, turn
+
+    @property
+    def storage_status(self) -> dict[str, Any]:
+        return {
+            "backend": self._store.backend_id,
+            "durable": self._store.durable,
+            "credential_exposed_to_model": False,
+        }
 
 
 STATE = RuntimeState()
@@ -118,12 +117,20 @@ def operator_state() -> dict[str, Any]:
             "production": False,
             "high_noforn_processing": False,
         },
+        "storage": STATE.storage_status,
         "next_safe_action": (
             "Use synthetic or public development data while the approved "
             "Proxmox/U.S.-person-controlled inference profile is built and accepted."
         ),
         "requirements": list(noforn.requirement_ids)
-        + ["YKS-REQ-MTX-053", "YKS-REQ-MTX-UI-001", "YKS-REQ-MTX-UI-002", "YKS-REQ-MTX-UI-003"],
+        + [
+            "YKS-REQ-MTX-040",
+            "YKS-REQ-MTX-BRAIN-003",
+            "YKS-REQ-MTX-053",
+            "YKS-REQ-MTX-UI-001",
+            "YKS-REQ-MTX-UI-002",
+            "YKS-REQ-MTX-UI-003",
+        ],
     }
 
 
@@ -154,14 +161,20 @@ class MetaxisHandler(BaseHTTPRequestHandler):
         return value
 
     def do_GET(self) -> None:  # noqa: N802
-        if self.path == "/healthz":
-            self._send(HTTPStatus.OK, {"status": "ok", "version": __version__})
-        elif self.path == "/api/v1/operator-state":
-            self._send(HTTPStatus.OK, operator_state())
-        elif self.path == "/api/v1/threads":
-            self._send(HTTPStatus.OK, {"threads": STATE.list_threads()})
-        else:
-            self._send(HTTPStatus.NOT_FOUND, {"error": "not_found"})
+        try:
+            if self.path == "/healthz":
+                self._send(HTTPStatus.OK, {"status": "ok", "version": __version__})
+            elif self.path == "/api/v1/operator-state":
+                self._send(HTTPStatus.OK, operator_state())
+            elif self.path == "/api/v1/threads":
+                self._send(HTTPStatus.OK, {"threads": STATE.list_threads()})
+            else:
+                self._send(HTTPStatus.NOT_FOUND, {"error": "not_found"})
+        except StorageUnavailableError:
+            self._send(
+                HTTPStatus.SERVICE_UNAVAILABLE,
+                {"error": "state_store_unavailable", "retryable": True},
+            )
 
     def do_POST(self) -> None:  # noqa: N802
         try:
@@ -183,6 +196,11 @@ class MetaxisHandler(BaseHTTPRequestHandler):
             self._send(HTTPStatus.NOT_FOUND, {"error": "not_found"})
         except (ValueError, json.JSONDecodeError) as error:
             self._send(HTTPStatus.BAD_REQUEST, {"error": "bad_request", "message": str(error)})
+        except StorageUnavailableError:
+            self._send(
+                HTTPStatus.SERVICE_UNAVAILABLE,
+                {"error": "state_store_unavailable", "retryable": True},
+            )
 
 
 def make_server(host: str = "127.0.0.1", port: int = 4310) -> ThreadingHTTPServer:

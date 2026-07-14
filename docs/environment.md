@@ -28,10 +28,21 @@ store. Never commit a populated `.env` file.
 | `HF_HOME` | No | No | `~/.cache/huggingface` | Optional external root for Hugging Face cache and token state; never point it inside the repository. |
 | `HF_HUB_CACHE` | No | No | `$HF_HOME/hub` | Optional external model/dataset cache location. |
 | `HF_TOKEN_PATH` | No | Yes-bearing path | `$HF_HOME/token` | Optional token-file path. METAXIS prefers L2 environment injection rather than a persistent token file. |
+| `METAXIS_STATE_BACKEND` | No | No | `memory` | Dynamic-state backend. Set `cloudflare-d1` only with the complete governed D1 configuration. |
+| `CLOUDFLARE_ACCOUNT_ID` | For D1 | No | None | Cloudflare account coordinate for the D1 REST query API. |
+| `METAXIS_D1_DATABASE_ID` | For D1 | No | None | UUID of the METAXIS dynamic-state D1 database. |
+| `CLOUDFLARE_D1_API_TOKEN` | For D1 | Yes | L2 credential mesh injection | Least-privilege D1 Read/Write API token; never exposed to the brain or stored in D1. |
+| `METAXIS_D1_TIMEOUT_SECONDS` | No | No | `10` | D1 query timeout at the METAXIS adapter boundary. |
+| `METAXIS_D1_API_BASE` | No | No | `https://api.cloudflare.com/client/v4` | Cloudflare API base; override only for an authorized test double. |
 
 The GitHub Actions secret `YKS_OPS_SYNC_TOKEN` is repository configuration,
 not a process variable consumed by Python. The workflow exposes it to the
 process as `GH_TOKEN`. Its value must never appear in logs or repository files.
+
+The D1 API token is also an L2 credential. Selecting `cloudflare-d1` without
+the account ID, database UUID, and token fails startup rather than falling back
+to volatile memory. The Phase 0 schema accepts DEVELOPMENT rows only. See
+`docs/cloudflare-d1-storage.md`.
 
 ## L2 Credential Mesh Binding
 

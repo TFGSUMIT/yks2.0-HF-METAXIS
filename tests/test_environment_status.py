@@ -23,6 +23,8 @@ class EnvironmentStatusTests(unittest.TestCase):
         environ = {
             "GH_TOKEN": secret,
             "HF_TOKEN": secret,
+            "CLOUDFLARE_D1_API_TOKEN": secret,
+            "METAXIS_STATE_BACKEND": "cloudflare-d1",
             "METAXIS_TARGET_REPO": "LittleYeti-Dev/yks2.0-HF-METAXIS",
         }
 
@@ -35,6 +37,7 @@ class EnvironmentStatusTests(unittest.TestCase):
         with patch.dict(os.environ, environ, clear=True), redirect_stdout(output):
             self.assertEqual(main(), 0)
         self.assertNotIn(secret, output.getvalue())
+        self.assertTrue(status["state_store"]["d1_token_configured"])
 
 
 if __name__ == "__main__":
