@@ -85,9 +85,20 @@ AWS_SECRET_ACCESS_KEY=$(python3 -c 'import json,sys; print(json.load(open(sys.ar
 unset AWS_SESSION_TOKEN
 export AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY
 
+TEMP_CALLER_ARN=$(AWS_CONFIG_FILE=/dev/null AWS_SHARED_CREDENTIALS_FILE=/dev/null \
+  aws sts get-caller-identity \
+    --region "$REGION" \
+    --query Arn \
+    --output text)
+case "$TEMP_CALLER_ARN" in
+  *:user/METAXISBedrockBootstrap) ;;
+  *) printf '%s\n' 'Temporary IAM credentials did not isolate from the root profile.' >&2; exit 1 ;;
+esac
+
 attempt=0
 while :; do
-  if aws sts assume-role \
+  if AWS_CONFIG_FILE=/dev/null AWS_SHARED_CREDENTIALS_FILE=/dev/null \
+    aws sts assume-role \
     --region "$REGION" \
     --role-arn "$ROLE_ARN" \
     --role-session-name metaxis-protos4-development \
