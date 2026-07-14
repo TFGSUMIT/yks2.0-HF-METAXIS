@@ -1,5 +1,7 @@
 # METAXIS
 
+![METAXIS sasquatch avatar](assets/metaxis-sasquatch-avatar.png)
+
 YKS Ops PROD 0.1 METAXIS is the provider-neutral agentic box at the beginning
 of the YKS core-product critical path.
 
@@ -42,6 +44,7 @@ The Phase 0 gate will:
 | evals | Candidate register and repeatable evaluation design |
 | docs/architecture | Ownership boundaries and migration architecture |
 | tests | Contract and import checks |
+| assets | METAXIS identity assets |
 
 ## Current posture
 
@@ -63,4 +66,3 @@ terms that its root issue has not authorized.
 - METAXIS root: https://github.com/LittleYeti-Dev/yks2.0-ops-hub/issues/422
 - Research gate: https://github.com/LittleYeti-Dev/yks2.0-ops-hub/issues/423
 - Hugging Face: https://huggingface.co/yks-metaxis
-
