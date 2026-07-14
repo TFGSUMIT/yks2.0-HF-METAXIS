@@ -6,4 +6,5 @@ Hugging Face and GitHub surfaces.
 - File: metaxis-sasquatch-avatar.png
 - Format: PNG, 512 by 512 pixels
 - Design: original generated artwork; no text or third-party logo
-- Palette: blue-to-purple agentic plane with warm sasquatch character
+- Character: distinguished silver sasquatch with vivid blue eyes
+- Palette: blue-to-purple agentic plane with silver, charcoal, and white fur
