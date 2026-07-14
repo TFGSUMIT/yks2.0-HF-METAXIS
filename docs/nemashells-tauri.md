@@ -48,8 +48,12 @@ Normal use:
 ```text
 orb start PROTOS-4
 orb -m PROTOS-4
-nemashells-tauri
+yetis live
 ```
+
+`yeti live`, `yetis-live`, and `yeti-live` are equivalent command aliases.
+Every form dispatches to the same `nemashells-tauri` health-gated launcher; it
+does not bypass METAXIS or introduce another service.
 
 The shell displays the active model route, HIGH/NOFORN denial, storage backend,
 durability posture, and proof state. A successful mock response proves the UI

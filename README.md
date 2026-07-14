@@ -38,7 +38,8 @@ stack without changing the app or brain adapter.
 
 The optional Tauri 2 second shell uses the same API and is isolated behind the
 `PROTOS-4` login/launcher path. See
-[`docs/nemashells-tauri.md`](docs/nemashells-tauri.md).
+[`docs/nemashells-tauri.md`](docs/nemashells-tauri.md). From its guest shell,
+`yetis live` performs the health-gated application boot.
 
 ## HIGH/NOFORN hard gate
 

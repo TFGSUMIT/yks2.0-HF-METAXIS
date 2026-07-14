@@ -36,4 +36,4 @@ orb -m "$MACHINE" sh "$ROOT/deployment/orbstack/install-guest.sh" "$ROOT"
 orb -m "$MACHINE" curl --fail --silent --show-error http://host.internal:4310/healthz >/dev/null
 
 printf '%s\n' 'NemaShells Tauri installation complete.'
-printf '%s\n' "Normal use: orb start ${MACHINE}; orb -m ${MACHINE}; nemashells-tauri"
+printf '%s\n' "Normal use: orb start ${MACHINE}; orb -m ${MACHINE}; yetis live"
