@@ -12,7 +12,7 @@ command -v orb >/dev/null 2>&1 || {
   exit 1
 }
 
-APP=$($ROOT/scripts/build-nemashells-app.sh)
+APP=$("$ROOT/scripts/build-nemashells-app.sh")
 mkdir -p "$HOME/Applications"
 rm -rf "$HOME/Applications/NemaShells.app"
 ditto "$APP" "$HOME/Applications/NemaShells.app"
