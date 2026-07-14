@@ -35,6 +35,22 @@ def build_environment_status(environ: Mapping[str, str]) -> dict[str, object]:
             "selected_variable": credential_variable,
         },
         "github_repository": environ.get("GITHUB_REPOSITORY"),
+        "huggingface": {
+            "disable_implicit_token": environ.get(
+                "HF_HUB_DISABLE_IMPLICIT_TOKEN", "1"
+            ),
+            "disable_telemetry": environ.get(
+                "HF_HUB_DISABLE_TELEMETRY", "1"
+            ),
+            "disable_update_check": environ.get(
+                "HF_HUB_DISABLE_UPDATE_CHECK", "1"
+            ),
+            "home": environ.get("HF_HOME", "~/.cache/huggingface"),
+            "hub_cache": environ.get("HF_HUB_CACHE", "$HF_HOME/hub"),
+            "offline": environ.get("HF_HUB_OFFLINE", "0"),
+            "env_token_configured": bool(environ.get("HF_TOKEN")),
+            "token_path_configured": bool(environ.get("HF_TOKEN_PATH")),
+        },
         "pythonpath": {
             "configured": bool(environ.get("PYTHONPATH")),
             "effective": environ.get("PYTHONPATH", RECOMMENDED_PYTHONPATH),

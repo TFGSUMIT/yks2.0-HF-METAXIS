@@ -68,3 +68,4 @@ Run:
     python3 -m unittest discover -s tests -v
     python3 -m metaxis status
     python3 scripts/environment_status.py
+    .venv/bin/hf env

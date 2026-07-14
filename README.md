@@ -44,6 +44,7 @@ The Phase 0 gate will:
 | evals | Candidate register and repeatable evaluation design |
 | docs/architecture | Ownership boundaries and migration architecture |
 | docs/environment.md | Environment-variable and secret-handling contract |
+| docs/huggingface-setup.md | Phase 0 Hugging Face toolchain and credential boundary |
 | scripts | Repository automation and redacted environment readback |
 | tests | Contract and import checks |
 | assets | METAXIS identity assets |

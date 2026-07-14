@@ -15,11 +15,14 @@ class EnvironmentStatusTests(unittest.TestCase):
         self.assertEqual(status["target_issue"], "1")
         self.assertIsNone(status["target_repo"])
         self.assertFalse(status["sync_ready"])
+        self.assertFalse(status["huggingface"]["env_token_configured"])
+        self.assertEqual(status["huggingface"]["disable_implicit_token"], "1")
 
     def test_secret_value_is_never_returned_or_printed(self) -> None:
         secret = "never-print-this-token"
         environ = {
             "GH_TOKEN": secret,
+            "HF_TOKEN": secret,
             "METAXIS_TARGET_REPO": "LittleYeti-Dev/yks2.0-HF-METAXIS",
         }
 

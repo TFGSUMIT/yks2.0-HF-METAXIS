@@ -4,6 +4,22 @@ state: discovery-only
 provider: huggingface
 organization: yks-metaxis
 
+toolchain:
+  plugin: hugging-face
+  plugin_version: 1.0.0
+  cli: hf
+  huggingface_hub_version: 1.23.0
+
+authentication:
+  discovery_connector: configured
+  discovery_identity: yetisdigits
+  cli_identity: yetisdigits
+  cli_organization: yks-metaxis
+  cli_session: oauth-authenticated
+  automation_token: external-l2-required
+  implicit_token: disabled
+  telemetry: disabled
+
 model:
   repository: pending
   revision: pending
@@ -33,4 +49,3 @@ controls:
   consequential_actions: deny
   fail_closed: true
   evidence_required: true
-

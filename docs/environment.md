@@ -20,6 +20,14 @@ store. Never commit a populated `.env` file.
 | `GITHUB_REPOSITORY` | GitHub Actions context only | No | Supplied by GitHub Actions | Target-repository fallback used when `METAXIS_TARGET_REPO` is unset. |
 | `PYTHONPATH` | No | No | Recommended `src:.` for direct checkout execution | Makes the source package importable when it has not been installed into the active Python environment. |
 | `VIRTUAL_ENV` | No | No | Set by Python environment activation | Indicates that the managed `.venv` is active. It is inspected only by the safe environment-status readback. |
+| `HF_TOKEN` | For authorized private/gated or write operations | Yes | L2 credential mesh injection | Hugging Face user access token. Connector authentication is separate and does not populate this variable. |
+| `HF_HUB_DISABLE_IMPLICIT_TOKEN` | No | No | METAXIS default `1` | Prevents automatic token attachment to public read requests. Authorized calls must request authentication explicitly. |
+| `HF_HUB_DISABLE_TELEMETRY` | No | No | METAXIS default `1` | Disables Hugging Face library telemetry for the governed research environment. |
+| `HF_HUB_DISABLE_UPDATE_CHECK` | No | No | METAXIS default `1` | Prevents unpinned CLI update checks during repeatable runs. |
+| `HF_HUB_OFFLINE` | No | No | METAXIS default `0` | Enables explicit offline mode when set to `1`; Phase 0 Hub discovery requires online mode. |
+| `HF_HOME` | No | No | `~/.cache/huggingface` | Optional external root for Hugging Face cache and token state; never point it inside the repository. |
+| `HF_HUB_CACHE` | No | No | `$HF_HOME/hub` | Optional external model/dataset cache location. |
+| `HF_TOKEN_PATH` | No | Yes-bearing path | `$HF_HOME/token` | Optional token-file path. METAXIS prefers L2 environment injection rather than a persistent token file. |
 
 The GitHub Actions secret `YKS_OPS_SYNC_TOKEN` is repository configuration,
 not a process variable consumed by Python. The workflow exposes it to the
@@ -43,6 +51,12 @@ cross-repository mirror behavior. It does not prove least-privilege token
 scope, rotation, revocation, issuer provenance, or a general-purpose L2
 credential service. Those properties require YKS Ops/CUSTODIA readback before
 promotion beyond this single workflow.
+
+The Hugging Face automation token is a separate L2 credential. The authenticated
+plugin connector may perform governed discovery without exporting its
+credential to the worktree. The interactive CLI may use its official OAuth
+session; automation uses `HF_TOKEN` only when an authorized operation requires
+it. See `docs/huggingface-setup.md`.
 
 ## Local Setup
 

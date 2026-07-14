@@ -3,8 +3,13 @@ name = "PROD 0.1 YKS METAXIS"
 
 [setup]
 script = """
+export HF_HUB_DISABLE_IMPLICIT_TOKEN=1
+export HF_HUB_DISABLE_TELEMETRY=1
+export HF_HUB_DISABLE_UPDATE_CHECK=1
+export HF_HUB_OFFLINE=0
 python3 -m venv .venv
-.venv/bin/python -m pip install --editable .
+.venv/bin/python -m pip install --editable ".[huggingface]"
 .venv/bin/python -m unittest discover -s tests -v
 .venv/bin/python scripts/environment_status.py
+.venv/bin/hf env
 """
