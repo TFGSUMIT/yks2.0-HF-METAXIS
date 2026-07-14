@@ -39,12 +39,19 @@ struct OperatorState: Decodable, Sendable {
         let highNofornProcessing: Bool
     }
 
+    struct StorageState: Decodable, Sendable {
+        let backend: String
+        let durable: Bool
+        let credentialExposedToModel: Bool
+    }
+
     let service: Service
     let application: Application
     let operatorContext: OperatorContext
     let classification: ClassificationState
     let model: ModelState
     let proof: ProofState
+    let storage: StorageState
     let nextSafeAction: String
     let requirements: [String]
 }

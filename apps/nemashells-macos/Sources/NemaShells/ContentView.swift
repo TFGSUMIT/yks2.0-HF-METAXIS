@@ -166,6 +166,7 @@ struct ContentView: View {
                                 HStack {
                                     Tag(text: state.proof.posture)
                                     Tag(text: state.model.sufficiency.lowercased())
+                                    Tag(text: state.storage.backend)
                                     Tag(text: state.operatorContext.cadence)
                                 }
                             }
@@ -255,6 +256,13 @@ struct ContentView: View {
                     ("Active", model.state?.model.activeRoute ?? "—"),
                     ("Quality", model.state?.model.sufficiency ?? "—"),
                     ("External API", "denied")
+                ])
+
+                InspectorHeader(title: "Dynamic storage", icon: "cylinder.split.1x2")
+                ReadbackCard(rows: [
+                    ("Backend", model.state?.storage.backend ?? "—"),
+                    ("Durable", model.state?.storage.durable == true ? "yes" : "no"),
+                    ("Credential to model", model.state?.storage.credentialExposedToModel == true ? "violation" : "never")
                 ])
 
                 InspectorHeader(title: "Deployment", icon: "server.rack")
