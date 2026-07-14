@@ -56,13 +56,20 @@ export METAXIS_AWS_BOOTSTRAP_PRINCIPAL_ARN=arn:aws:iam::ACCOUNT_ID:root
 deployment/aws/deploy-bedrock-development-role.sh
 ```
 
-Capture its printed role ARN, then export a one-hour session to an owner-only
-file outside the repository:
+Capture its printed role ARN. Because AWS does not permit a root session to
+assume a role directly, use the bounded bootstrap helper to export a one-hour
+session to an owner-only file outside the repository:
 
 ```text
 export METAXIS_AWS_ROLE_ARN=arn:aws:iam::ACCOUNT_ID:role/METAXISBedrockDevelopmentRole
-scripts/export-bedrock-session.sh "$HOME/.config/metaxis/bedrock-development.ini"
+scripts/bootstrap-bedrock-session.sh "$HOME/.config/metaxis/bedrock-development.ini"
 ```
+
+The helper briefly creates `METAXISBedrockBootstrap`, grants it only
+`sts:AssumeRole` on the exact invocation role, creates the role session, then
+deletes the bootstrap access key, inline policy, and user. If a non-root IAM
+principal already has that assume permission, use
+`scripts/export-bedrock-session.sh` instead and avoid the bootstrap user.
 
 For one DEVELOPMENT validation, run the installer with
 `METAXIS_BRAIN_MODE=aws-bedrock`, `METAXIS_EXTERNAL_MODEL_CALLS=1`, and
