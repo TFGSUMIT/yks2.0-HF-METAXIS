@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/LittleYeti-Dev/yks2.0-HF-METAXIS/schemas/brain-contract/response.schema.json",
+  "title": "METAXIS Brain Response",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["request_id", "text", "provenance", "tool_calls"],
+  "properties": {
+    "request_id": {"type": "string", "minLength": 1},
+    "text": {"type": "string"},
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provider", "model_repository", "model_revision", "runtime", "runtime_version", "route"],
+      "properties": {
+        "provider": {"type": "string", "minLength": 1},
+        "model_repository": {"type": "string", "minLength": 1},
+        "model_revision": {"type": "string", "minLength": 1},
+        "runtime": {"type": "string", "minLength": 1},
+        "runtime_version": {"type": "string", "minLength": 1},
+        "route": {"type": "string", "minLength": 1}
+      }
+    },
+    "tool_calls": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["call_id", "name", "arguments"],
+        "properties": {
+          "call_id": {"type": "string"},
+          "name": {"type": "string"},
+          "arguments": {"type": "object"}
+        }
+      }
+    },
+    "input_tokens": {"type": ["integer", "null"], "minimum": 0},
+    "output_tokens": {"type": ["integer", "null"], "minimum": 0},
+    "latency_ms": {"type": ["number", "null"], "minimum": 0},
+    "error": {"type": ["object", "null"]}
+  }
+}
+

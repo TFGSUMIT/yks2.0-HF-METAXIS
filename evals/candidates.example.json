@@ -1,0 +1,21 @@
+{
+  "candidates": [
+    {
+      "model_repository": "pending",
+      "model_revision": "pending",
+      "vendor_family": "NVIDIA Nemotron",
+      "license": "pending-verification",
+      "runtime": "pending",
+      "decision": "research"
+    },
+    {
+      "model_repository": "pending",
+      "model_revision": "pending",
+      "vendor_family": "non-NVIDIA comparison",
+      "license": "pending-verification",
+      "runtime": "pending",
+      "decision": "research"
+    }
+  ]
+}
+

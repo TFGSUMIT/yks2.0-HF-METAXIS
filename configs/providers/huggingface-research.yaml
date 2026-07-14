@@ -1,0 +1,36 @@
+profile_id: huggingface-research
+phase: 0
+state: discovery-only
+provider: huggingface
+organization: yks-metaxis
+
+model:
+  repository: pending
+  revision: pending
+  license: pending-verification
+  gated: pending-verification
+
+route:
+  kind: dedicated-inference-endpoint
+  activated: false
+  region: pending
+  scaling: pending
+  spend_cap_usd: 0
+
+runtime:
+  hosted: pending
+  export_target: vllm
+  export_proven: false
+
+data_boundary:
+  prompt_retention: pending-verification
+  log_retention: pending-verification
+  training_use: pending-verification
+  egress: pending-verification
+
+controls:
+  credential_source: external-custody-required
+  consequential_actions: deny
+  fail_closed: true
+  evidence_required: true
+
