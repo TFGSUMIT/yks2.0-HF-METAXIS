@@ -18,6 +18,15 @@ type OperatorState = {
     durable: boolean;
     credential_exposed_to_model: boolean;
   };
+  capabilities: {
+    profile: string;
+    loaded_count: number;
+    active_count: number;
+    execution_boundary: string;
+    credential_exposed_to_model: boolean;
+    skills: Array<{ id: string; version: string; active: boolean }>;
+    plugins: Array<{ id: string; version: string; active: boolean }>;
+  };
   integrations: {
     github: {
       account: string;
@@ -93,6 +102,11 @@ function renderState(state: OperatorState): void {
   setText("storage-backend", state.storage.backend);
   setText("storage-durable", state.storage.durable ? "yes" : "no");
   setText("storage-credential", state.storage.credential_exposed_to_model ? "violation" : "never");
+  const activeSkill = state.capabilities.skills.find((item) => item.active);
+  setText("capability-skill", activeSkill ? `${activeSkill.id}@${activeSkill.version}` : "none");
+  setText("capability-plugins", `${state.capabilities.active_count - state.capabilities.skills.filter((item) => item.active).length} active / ${state.capabilities.plugins.length} loaded`);
+  setText("capability-boundary", state.capabilities.execution_boundary);
+  setText("capability-credential", state.capabilities.credential_exposed_to_model ? "violation" : "never");
   setText("github-account", state.integrations.github.account);
   setText("github-authority", state.integrations.github.authority_repo.split("/").pop() || "—");
   setText("github-implementation", state.integrations.github.implementation_repo.split("/").pop() || "—");
@@ -106,6 +120,7 @@ function renderState(state: OperatorState): void {
     state.model.sufficiency.toLowerCase(),
     state.storage.backend,
     state.integrations.github.live ? "github-live-read" : "github-declared-only",
+    `${state.capabilities.active_count}/${state.capabilities.loaded_count}-capabilities-active`,
     state.operator_context.cadence,
   ]);
   element("service-dot").classList.add("online");

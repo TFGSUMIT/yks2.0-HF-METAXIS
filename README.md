@@ -78,6 +78,7 @@ The Phase 0 gate will:
 | apps/nemashells-macos | Native presentation-only NemaShells application |
 | apps/nemashells-tauri | Tauri 2 presentation-only second shell |
 | deployment | OrbStack, systemd, Docker, and Proxmox profiles |
+| src/metaxis/capabilities | Pinned skill and plugin inventory for PROTOS-4 |
 | schemas/brain-contract | Machine-readable request and response envelopes |
 | configs/providers | Research-only provider profiles |
 | evals | Candidate register and repeatable evaluation design |
@@ -101,6 +102,7 @@ The Phase 0 gate will:
 - Endpoint spending: not authorized
 - HIGH/NOFORN processing: blocked in the laptop development profile
 - Functional prototype: shell installed; GitHub live read, inference, and D1 durability gated
+- PROTOS-4 capabilities: `yeti-boot` and GitHub broker active; Hugging Face and Cloudflare loaded/gated
 - Software license: selection pending an explicit governance decision
 
 Public visibility does not itself grant a software license. License selection

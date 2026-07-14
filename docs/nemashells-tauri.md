@@ -64,5 +64,8 @@ brief reports when live GitHub, Project 18, workflow, or D1 refresh is
 unavailable to the isolated runtime instead of fabricating current state.
 
 The shell displays the active model route, HIGH/NOFORN denial, storage backend,
-durability posture, and proof state. A successful mock response proves the UI
+durability posture, capability inventory, and proof state. Run
+`metaxis-capabilities` inside `PROTOS-4` for the guest-side pinned inventory.
+The guest holds no plugin credential or general plugin host; capability
+execution remains behind METAXIS adapters. A successful mock response proves the UI
 and local API path only; it does not prove live model or D1 activation.

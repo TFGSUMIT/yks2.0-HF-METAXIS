@@ -12,6 +12,7 @@ from typing import Any
 
 from . import __version__
 from .adapters import adapter_from_environment
+from .capability_registry import REGISTRY
 from .contracts import BrainRequest
 from .github_broker import GitHubReadBroker
 from .policy import Classification, DEVELOPMENT_ROUTE, evaluate_route
@@ -41,6 +42,7 @@ def _yeti_live_brief(
     storage_status: dict[str, Any],
     github_status: dict[str, Any],
     model_route: str,
+    capability_status: dict[str, Any],
 ) -> str:
     github_connection = "live" if github_status["live"] else "declared-only"
     return "\n".join(
@@ -60,6 +62,7 @@ def _yeti_live_brief(
             "3. CI/CD and automation",
             f"- GitHub broker: {github_connection}; metadata read-only; writes denied.",
             f"- Brain route: {model_route}.",
+            f"- Capability pack: {capability_status['active_count']} active / {capability_status['loaded_count']} loaded; writes denied.",
             "- This isolated runtime does not currently hold Cloudflare credentials.",
             "- Live repository, Project 18, workflow, and D1 refresh require the governed cGunther host path.",
             "",
@@ -143,6 +146,7 @@ class RuntimeState:
                     self.storage_status,
                     self.github_status,
                     self._adapter.adapter_id,
+                    self.capability_status,
                 ),
                 "route": "yeti-boot-local-readback",
             }
@@ -195,6 +199,10 @@ class RuntimeState:
     def github_status(self) -> dict[str, Any]:
         return self._github_broker.status()
 
+    @property
+    def capability_status(self) -> dict[str, Any]:
+        return REGISTRY.status()
+
 
 STATE = RuntimeState()
 
@@ -233,6 +241,7 @@ def operator_state() -> dict[str, Any]:
             "high_noforn_processing": False,
         },
         "storage": STATE.storage_status,
+        "capabilities": STATE.capability_status,
         "integrations": {"github": STATE.github_status},
         "next_safe_action": (
             "Use synthetic or public development data while the approved "
@@ -284,6 +293,8 @@ class MetaxisHandler(BaseHTTPRequestHandler):
                 self._send(HTTPStatus.OK, operator_state())
             elif self.path == "/api/v1/github-state":
                 self._send(HTTPStatus.OK, STATE.github_status)
+            elif self.path == "/api/v1/capabilities":
+                self._send(HTTPStatus.OK, STATE.capability_status)
             elif self.path == "/api/v1/threads":
                 self._send(HTTPStatus.OK, {"threads": STATE.list_threads()})
             else:

@@ -50,6 +50,17 @@ class LocalServerTests(unittest.TestCase):
             "LittleYeti-Dev/yks2.0-ops-hub",
         )
         self.assertFalse(value["integrations"]["github"]["writes_allowed"])
+        self.assertEqual(value["capabilities"]["profile"], "PROTOS-4")
+        self.assertEqual(value["capabilities"]["loaded_count"], 4)
+        self.assertEqual(value["capabilities"]["active_count"], 2)
+        self.assertFalse(value["capabilities"]["credential_exposed_to_model"])
+
+    def test_capability_inventory_is_read_only(self) -> None:
+        with self.request("/api/v1/capabilities") as response:
+            value = json.load(response)
+        self.assertEqual(value["authority"]["safe_chain"], [474, 475, 476])
+        self.assertEqual(value["skills"][0]["id"], "yeti-boot")
+        self.assertTrue(all(not item["writes_allowed"] for item in value["plugins"]))
 
     def test_thread_flow_uses_mock_for_development(self) -> None:
         with self.request("/api/v1/threads", {"title": "proof"}) as response:
@@ -77,6 +88,7 @@ class LocalServerTests(unittest.TestCase):
                 self.assertIn("No external model was called", turn["assistant"])
                 self.assertIn("GitHub broker: declared-only", turn["assistant"])
                 self.assertIn("Brain route: mock-local-development", turn["assistant"])
+                self.assertIn("Capability pack: 2 active / 4 loaded", turn["assistant"])
 
     def test_github_question_uses_broker_readback_not_brain(self) -> None:
         with self.request("/api/v1/threads", {"title": "github"}) as response:

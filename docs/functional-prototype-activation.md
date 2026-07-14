@@ -20,6 +20,7 @@ profile remains DEVELOPMENT-only even after all three live integrations pass.
 | Surface | Current state | Activation result required |
 | --- | --- | --- |
 | Installed Tauri 2 shell | Running through `PROTOS-4`; loopback-only | Retain health-gated `yetis live` boot |
+| Capability pack | `yeti-boot` active; GitHub broker active; Hugging Face and Cloudflare loaded/gated | Activate adapters only through their existing acceptance gates |
 | GitHub | Declared metadata only; no credential; writes denied | Live bounded read of `yks2.0-ops-hub` and `yks2.0-HF-METAXIS` |
 | Brain | `mock-local-development`; external calls disabled | One approved DEVELOPMENT turn through the pinned endpoint route |
 | Candidate | `nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-BF16` at `cbd3fa9f933d55ef16a84236559f4ee2a0526848` | Preserve repository and revision in response provenance |
@@ -41,6 +42,24 @@ profile remains DEVELOPMENT-only even after all three live integrations pass.
    `github-readback-local`, not the model route.
 
 The broker deliberately ignores broad `GH_TOKEN` and `GITHUB_TOKEN` values.
+
+## Capability pack
+
+The checked-in `PROTOS-4` capability pack is the only capability inventory
+installed into the guest. It pins one first-party skill and three plugin
+contracts:
+
+- `yeti-boot@1.0.0` is active through the deterministic local readback route;
+- `github@0.1.8-2841cf9749ae` is active only through the METAXIS metadata
+  broker, with writes denied;
+- `hugging-face@1.0.0` is loaded but inactive until Gate 2 passes; and
+- `cloudflare@0.1.2` is loaded but inactive until Gate 3 passes.
+
+The installer does not copy the host Codex plugin cache, browser sessions, app
+connectors, MCP credentials, or macOS binaries into Ubuntu. Plugin metadata
+does not execute third-party code. METAXIS adapters remain the execution
+boundary, and `/api/v1/capabilities` reports the distinction between loaded
+and active entries.
 
 ## Gate 2 — DEVELOPMENT inference
 

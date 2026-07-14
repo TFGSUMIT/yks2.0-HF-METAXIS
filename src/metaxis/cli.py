@@ -16,6 +16,7 @@ def _status() -> int:
     print("HIGH/NOFORN processing: blocked")
     print("approved development data: synthetic/public only")
     print("brain contract: provider-neutral scaffold")
+    print("PROTOS-4 capabilities: 4 loaded; 2 active; writes denied")
     return 0
 
 

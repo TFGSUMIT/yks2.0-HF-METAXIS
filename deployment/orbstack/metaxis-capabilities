@@ -1,0 +1,24 @@
+#!/bin/sh
+set -eu
+
+MANIFEST=/etc/metaxis/capabilities/protos-4.json
+test -r "$MANIFEST" || {
+  printf '%s\n' 'PROTOS-4 capability pack is not installed.' >&2
+  exit 1
+}
+
+python3 - "$MANIFEST" <<'PY'
+import json
+import sys
+
+with open(sys.argv[1], encoding="utf-8") as stream:
+    manifest = json.load(stream)
+
+print(f"METAXIS capability pack: {manifest['profile']}")
+for kind in ("skills", "plugins"):
+    print(f"{kind}:")
+    for item in manifest[kind]:
+        state = "active" if item["active"] else "loaded / gated"
+        print(f"  {item['id']}@{item['version']}: {state}; writes denied")
+print("credential exposed to model: never")
+PY
