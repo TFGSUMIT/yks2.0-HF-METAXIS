@@ -35,8 +35,29 @@ store. Never commit a populated `.env` file.
 | `CLOUDFLARE_ACCOUNT_ID` | For D1 | No | None | Cloudflare account coordinate for the D1 REST query API. |
 | `METAXIS_D1_DATABASE_ID` | For D1 | No | None | UUID of the METAXIS dynamic-state D1 database. |
 | `CLOUDFLARE_D1_API_TOKEN` | For D1 | Yes | L2 credential mesh injection | Least-privilege D1 Read/Write API token; never exposed to the brain or stored in D1. |
+| `CLOUDFLARE_D1_API_TOKEN_FILE` | Preferred for D1; required by OrbStack | Yes-bearing path | None | Absolute owner-only token file mounted read-only; takes precedence over the direct-process token variable. |
 | `METAXIS_D1_TIMEOUT_SECONDS` | No | No | `10` | D1 query timeout at the METAXIS adapter boundary. |
 | `METAXIS_D1_API_BASE` | No | No | `https://api.cloudflare.com/client/v4` | Cloudflare API base; override only for an authorized test double. |
+| `METAXIS_BRAIN_MODE` | No | No | `mock` | Selects deterministic mock or `openai-compatible`; external routing still requires the separate call flag. |
+| `METAXIS_EXTERNAL_MODEL_CALLS` | For live inference | No | `0` | Final explicit live-call gate; only `1` enables adapter construction. |
+| `METAXIS_BRAIN_URL` | For live inference | No | None | Registered OpenAI-compatible endpoint base URL. |
+| `METAXIS_BRAIN_API_KEY` | Direct-process compatibility only | Yes | None | Inference-only key; the OrbStack installer rejects this environment form. |
+| `METAXIS_BRAIN_API_KEY_FILE` | Required by OrbStack live inference | Yes-bearing path | None | Absolute owner-only inference-key file mounted read-only. Never use the endpoint-management token. |
+| `METAXIS_BRAIN_PROVIDER` | For live inference | No | `registered-provider` | Provider identifier written into provenance. |
+| `METAXIS_BRAIN_ROUTE_ID` | For live inference | No | `registered-api` | Registered route identifier. |
+| `METAXIS_BRAIN_MODEL` | For live inference | No | Pinned Nemotron candidate | Exact model repository sent to the endpoint and recorded in provenance. |
+| `METAXIS_BRAIN_REVISION` | For live inference | No | Pinned candidate SHA | Immutable model revision recorded in provenance. |
+| `METAXIS_BRAIN_DEVELOPER_COUNTRY` | For route evaluation | No | `unknown` in Python; `US` in laptop installer | Provenance control input; not sufficient by itself. |
+| `METAXIS_BRAIN_PLACEMENT` | For route evaluation | No | `unknown` | Registered workload placement. |
+| `METAXIS_BRAIN_MAX_OUTPUT_TOKENS` | No | No | `4096` | Hard output-token ceiling enforced before the call. |
+| `METAXIS_BRAIN_TIMEOUT_SECONDS` | No | No | `60` | Provider request timeout. |
+| `METAXIS_BRAIN_US_PERSON_ADMIN_ONLY` | For HIGH/NOFORN | No | `0` | Evidence-backed administrative-access control flag. |
+| `METAXIS_BRAIN_US_PERSON_USER_ONLY` | For HIGH/NOFORN | No | `0` | Evidence-backed workload-user control flag. |
+| `METAXIS_BRAIN_US_LOCATION_ONLY` | For HIGH/NOFORN | No | `0` | Evidence-backed placement flag. |
+| `METAXIS_BRAIN_EGRESS_DEFAULT_DENY` | For HIGH/NOFORN | No | `0` | Evidence-backed network-control flag. |
+| `METAXIS_BRAIN_EXTERNAL_TELEMETRY_DISABLED` | For HIGH/NOFORN | No | `0` | Evidence-backed telemetry-control flag. |
+| `METAXIS_BRAIN_CUSTODY_APPROVED` | For HIGH/NOFORN | No | `0` | Evidence-backed credential-custody flag. |
+| `METAXIS_HIGH_NOFORN_AUTHORITY_RECORD` | For HIGH/NOFORN | No | None | Authority record required in addition to all technical controls. |
 
 The GitHub Actions secret `YKS_OPS_SYNC_TOKEN` is repository configuration,
 not a process variable consumed by Python. The workflow exposes it to the
@@ -44,8 +65,9 @@ process as `GH_TOKEN`. Its value must never appear in logs or repository files.
 
 The D1 API token is also an L2 credential. Selecting `cloudflare-d1` without
 the account ID, database UUID, and token fails startup rather than falling back
-to volatile memory. The Phase 0 schema accepts DEVELOPMENT rows only. See
-`docs/cloudflare-d1-storage.md`.
+to volatile memory. When a token file is configured it must be absolute,
+owner-only, nonempty, and at most 4096 bytes. The Phase 0 schema accepts
+DEVELOPMENT rows only. See `docs/cloudflare-d1-storage.md`.
 
 The NemaShells GitHub broker is disabled for live reads unless
 `METAXIS_GITHUB_TOKEN_FILE` is explicitly mounted. Use a fine-grained token

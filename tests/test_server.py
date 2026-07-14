@@ -75,6 +75,8 @@ class LocalServerTests(unittest.TestCase):
                 self.assertIn("YKS Ops Live Brief", turn["assistant"])
                 self.assertIn("HIGH/NOFORN remains blocked", turn["assistant"])
                 self.assertIn("No external model was called", turn["assistant"])
+                self.assertIn("GitHub broker: declared-only", turn["assistant"])
+                self.assertIn("Brain route: mock-local-development", turn["assistant"])
 
     def test_github_question_uses_broker_readback_not_brain(self) -> None:
         with self.request("/api/v1/threads", {"title": "github"}) as response:

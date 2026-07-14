@@ -5,32 +5,16 @@ from __future__ import annotations
 import json
 import os
 import re
-import stat
 import threading
 import time
 import urllib.error
 import urllib.request
-from pathlib import Path
 from typing import Any, Callable
+
+from .secret_file import read_secret_file
 
 
 JsonOpener = Callable[..., Any]
-
-
-def _read_token_file(path_value: str) -> str:
-    path = Path(path_value).expanduser()
-    if not path.is_absolute():
-        raise ValueError("METAXIS_GITHUB_TOKEN_FILE must be an absolute path")
-    if not path.is_file():
-        raise ValueError("METAXIS_GITHUB_TOKEN_FILE is not a regular file")
-    if path.stat().st_size > 4096:
-        raise ValueError("METAXIS_GITHUB_TOKEN_FILE exceeds 4096 bytes")
-    if stat.S_IMODE(path.stat().st_mode) & 0o077:
-        raise ValueError("METAXIS_GITHUB_TOKEN_FILE must not be group/world accessible")
-    token = path.read_text(encoding="utf-8").strip()
-    if not token:
-        raise ValueError("METAXIS_GITHUB_TOKEN_FILE is empty")
-    return token
 
 
 def _validate_repo(value: str) -> str:
@@ -67,7 +51,11 @@ class GitHubReadBroker:
     @classmethod
     def from_environment(cls) -> GitHubReadBroker:
         token_file = os.environ.get("METAXIS_GITHUB_TOKEN_FILE", "").strip()
-        token = _read_token_file(token_file) if token_file else None
+        token = (
+            read_secret_file(token_file, "METAXIS_GITHUB_TOKEN_FILE")
+            if token_file
+            else None
+        )
         return cls(
             account=os.environ.get("METAXIS_GITHUB_ACCOUNT", "LittleYeti-Dev"),
             authority_repo=os.environ.get(

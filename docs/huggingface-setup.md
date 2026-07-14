@@ -8,8 +8,9 @@ Observed: 2026-07-14
 
 Hugging Face is the first model and provider discovery surface for METAXIS.
 This setup supports research, immutable revision capture, license and model-card
-inspection, and later bounded endpoint evaluation. It does not activate an
-Inference Endpoint, approve spend, select a model, or accept license terms.
+inspection, and later bounded endpoint evaluation. The first candidate and
+immutable revision are now registered. This does not activate an Inference
+Endpoint, approve spend, promote the candidate, or accept license terms.
 
 ## Installed Surfaces
 
@@ -56,12 +57,12 @@ was created by this setup.
 
 ## Current Research Readback
 
-Authenticated plugin discovery found current NVIDIA Nemotron text-generation
-repositories, including the Nano 4B, Nano 30B-A3B, Super 120B-A12B, and newer
-research variants. Search results are discovery evidence only. Candidate
-promotion still requires the exact repository revision, actual license,
-gating, model card, runtime compatibility, hardware profile, and comparison
-model record required by issue 423.
+The first registered candidate is
+`nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-BF16` at immutable revision
+`cbd3fa9f933d55ef16a84236559f4ee2a0526848`. Its Hub metadata declares
+`nvidia-nemotron-open-model-license` and the repository is not gated. These
+facts register the research input; they do not establish evaluation quality,
+deployment suitability, export conformance, or HIGH/NOFORN eligibility.
 
 ## Commands
 
@@ -86,3 +87,6 @@ arguments can be exposed through process inspection or logs.
    do not expose the endpoint-management token as `METAXIS_BRAIN_API_KEY`.
 5. Keep Inference Endpoint deployment and spend at `activated: false` and
    `spend_cap_usd: 0` until the operator accepts the endpoint plan.
+
+The executable gate sequence is in
+`docs/functional-prototype-activation.md`.

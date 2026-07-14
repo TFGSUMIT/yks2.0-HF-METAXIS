@@ -1,5 +1,6 @@
 import json
 import os
+import tempfile
 import unittest
 from unittest.mock import patch
 
@@ -118,6 +119,42 @@ class StateStoreEnvironmentTests(unittest.TestCase):
         ):
             with self.assertRaises(StorageConfigurationError):
                 state_store_from_environment()
+
+    def test_d1_accepts_owner_only_token_file(self) -> None:
+        with tempfile.NamedTemporaryFile(mode="w", delete=False) as token_file:
+            token_file.write("file-token")
+            token_path = token_file.name
+        os.chmod(token_path, 0o600)
+        try:
+            environment = {
+                "METAXIS_STATE_BACKEND": "cloudflare-d1",
+                "CLOUDFLARE_ACCOUNT_ID": "account",
+                "METAXIS_D1_DATABASE_ID": "database",
+                "CLOUDFLARE_D1_API_TOKEN_FILE": token_path,
+            }
+            with patch.dict(os.environ, environment, clear=True):
+                store = state_store_from_environment()
+            self.assertEqual(store.settings.api_token, "file-token")
+        finally:
+            os.unlink(token_path)
+
+    def test_d1_rejects_accessible_token_file(self) -> None:
+        with tempfile.NamedTemporaryFile(mode="w", delete=False) as token_file:
+            token_file.write("file-token")
+            token_path = token_file.name
+        os.chmod(token_path, 0o644)
+        try:
+            environment = {
+                "METAXIS_STATE_BACKEND": "cloudflare-d1",
+                "CLOUDFLARE_ACCOUNT_ID": "account",
+                "METAXIS_D1_DATABASE_ID": "database",
+                "CLOUDFLARE_D1_API_TOKEN_FILE": token_path,
+            }
+            with patch.dict(os.environ, environment, clear=True):
+                with self.assertRaises(StorageConfigurationError):
+                    state_store_from_environment()
+        finally:
+            os.unlink(token_path)
 
 
 if __name__ == "__main__":

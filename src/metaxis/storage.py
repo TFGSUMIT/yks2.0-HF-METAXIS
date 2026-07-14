@@ -18,6 +18,8 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from typing import Any, Callable, Protocol
 
+from .secret_file import read_secret_file
+
 
 def _now() -> str:
     return datetime.now(UTC).isoformat()
@@ -310,10 +312,20 @@ def state_store_from_environment() -> StateStore:
     if backend != "cloudflare-d1":
         raise StorageConfigurationError(f"unsupported METAXIS_STATE_BACKEND: {backend}")
 
+    token_file = os.environ.get("CLOUDFLARE_D1_API_TOKEN_FILE", "").strip()
+    try:
+        api_token = (
+            read_secret_file(token_file, "CLOUDFLARE_D1_API_TOKEN_FILE")
+            if token_file
+            else os.environ.get("CLOUDFLARE_D1_API_TOKEN", "").strip()
+        )
+    except ValueError as error:
+        raise StorageConfigurationError(str(error)) from error
+
     settings = {
         "account_id": os.environ.get("CLOUDFLARE_ACCOUNT_ID", "").strip(),
         "database_id": os.environ.get("METAXIS_D1_DATABASE_ID", "").strip(),
-        "api_token": os.environ.get("CLOUDFLARE_D1_API_TOKEN", "").strip(),
+        "api_token": api_token,
     }
     missing = [name for name, value in settings.items() if not value]
     if missing:

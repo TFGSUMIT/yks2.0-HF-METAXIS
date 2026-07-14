@@ -37,7 +37,12 @@ def _is_yeti_live_trigger(text: str) -> bool:
     }
 
 
-def _yeti_live_brief(storage_status: dict[str, Any]) -> str:
+def _yeti_live_brief(
+    storage_status: dict[str, Any],
+    github_status: dict[str, Any],
+    model_route: str,
+) -> str:
+    github_connection = "live" if github_status["live"] else "declared-only"
     return "\n".join(
         [
             "YKS Ops Live Brief",
@@ -53,7 +58,9 @@ def _yeti_live_brief(storage_status: dict[str, Any]) -> str:
             "- PROTOS-3 is the Swift lane; PROTOS-4 is the Tauri 2 presentation lane.",
             "",
             "3. CI/CD and automation",
-            "- This isolated runtime does not hold GitHub or Cloudflare credentials.",
+            f"- GitHub broker: {github_connection}; metadata read-only; writes denied.",
+            f"- Brain route: {model_route}.",
+            "- This isolated runtime does not currently hold Cloudflare credentials.",
             "- Live repository, Project 18, workflow, and D1 refresh require the governed cGunther host path.",
             "",
             "4. Canon and architecture drift",
@@ -132,7 +139,11 @@ class RuntimeState:
                 "created_at": _now(),
                 "classification": classification.value,
                 "operator": text,
-                "assistant": _yeti_live_brief(self.storage_status),
+                "assistant": _yeti_live_brief(
+                    self.storage_status,
+                    self.github_status,
+                    self._adapter.adapter_id,
+                ),
                 "route": "yeti-boot-local-readback",
             }
             self._store.append_turn(thread_id, turn)
@@ -213,7 +224,8 @@ def operator_state() -> dict[str, Any]:
             "primary_candidate": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-BF16",
             "sufficiency": "EVALUATION-REQUIRED",
             "active_route": STATE._adapter.adapter_id,
-            "external_api_allowed": False,
+            "external_api_allowed": STATE._adapter.adapter_id
+            != "mock-local-development",
         },
         "proof": {
             "posture": "manual-placeholder",

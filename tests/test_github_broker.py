@@ -5,7 +5,8 @@ import unittest
 import urllib.request
 from pathlib import Path
 
-from metaxis.github_broker import GitHubReadBroker, _read_token_file
+from metaxis.github_broker import GitHubReadBroker
+from metaxis.secret_file import read_secret_file
 
 
 class _Response(io.BytesIO):
@@ -71,15 +72,18 @@ class GitHubReadBrokerTests(unittest.TestCase):
 
     def test_token_file_requires_absolute_regular_nonempty_file(self) -> None:
         with self.assertRaises(ValueError):
-            _read_token_file("relative-token")
+            read_secret_file("relative-token", "METAXIS_GITHUB_TOKEN_FILE")
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "token"
             path.write_text("test-secret\n", encoding="utf-8")
             path.chmod(0o600)
-            self.assertEqual(_read_token_file(str(path)), "test-secret")
+            self.assertEqual(
+                read_secret_file(str(path), "METAXIS_GITHUB_TOKEN_FILE"),
+                "test-secret",
+            )
             path.chmod(0o644)
             with self.assertRaises(ValueError):
-                _read_token_file(str(path))
+                read_secret_file(str(path), "METAXIS_GITHUB_TOKEN_FILE")
 
     def test_repository_coordinates_reject_path_injection(self) -> None:
         with self.assertRaises(ValueError):

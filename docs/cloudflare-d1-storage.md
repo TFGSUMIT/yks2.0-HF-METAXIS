@@ -14,9 +14,10 @@ receives D1 credentials or database authority.
   credential is missing; it never silently falls back to memory.
 - The Phase 0 D1 schema accepts `DEVELOPMENT` rows only. HIGH/NOFORN remains
   blocked before any provider call and is not written to commercial D1.
-- `CLOUDFLARE_D1_API_TOKEN` stays in the L2 credential mesh or an authorized CI
-  secret store. It is not committed, written into D1, exposed to the model, or
-  returned by operator readback.
+- The D1 token stays in the L2 credential mesh or an authorized CI secret
+  store. OrbStack mounts it from `CLOUDFLARE_D1_API_TOKEN_FILE` as a read-only
+  owner-only file. It is not committed, written into D1, exposed to the model,
+  returned by operator readback, or placed in Docker environment metadata.
 - D1 holds working application state and evidence references. GitHub/YKS Ops
   and canon remain requirements and product source truth; D1 does not grant
   authorization or final-action authority.
@@ -39,7 +40,7 @@ Required when `METAXIS_STATE_BACKEND=cloudflare-d1`:
 ```text
 CLOUDFLARE_ACCOUNT_ID=<account-id>
 METAXIS_D1_DATABASE_ID=<database-uuid>
-CLOUDFLARE_D1_API_TOKEN=<L2-injected D1 Read/Write token>
+CLOUDFLARE_D1_API_TOKEN_FILE=<absolute owner-only token-file path>
 ```
 
 Optional:
@@ -49,8 +50,9 @@ METAXIS_D1_TIMEOUT_SECONDS=10
 METAXIS_D1_API_BASE=https://api.cloudflare.com/client/v4
 ```
 
-Do not place populated values in `.env`. Inject them into the container at
-launch from the approved credential boundary.
+Direct-process tooling may use `CLOUDFLARE_D1_API_TOKEN` for compatibility,
+but the OrbStack installer rejects that form. Do not place populated values in
+`.env`. Inject the file from the approved credential boundary.
 
 ## Migration workflow
 

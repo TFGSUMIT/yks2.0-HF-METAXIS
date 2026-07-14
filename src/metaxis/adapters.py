@@ -12,6 +12,7 @@ from typing import Any
 
 from .contracts import BrainError, BrainProvenance, BrainRequest, BrainResponse
 from .policy import Classification, RouteProfile, evaluate_route
+from .secret_file import read_secret_file
 
 
 @dataclass(frozen=True, slots=True)
@@ -152,7 +153,12 @@ def adapter_from_environment():
     if os.environ.get("METAXIS_EXTERNAL_MODEL_CALLS") != "1":
         return MockBrainAdapter()
     endpoint = os.environ.get("METAXIS_BRAIN_URL", "").strip()
-    api_key = os.environ.get("METAXIS_BRAIN_API_KEY", "").strip()
+    api_key_file = os.environ.get("METAXIS_BRAIN_API_KEY_FILE", "").strip()
+    api_key = (
+        read_secret_file(api_key_file, "METAXIS_BRAIN_API_KEY_FILE")
+        if api_key_file
+        else os.environ.get("METAXIS_BRAIN_API_KEY", "").strip()
+    )
     if not endpoint or not api_key:
         return MockBrainAdapter()
     route = RouteProfile(

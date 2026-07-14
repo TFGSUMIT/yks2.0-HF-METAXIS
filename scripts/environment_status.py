@@ -68,6 +68,31 @@ def build_environment_status(environ: Mapping[str, str]) -> dict[str, object]:
             ),
             "d1_token_configured": bool(
                 environ.get("CLOUDFLARE_D1_API_TOKEN")
+                or environ.get("CLOUDFLARE_D1_API_TOKEN_FILE")
+            ),
+            "d1_token_file_configured": bool(
+                environ.get("CLOUDFLARE_D1_API_TOKEN_FILE")
+            ),
+        },
+        "brain": {
+            "mode": environ.get("METAXIS_BRAIN_MODE", "mock"),
+            "external_calls_enabled": environ.get("METAXIS_EXTERNAL_MODEL_CALLS")
+            == "1",
+            "endpoint_configured": bool(environ.get("METAXIS_BRAIN_URL")),
+            "api_key_configured": bool(
+                environ.get("METAXIS_BRAIN_API_KEY")
+                or environ.get("METAXIS_BRAIN_API_KEY_FILE")
+            ),
+            "api_key_file_configured": bool(
+                environ.get("METAXIS_BRAIN_API_KEY_FILE")
+            ),
+            "candidate": environ.get(
+                "METAXIS_BRAIN_MODEL",
+                "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-BF16",
+            ),
+            "revision": environ.get(
+                "METAXIS_BRAIN_REVISION",
+                "cbd3fa9f933d55ef16a84236559f4ee2a0526848",
             ),
         },
         "pythonpath": {

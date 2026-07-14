@@ -34,7 +34,7 @@ set -- docker run -d \
   --publish 127.0.0.1:4310:4310 \
   --env METAXIS_PROFILE=orbstack-development \
   --env METAXIS_DATA_CLASSIFICATION=DEVELOPMENT \
-  --env METAXIS_EXTERNAL_MODEL_CALLS=0 \
+  --env "METAXIS_EXTERNAL_MODEL_CALLS=${METAXIS_EXTERNAL_MODEL_CALLS:-0}" \
   --env METAXIS_EXTERNAL_TELEMETRY=0 \
   --env "METAXIS_OPERATOR_CADENCE=5.6 sol" \
   --env "METAXIS_GITHUB_ACCOUNT=${METAXIS_GITHUB_ACCOUNT:-LittleYeti-Dev}" \
@@ -43,9 +43,34 @@ set -- docker run -d \
   --env "METAXIS_STATE_BACKEND=${METAXIS_STATE_BACKEND:-memory}" \
   --env "CLOUDFLARE_ACCOUNT_ID=${CLOUDFLARE_ACCOUNT_ID:-}" \
   --env "METAXIS_D1_DATABASE_ID=${METAXIS_D1_DATABASE_ID:-}" \
-  --env "CLOUDFLARE_D1_API_TOKEN=${CLOUDFLARE_D1_API_TOKEN:-}" \
   --env "METAXIS_D1_TIMEOUT_SECONDS=${METAXIS_D1_TIMEOUT_SECONDS:-10}" \
-  --env "METAXIS_D1_API_BASE=${METAXIS_D1_API_BASE:-https://api.cloudflare.com/client/v4}"
+  --env "METAXIS_D1_API_BASE=${METAXIS_D1_API_BASE:-https://api.cloudflare.com/client/v4}" \
+  --env "METAXIS_BRAIN_MODE=${METAXIS_BRAIN_MODE:-mock}" \
+  --env "METAXIS_BRAIN_URL=${METAXIS_BRAIN_URL:-}" \
+  --env "METAXIS_BRAIN_PROVIDER=${METAXIS_BRAIN_PROVIDER:-}" \
+  --env "METAXIS_BRAIN_ROUTE_ID=${METAXIS_BRAIN_ROUTE_ID:-}" \
+  --env "METAXIS_BRAIN_MODEL=${METAXIS_BRAIN_MODEL:-nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-BF16}" \
+  --env "METAXIS_BRAIN_REVISION=${METAXIS_BRAIN_REVISION:-cbd3fa9f933d55ef16a84236559f4ee2a0526848}" \
+  --env "METAXIS_BRAIN_DEVELOPER_COUNTRY=${METAXIS_BRAIN_DEVELOPER_COUNTRY:-US}" \
+  --env "METAXIS_BRAIN_PLACEMENT=${METAXIS_BRAIN_PLACEMENT:-}" \
+  --env "METAXIS_BRAIN_MAX_OUTPUT_TOKENS=${METAXIS_BRAIN_MAX_OUTPUT_TOKENS:-4096}" \
+  --env "METAXIS_BRAIN_TIMEOUT_SECONDS=${METAXIS_BRAIN_TIMEOUT_SECONDS:-60}" \
+  --env "METAXIS_BRAIN_US_PERSON_ADMIN_ONLY=${METAXIS_BRAIN_US_PERSON_ADMIN_ONLY:-0}" \
+  --env "METAXIS_BRAIN_US_PERSON_USER_ONLY=${METAXIS_BRAIN_US_PERSON_USER_ONLY:-0}" \
+  --env "METAXIS_BRAIN_US_LOCATION_ONLY=${METAXIS_BRAIN_US_LOCATION_ONLY:-0}" \
+  --env "METAXIS_BRAIN_EGRESS_DEFAULT_DENY=${METAXIS_BRAIN_EGRESS_DEFAULT_DENY:-0}" \
+  --env "METAXIS_BRAIN_EXTERNAL_TELEMETRY_DISABLED=${METAXIS_BRAIN_EXTERNAL_TELEMETRY_DISABLED:-0}" \
+  --env "METAXIS_BRAIN_CUSTODY_APPROVED=${METAXIS_BRAIN_CUSTODY_APPROVED:-0}" \
+  --env "METAXIS_HIGH_NOFORN_AUTHORITY_RECORD=${METAXIS_HIGH_NOFORN_AUTHORITY_RECORD:-}"
+
+if [ -n "${CLOUDFLARE_D1_API_TOKEN:-}" ]; then
+  printf '%s\n' 'OrbStack deployment rejects CLOUDFLARE_D1_API_TOKEN; use CLOUDFLARE_D1_API_TOKEN_FILE.' >&2
+  exit 1
+fi
+if [ -n "${METAXIS_BRAIN_API_KEY:-}" ]; then
+  printf '%s\n' 'OrbStack deployment rejects METAXIS_BRAIN_API_KEY; use METAXIS_BRAIN_API_KEY_FILE.' >&2
+  exit 1
+fi
 
 if [ -n "${METAXIS_GITHUB_TOKEN_FILE:-}" ]; then
   test -f "$METAXIS_GITHUB_TOKEN_FILE" || {
@@ -55,6 +80,26 @@ if [ -n "${METAXIS_GITHUB_TOKEN_FILE:-}" ]; then
   set -- "$@" \
     --mount "type=bind,src=${METAXIS_GITHUB_TOKEN_FILE},dst=/run/secrets/metaxis_github_token,readonly" \
     --env METAXIS_GITHUB_TOKEN_FILE=/run/secrets/metaxis_github_token
+fi
+
+if [ -n "${CLOUDFLARE_D1_API_TOKEN_FILE:-}" ]; then
+  test -f "$CLOUDFLARE_D1_API_TOKEN_FILE" || {
+    printf '%s\n' 'CLOUDFLARE_D1_API_TOKEN_FILE is not a regular file.' >&2
+    exit 1
+  }
+  set -- "$@" \
+    --mount "type=bind,src=${CLOUDFLARE_D1_API_TOKEN_FILE},dst=/run/secrets/metaxis_d1_token,readonly" \
+    --env CLOUDFLARE_D1_API_TOKEN_FILE=/run/secrets/metaxis_d1_token
+fi
+
+if [ -n "${METAXIS_BRAIN_API_KEY_FILE:-}" ]; then
+  test -f "$METAXIS_BRAIN_API_KEY_FILE" || {
+    printf '%s\n' 'METAXIS_BRAIN_API_KEY_FILE is not a regular file.' >&2
+    exit 1
+  }
+  set -- "$@" \
+    --mount "type=bind,src=${METAXIS_BRAIN_API_KEY_FILE},dst=/run/secrets/metaxis_brain_api_key,readonly" \
+    --env METAXIS_BRAIN_API_KEY_FILE=/run/secrets/metaxis_brain_api_key
 fi
 
 "$@" "metaxis:${REVISION}" >/dev/null
