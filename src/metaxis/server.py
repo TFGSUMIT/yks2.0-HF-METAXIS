@@ -13,6 +13,7 @@ from typing import Any
 from . import __version__
 from .adapters import adapter_from_environment
 from .contracts import BrainRequest
+from .github_broker import GitHubReadBroker
 from .policy import Classification, DEVELOPMENT_ROUTE, evaluate_route
 from .storage import (
     StateStore,
@@ -65,12 +66,48 @@ def _yeti_live_brief(storage_status: dict[str, Any]) -> str:
     )
 
 
+def _is_github_identity_question(text: str) -> bool:
+    normalized = re.sub(r"[^a-z]+", " ", text.strip().lower()).strip()
+    return normalized in {
+        "what gh are you talking to",
+        "what github are you talking to",
+        "which gh are you talking to",
+        "which github are you talking to",
+        "what github are you connected to",
+        "which github are you connected to",
+    }
+
+
+def _github_identity_brief(status: dict[str, Any]) -> str:
+    live = "live" if status["live"] else "declared-only"
+    lines = [
+        "GitHub broker readback",
+        "",
+        f"- Account: {status['account']}",
+        f"- Authority repository: {status['authority_repo']}",
+        f"- Implementation repository: {status['implementation_repo']}",
+        f"- Connection: {live} ({status['reason']})",
+        "- Mode: metadata read-only; writes denied.",
+        "- Credential exposed to the model: never.",
+    ]
+    if not status["live"]:
+        lines.append(
+            "- NemaShells is not making live GitHub calls until a repository-scoped read credential is mounted into the METAXIS broker."
+        )
+    return "\n".join(lines)
+
+
 class RuntimeState:
     """Orchestrate policy, brain calls, and a provider-neutral state store."""
 
-    def __init__(self, store: StateStore | None = None) -> None:
+    def __init__(
+        self,
+        store: StateStore | None = None,
+        github_broker: GitHubReadBroker | None = None,
+    ) -> None:
         self._store = store or state_store_from_environment()
         self._adapter = adapter_from_environment()
+        self._github_broker = github_broker or GitHubReadBroker.from_environment()
 
     def list_threads(self) -> list[dict[str, Any]]:
         return self._store.list_threads()
@@ -97,6 +134,17 @@ class RuntimeState:
                 "operator": text,
                 "assistant": _yeti_live_brief(self.storage_status),
                 "route": "yeti-boot-local-readback",
+            }
+            self._store.append_turn(thread_id, turn)
+            return HTTPStatus.CREATED, turn
+        if _is_github_identity_question(text):
+            turn = {
+                "id": str(uuid.uuid4()),
+                "created_at": _now(),
+                "classification": classification.value,
+                "operator": text,
+                "assistant": _github_identity_brief(self.github_status),
+                "route": "github-readback-local",
             }
             self._store.append_turn(thread_id, turn)
             return HTTPStatus.CREATED, turn
@@ -131,6 +179,10 @@ class RuntimeState:
             "durable": self._store.durable,
             "credential_exposed_to_model": False,
         }
+
+    @property
+    def github_status(self) -> dict[str, Any]:
+        return self._github_broker.status()
 
 
 STATE = RuntimeState()
@@ -169,6 +221,7 @@ def operator_state() -> dict[str, Any]:
             "high_noforn_processing": False,
         },
         "storage": STATE.storage_status,
+        "integrations": {"github": STATE.github_status},
         "next_safe_action": (
             "Use synthetic or public development data while the approved "
             "Proxmox/U.S.-person-controlled inference profile is built and accepted."
@@ -217,6 +270,8 @@ class MetaxisHandler(BaseHTTPRequestHandler):
                 self._send(HTTPStatus.OK, {"status": "ok", "version": __version__})
             elif self.path == "/api/v1/operator-state":
                 self._send(HTTPStatus.OK, operator_state())
+            elif self.path == "/api/v1/github-state":
+                self._send(HTTPStatus.OK, STATE.github_status)
             elif self.path == "/api/v1/threads":
                 self._send(HTTPStatus.OK, {"threads": STATE.list_threads()})
             else:

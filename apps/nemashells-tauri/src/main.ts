@@ -18,6 +18,18 @@ type OperatorState = {
     durable: boolean;
     credential_exposed_to_model: boolean;
   };
+  integrations: {
+    github: {
+      account: string;
+      authority_repo: string;
+      implementation_repo: string;
+      mode: string;
+      live: boolean;
+      reason: string;
+      writes_allowed: boolean;
+      credential_exposed_to_model: boolean;
+    };
+  };
   next_safe_action: string;
 };
 
@@ -81,9 +93,21 @@ function renderState(state: OperatorState): void {
   setText("storage-backend", state.storage.backend);
   setText("storage-durable", state.storage.durable ? "yes" : "no");
   setText("storage-credential", state.storage.credential_exposed_to_model ? "violation" : "never");
+  setText("github-account", state.integrations.github.account);
+  setText("github-authority", state.integrations.github.authority_repo.split("/").pop() || "—");
+  setText("github-implementation", state.integrations.github.implementation_repo.split("/").pop() || "—");
+  setText("github-live", state.integrations.github.live ? "live read" : "declared only");
+  setText("github-writes", state.integrations.github.writes_allowed ? "enabled" : "denied");
+  setText("github-credential", state.integrations.github.credential_exposed_to_model ? "violation" : "never");
   setText("proof-posture", state.proof.posture);
   setText("next-action", state.next_safe_action);
-  tags([state.proof.posture, state.model.sufficiency.toLowerCase(), state.storage.backend, state.operator_context.cadence]);
+  tags([
+    state.proof.posture,
+    state.model.sufficiency.toLowerCase(),
+    state.storage.backend,
+    state.integrations.github.live ? "github-live-read" : "github-declared-only",
+    state.operator_context.cadence,
+  ]);
   element("service-dot").classList.add("online");
 }
 

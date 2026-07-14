@@ -17,6 +17,8 @@ class EnvironmentStatusTests(unittest.TestCase):
         self.assertFalse(status["sync_ready"])
         self.assertFalse(status["huggingface"]["env_token_configured"])
         self.assertEqual(status["huggingface"]["disable_implicit_token"], "1")
+        self.assertFalse(status["github_broker"]["token_file_configured"])
+        self.assertFalse(status["github_broker"]["writes_allowed"])
 
     def test_secret_value_is_never_returned_or_printed(self) -> None:
         secret = "never-print-this-token"
@@ -24,6 +26,7 @@ class EnvironmentStatusTests(unittest.TestCase):
             "GH_TOKEN": secret,
             "HF_TOKEN": secret,
             "CLOUDFLARE_D1_API_TOKEN": secret,
+            "METAXIS_GITHUB_TOKEN_FILE": f"/tmp/{secret}",
             "METAXIS_STATE_BACKEND": "cloudflare-d1",
             "METAXIS_TARGET_REPO": "LittleYeti-Dev/yks2.0-HF-METAXIS",
         }
@@ -38,6 +41,7 @@ class EnvironmentStatusTests(unittest.TestCase):
             self.assertEqual(main(), 0)
         self.assertNotIn(secret, output.getvalue())
         self.assertTrue(status["state_store"]["d1_token_configured"])
+        self.assertTrue(status["github_broker"]["token_file_configured"])
 
 
 if __name__ == "__main__":

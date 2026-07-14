@@ -17,6 +17,9 @@ store. Never commit a populated `.env` file.
 | `METAXIS_SOURCE_ISSUE` | No | No | `422` | Authoritative METAXIS root issue. |
 | `METAXIS_TARGET_REPO` | Yes for local sync | No | Falls back to `GITHUB_REPOSITORY` | METAXIS implementation repository containing the read-only mirror. |
 | `METAXIS_TARGET_ISSUE` | No | No | `1` | Read-only mirror issue number. |
+| `METAXIS_GITHUB_ACCOUNT` | No | No | `LittleYeti-Dev` | Declared GitHub account shown by the read-only NemaShells broker. Live identity replaces this value only after an authenticated read. |
+| `METAXIS_GITHUB_API_BASE` | No | No | `https://api.github.com` | GitHub REST API base for the bounded metadata broker. |
+| `METAXIS_GITHUB_TOKEN_FILE` | For live GitHub readback | Yes-bearing path | None | Absolute path to a fine-grained, repository-selected, metadata-read token file mounted read-only into METAXIS. The broker deliberately ignores broad `GH_TOKEN`/`GITHUB_TOKEN` variables. |
 | `GITHUB_REPOSITORY` | GitHub Actions context only | No | Supplied by GitHub Actions | Target-repository fallback used when `METAXIS_TARGET_REPO` is unset. |
 | `PYTHONPATH` | No | No | Recommended `src:.` for direct checkout execution | Makes the source package importable when it has not been installed into the active Python environment. |
 | `VIRTUAL_ENV` | No | No | Set by Python environment activation | Indicates that the managed `.venv` is active. It is inspected only by the safe environment-status readback. |
@@ -43,6 +46,14 @@ The D1 API token is also an L2 credential. Selecting `cloudflare-d1` without
 the account ID, database UUID, and token fails startup rather than falling back
 to volatile memory. The Phase 0 schema accepts DEVELOPMENT rows only. See
 `docs/cloudflare-d1-storage.md`.
+
+The NemaShells GitHub broker is disabled for live reads unless
+`METAXIS_GITHUB_TOKEN_FILE` is explicitly mounted. Use a fine-grained token
+selected only for `yks2.0-ops-hub` and `yks2.0-HF-METAXIS` with repository
+Metadata read permission. The broker exposes a bounded repository snapshot,
+never the token or raw permission object, and provides no write method. An
+invalid configured secret file fails startup instead of falling back to an
+environment credential.
 
 ## L2 Credential Mesh Binding
 

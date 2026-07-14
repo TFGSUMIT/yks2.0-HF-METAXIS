@@ -30,6 +30,8 @@ lane without creating a second product authority.
 - HTTP permission is scoped to `http://127.0.0.1:4310/**`.
 - No shell, opener, filesystem, SQL, process, or arbitrary remote HTTP plugin
   permission is enabled.
+- GitHub identity and repository metadata flow through the METAXIS read broker;
+  the Tauri shell receives no GitHub token and exposes no GitHub write method.
 - A restrictive content security policy is checked into `tauri.conf.json`.
 - The UI submits DEVELOPMENT turns only. METAXIS performs the actual route,
   classification, credential, and storage enforcement.

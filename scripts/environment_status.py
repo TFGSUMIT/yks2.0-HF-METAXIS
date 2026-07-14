@@ -35,6 +35,13 @@ def build_environment_status(environ: Mapping[str, str]) -> dict[str, object]:
             "selected_variable": credential_variable,
         },
         "github_repository": environ.get("GITHUB_REPOSITORY"),
+        "github_broker": {
+            "account": environ.get("METAXIS_GITHUB_ACCOUNT", "LittleYeti-Dev"),
+            "api_base": environ.get("METAXIS_GITHUB_API_BASE", "https://api.github.com"),
+            "token_file_configured": bool(environ.get("METAXIS_GITHUB_TOKEN_FILE")),
+            "mode": "metadata-read-only",
+            "writes_allowed": False,
+        },
         "huggingface": {
             "disable_implicit_token": environ.get(
                 "HF_HUB_DISABLE_IMPLICIT_TOKEN", "1"

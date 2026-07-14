@@ -84,6 +84,7 @@ The Phase 0 gate will:
 | docs/architecture | Ownership boundaries and migration architecture |
 | docs/environment.md | Environment-variable and secret-handling contract |
 | docs/huggingface-setup.md | Phase 0 Hugging Face toolchain and credential boundary |
+| docs/github-read-broker.md | Fail-closed GitHub metadata boundary for NemaShells |
 | docs/cloudflare-d1-storage.md | Durable Cloudflare D1 dynamic-state contract and migration |
 | scripts | Repository automation and redacted environment readback |
 | tests | Contract and import checks |

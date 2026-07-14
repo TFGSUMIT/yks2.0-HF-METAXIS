@@ -45,6 +45,11 @@ class LocalServerTests(unittest.TestCase):
         self.assertEqual(value["storage"]["backend"], "memory-development")
         self.assertFalse(value["storage"]["durable"])
         self.assertFalse(value["storage"]["credential_exposed_to_model"])
+        self.assertEqual(
+            value["integrations"]["github"]["authority_repo"],
+            "LittleYeti-Dev/yks2.0-ops-hub",
+        )
+        self.assertFalse(value["integrations"]["github"]["writes_allowed"])
 
     def test_thread_flow_uses_mock_for_development(self) -> None:
         with self.request("/api/v1/threads", {"title": "proof"}) as response:
@@ -70,6 +75,18 @@ class LocalServerTests(unittest.TestCase):
                 self.assertIn("YKS Ops Live Brief", turn["assistant"])
                 self.assertIn("HIGH/NOFORN remains blocked", turn["assistant"])
                 self.assertIn("No external model was called", turn["assistant"])
+
+    def test_github_question_uses_broker_readback_not_brain(self) -> None:
+        with self.request("/api/v1/threads", {"title": "github"}) as response:
+            thread = json.load(response)
+        with self.request(
+            f"/api/v1/threads/{thread['id']}/turns",
+            {"text": "what gh are you talking to", "classification": "DEVELOPMENT"},
+        ) as response:
+            turn = json.load(response)
+        self.assertEqual(turn["route"], "github-readback-local")
+        self.assertIn("LittleYeti-Dev/yks2.0-ops-hub", turn["assistant"])
+        self.assertIn("Credential exposed to the model: never", turn["assistant"])
 
     def test_high_noforn_turn_is_denied(self) -> None:
         with self.request("/api/v1/threads", {"title": "denial"}) as response:
