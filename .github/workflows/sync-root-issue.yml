@@ -23,10 +23,11 @@ jobs:
           python-version: "3.11"
       - name: Mirror YKS Ops root issue 422 to METAXIS issue 1
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Cross-repository token is required because YKS Ops is private.
+          # The built-in token can write this repo but cannot read its authority.
+          GH_TOKEN: ${{ secrets.YKS_OPS_SYNC_TOKEN }}
           METAXIS_SOURCE_REPO: LittleYeti-Dev/yks2.0-ops-hub
           METAXIS_SOURCE_ISSUE: "422"
           METAXIS_TARGET_REPO: LittleYeti-Dev/yks2.0-HF-METAXIS
           METAXIS_TARGET_ISSUE: "1"
         run: python scripts/sync_root_issue.py
-
