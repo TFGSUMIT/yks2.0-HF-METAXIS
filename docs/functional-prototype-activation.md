@@ -17,6 +17,19 @@ implementation repositories without granting GitHub write access.
 This definition does not satisfy the HIGH/NOFORN deployment gate. The laptop
 profile remains DEVELOPMENT-only even after all three live integrations pass.
 
+## Usable PROTOS-4 conversation contract
+
+The installed Tauri shell lists durable D1 tasks, restores their turns after
+restart, and sends a bounded window of prior DEVELOPMENT turns through the
+provider-neutral brain contract. The default window is 12 turns or 24,000
+characters, whichever is reached first. The Bedrock adapter independently
+enforces its registered input, output-token, and per-request cost ceilings.
+
+The model receives only the system safety contract and thread conversation. It
+does not receive the D1, GitHub, or AWS credential; raw adapter configuration;
+Docker metadata; or action authority. A provider failure appears as a safe
+turn-level error and does not mark the local control plane unhealthy.
+
 ## Current readback
 
 | Surface | Current state | Activation result required |
@@ -24,11 +37,12 @@ profile remains DEVELOPMENT-only even after all three live integrations pass.
 | Installed Tauri 2 shell | Running through `PROTOS-4`; loopback-only | Retain health-gated `yetis live` boot |
 | Capability pack | `yeti-boot`, GitHub broker, and Cloudflare D1 adapter active; Hugging Face loaded/gated | Retain adapter gates and deny general plugin writes |
 | GitHub | Live bounded read of both governed repositories; writes denied | Passed; retain repository-scoped read credential boundary |
-| Brain | Returned to `mock-local-development` after one controlled Super proof | Passed; reactivate only for an authorized DEVELOPMENT session |
+| Brain | Nemotron Super active for the bounded operator session ending 2026-07-14T20:20:05Z | DEVELOPMENT only; renew or shut down explicitly |
 | Candidate | `nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16` at `d51eab0d1f979ebc26b546e634a04f450d99158e` | Preserve repository and revision in response provenance |
-| Bedrock route | One synthetic turn passed; 38 input / 9 output tokens; `$0.00001155`; route then destroyed | Preserve evidence and repeat only with explicit spend approval |
+| Bedrock route | Usability acceptance passed; 116 input / 7 output tokens; `$0.00002195`; per-request ceiling `$0.01` | Preserve evidence; no standing GPU or endpoint |
 | Hugging Face endpoint | Disabled availability fallback; spend cap `$0` | Separate operator approval and hardware/spend acceptance |
 | Dynamic storage | `cloudflare-d1`; durable restart/recovery proof passed | Retain token isolation and DEVELOPMENT-only schema |
+| Task continuity | Tauri lists D1 tasks, restores turns, and sends a bounded prior-turn window | 12 turns / 24,000 characters by default |
 | HIGH/NOFORN | Blocked | Remains blocked; prototype activation does not change this row |
 
 ## Gate 1 — GitHub metadata read

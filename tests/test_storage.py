@@ -33,6 +33,10 @@ class MemoryStateStoreTests(unittest.TestCase):
         self.assertEqual(listed[0]["turns"], [turn])
         listed[0]["turns"].clear()
         self.assertEqual(len(store.list_threads()[0]["turns"]), 1)
+        loaded = store.get_thread(thread["id"])
+        self.assertIsNotNone(loaded)
+        self.assertEqual(loaded["turns"], [turn])
+        self.assertIsNone(store.get_thread("missing"))
 
 
 class CloudflareD1StateStoreTests(unittest.TestCase):
@@ -98,6 +102,33 @@ class CloudflareD1StateStoreTests(unittest.TestCase):
         threads = self.store(transport).list_threads()
         self.assertEqual(len(self.requests), 1)
         self.assertEqual(threads[0]["turns"][0]["assistant"], "ready")
+
+    def test_get_thread_is_parameter_bound(self) -> None:
+        def transport(request, timeout):
+            self.requests.append((request, timeout))
+            return {
+                "success": True,
+                "result": [{
+                    "success": True,
+                    "results": [{
+                        "thread_id": "thread-1",
+                        "thread_title": "proof",
+                        "thread_created_at": "t0",
+                        "turn_id": None,
+                        "turn_created_at": None,
+                        "turn_classification": None,
+                        "operator_text": None,
+                        "assistant_text": None,
+                        "route": None,
+                    }],
+                }],
+            }
+
+        thread = self.store(transport).get_thread("thread-1")
+        body = json.loads(self.requests[0][0].data)
+        self.assertEqual(body["params"], ["thread-1"])
+        self.assertEqual(thread["id"], "thread-1")
+        self.assertEqual(thread["turns"], [])
 
     def test_rejected_query_fails_closed_without_echoing_secret(self) -> None:
         def rejected(request, timeout):

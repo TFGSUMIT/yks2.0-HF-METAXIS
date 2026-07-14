@@ -90,6 +90,7 @@ The Phase 0 gate will:
 | docs/cloudflare-d1-storage.md | Durable Cloudflare D1 dynamic-state contract and migration |
 | docs/cloudflare-d1-validation-2026-07-14.md | Redacted D1 migration, isolation, and restart/recovery proof |
 | docs/functional-prototype-activation.md | No-spend-to-live activation gates and acceptance proof |
+| docs/protos-4-usability-validation-2026-07-14.md | Durable task, bounded context, live model, and negative proof |
 | scripts | Repository automation and redacted environment readback |
 | tests | Contract and import checks |
 | assets | METAXIS identity assets |

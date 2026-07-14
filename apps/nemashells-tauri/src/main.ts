@@ -43,6 +43,17 @@ type OperatorState = {
 };
 
 type ThreadCreated = { id: string };
+type StoredTurn = TurnCreated & {
+  created_at: string;
+  classification: string;
+};
+type StoredThread = {
+  id: string;
+  title: string;
+  created_at: string;
+  turns: StoredTurn[];
+};
+type ThreadList = { threads: StoredThread[] };
 type TurnCreated = {
   id: string;
   operator: string;
@@ -51,6 +62,7 @@ type TurnCreated = {
 };
 
 let threadId: string | undefined;
+let threads: StoredThread[] = [];
 let sending = false;
 
 function element<T extends HTMLElement>(id: string): T {
@@ -142,9 +154,10 @@ async function refresh(): Promise<void> {
   }
 }
 
-function message(role: "operator" | "assistant", text: string, route?: string): void {
+function message(role: "operator" | "assistant", text: string, route?: string, state?: "pending" | "error"): HTMLElement {
   const article = document.createElement("article");
   article.className = "message runtime-message";
+  if (state) article.classList.add(state);
   const avatar = document.createElement("div");
   avatar.className = `avatar ${role === "operator" ? "blue" : "mint"}`;
   avatar.textContent = role === "operator" ? "YO" : "NS";
@@ -157,6 +170,55 @@ function message(role: "operator" | "assistant", text: string, route?: string): 
   article.append(avatar, body);
   element("conversation").append(article);
   article.scrollIntoView({ behavior: "smooth", block: "end" });
+  return article;
+}
+
+function clearRuntimeMessages(): void {
+  document.querySelectorAll(".runtime-message").forEach((item) => item.remove());
+}
+
+function renderThread(thread?: StoredThread): void {
+  clearRuntimeMessages();
+  if (!thread) return;
+  threadId = thread.id;
+  for (const turn of thread.turns) {
+    message("operator", turn.operator);
+    message("assistant", turn.assistant, turn.route);
+  }
+  document.querySelectorAll("#task-list .nav-item").forEach((item) => {
+    item.classList.toggle("active", (item as HTMLElement).dataset.threadId === thread.id);
+  });
+}
+
+function renderThreadList(): void {
+  const list = element("task-list");
+  list.replaceChildren();
+  if (!threads.length) {
+    const empty = document.createElement("p");
+    empty.className = "task-empty";
+    empty.textContent = "No saved tasks yet.";
+    list.append(empty);
+    return;
+  }
+  for (const thread of [...threads].reverse()) {
+    const button = document.createElement("button");
+    button.className = "nav-item";
+    button.type = "button";
+    button.dataset.threadId = thread.id;
+    button.textContent = `◫  ${thread.title}`;
+    button.title = thread.title;
+    button.addEventListener("click", () => renderThread(thread));
+    list.append(button);
+  }
+}
+
+async function loadThreads(selectLatest = false): Promise<void> {
+  const value = await request<ThreadList>("/api/v1/threads");
+  threads = value.threads;
+  renderThreadList();
+  const selected = threads.find((thread) => thread.id === threadId);
+  if (selected) renderThread(selected);
+  else if (selectLatest && threads.length) renderThread(threads[threads.length - 1]);
 }
 
 async function submit(text: string): Promise<void> {
@@ -168,18 +230,23 @@ async function submit(text: string): Promise<void> {
     if (!threadId) {
       const thread = await request<ThreadCreated>("/api/v1/threads", {
         method: "POST",
-        body: JSON.stringify({ title: "NemaShells Tauri task" }),
+        body: JSON.stringify({ title: text.slice(0, 72) }),
       });
       threadId = thread.id;
     }
     message("operator", text);
+    const pending = message("assistant", "Thinking…", "METAXIS", "pending");
     const turn = await request<TurnCreated>(`/api/v1/threads/${threadId}/turns`, {
       method: "POST",
       body: JSON.stringify({ text, classification: "DEVELOPMENT" }),
     });
+    pending.remove();
     message("assistant", turn.assistant, turn.route);
+    await loadThreads();
   } catch (error) {
-    renderError(error);
+    const messageText = error instanceof Error ? error.message : String(error);
+    document.querySelectorAll(".runtime-message.pending").forEach((item) => item.remove());
+    message("assistant", `Request failed safely: ${messageText}`, "METAXIS", "error");
   } finally {
     sending = false;
     send.disabled = false;
@@ -204,8 +271,10 @@ window.addEventListener("DOMContentLoaded", () => {
   element("refresh").addEventListener("click", () => void refresh());
   element("new-task").addEventListener("click", () => {
     threadId = undefined;
+    clearRuntimeMessages();
+    document.querySelectorAll("#task-list .nav-item").forEach((item) => item.classList.remove("active"));
     input.focus();
   });
-  void refresh();
+  void Promise.all([refresh(), loadThreads(true)]).catch(renderError);
   window.setInterval(() => void refresh(), 15_000);
 });

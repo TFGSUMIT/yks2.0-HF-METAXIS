@@ -16,8 +16,12 @@
           <div><strong>NemaShells</strong><span>METAXIS · Tauri shell</span></div>
         </div>
         <button class="new-task" id="new-task" type="button">＋ New task</button>
-        <p class="eyebrow">WORKSPACE</p>
-        <nav>
+        <p class="eyebrow">TASKS</p>
+        <nav class="task-list" id="task-list" aria-label="Saved tasks">
+          <p class="task-empty" id="task-empty">Loading durable tasks…</p>
+        </nav>
+        <p class="eyebrow policy-label">WORKSPACE</p>
+        <nav class="policy-nav">
           <button class="nav-item active" type="button">◫ <span>Phase 0 delivery</span></button>
           <button class="nav-item" type="button">◇ <span>HIGH / NOFORN gate</span></button>
           <button class="nav-item" type="button">▤ <span>Proxmox profile</span></button>
@@ -36,13 +40,13 @@
         </header>
 
         <section class="conversation" id="conversation" aria-live="polite">
-          <article class="message">
+          <article class="message welcome-message">
             <div class="avatar mint">NS</div><div><h2>NemaShells</h2><p>The Tauri 2 shell is connected to the provider-neutral METAXIS control plane.</p><div class="tag-row"><span>Tauri 2</span><span>loopback only</span><span>presentation only</span></div></div>
           </article>
-          <article class="message">
+          <article class="message welcome-message">
             <div class="avatar blue">YO</div><div><h2>Operator outcome</h2><p class="lead">Start PROTOS-4 → log in → open NemaShells Tauri</p><ul><li>Swift remains the known-good native fallback on PROTOS-3</li><li>Tauri provides the second cross-platform shell on PROTOS-4</li><li>Both shells use the same METAXIS API and policy gates</li></ul></div>
           </article>
-          <article class="message" id="readback-message">
+          <article class="message welcome-message" id="readback-message">
             <div class="avatar violet">MX</div><div><h2>Deterministic readback</h2><p id="next-action">Connecting to METAXIS…</p><div class="tag-row" id="readback-tags"></div></div>
           </article>
         </section>

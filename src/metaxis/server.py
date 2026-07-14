@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import uuid
 from datetime import UTC, datetime
@@ -21,6 +22,9 @@ from .storage import (
     StorageUnavailableError,
     state_store_from_environment,
 )
+
+
+SYSTEM_PROMPT = """You are NemaShells, the conversational surface for the METAXIS provider-neutral agentic harness. This is a DEVELOPMENT-only session. Use only synthetic, public, or explicitly approved non-sensitive information. Never claim HIGH/NOFORN eligibility, production activation, tool execution, GitHub writes, or consequential action. Never request or repeat credentials. State clearly when an operation is unavailable through the current presentation-only surface."""
 
 
 def _now() -> str:
@@ -146,6 +150,51 @@ class RuntimeState:
     def create_thread(self, title: str) -> dict[str, Any]:
         return self._store.create_thread(title)
 
+    def get_thread(self, thread_id: str) -> dict[str, Any] | None:
+        return self._store.get_thread(thread_id)
+
+    def _system_context(self) -> str:
+        external = self._adapter.adapter_id != "mock-local-development"
+        return "\n".join(
+            [
+                SYSTEM_PROMPT,
+                "",
+                "Live non-secret control-plane context for this request:",
+                f"- Active brain route: {self._adapter.adapter_id}.",
+                f"- This answer uses external inference: {str(external).lower()}.",
+                f"- Storage backend: {self._store.backend_id}; durable: {str(self._store.durable).lower()}.",
+                "- METAXIS may append DEVELOPMENT thread and turn records. The mounted credential files are read-only; that does not make D1 itself read-only.",
+                "- GitHub access is bounded metadata read-only; writes are denied.",
+                "- The model has no tools and cannot execute the next action itself.",
+                "- HIGH/NOFORN and consequential actions remain blocked.",
+                "- Any older statement that no external model was called applies only to that earlier deterministic local-readback turn, not to this request.",
+            ]
+        )
+
+    def _brain_messages(self, thread_id: str, text: str) -> tuple[dict[str, str], ...]:
+        thread = self._store.get_thread(thread_id)
+        if thread is None:
+            return ({"role": "user", "content": text},)
+        max_turns = max(0, int(os.environ.get("METAXIS_BRAIN_CONTEXT_TURNS", "12")))
+        max_chars = max(0, int(os.environ.get("METAXIS_BRAIN_CONTEXT_CHARS", "24000")))
+        history: list[dict[str, str]] = []
+        characters = len(text)
+        for turn in reversed(thread["turns"][-max_turns:] if max_turns else []):
+            pair = (
+                {"role": "user", "content": str(turn["operator"])},
+                {"role": "assistant", "content": str(turn["assistant"])},
+            )
+            pair_characters = sum(len(message["content"]) for message in pair)
+            if characters + pair_characters > max_chars:
+                break
+            history[0:0] = pair
+            characters += pair_characters
+        return (
+            {"role": "system", "content": self._system_context()},
+            *history,
+            {"role": "user", "content": text},
+        )
+
     def add_turn(
         self, thread_id: str, text: str, classification: Classification
     ) -> tuple[HTTPStatus, dict[str, Any]]:
@@ -187,7 +236,7 @@ class RuntimeState:
         response = self._adapter.generate(
             BrainRequest(
                 request_id=str(uuid.uuid4()),
-                messages=({"role": "user", "content": text},),
+                messages=self._brain_messages(thread_id, text),
                 authority_context={"classification": classification.value},
             )
         )
@@ -331,6 +380,12 @@ class MetaxisHandler(BaseHTTPRequestHandler):
                 self._send(HTTPStatus.OK, STATE.capability_status)
             elif self.path == "/api/v1/threads":
                 self._send(HTTPStatus.OK, {"threads": STATE.list_threads()})
+            elif match := re.fullmatch(r"/api/v1/threads/([^/]+)", self.path):
+                thread = STATE.get_thread(match.group(1))
+                if thread is None:
+                    self._send(HTTPStatus.NOT_FOUND, {"error": "thread_not_found"})
+                else:
+                    self._send(HTTPStatus.OK, thread)
             else:
                 self._send(HTTPStatus.NOT_FOUND, {"error": "not_found"})
         except StorageUnavailableError:

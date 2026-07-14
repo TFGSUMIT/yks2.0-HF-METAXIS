@@ -39,6 +39,8 @@ class StateStore(Protocol):
 
     def list_threads(self) -> list[dict[str, Any]]: ...
 
+    def get_thread(self, thread_id: str) -> dict[str, Any] | None: ...
+
     def create_thread(self, title: str) -> dict[str, Any]: ...
 
     def thread_exists(self, thread_id: str) -> bool: ...
@@ -74,6 +76,16 @@ class MemoryStateStore:
             }
             self._threads[thread_id] = value
             return dict(value)
+
+    def get_thread(self, thread_id: str) -> dict[str, Any] | None:
+        with self._lock:
+            thread = self._threads.get(thread_id)
+            if thread is None:
+                return None
+            return {
+                **thread,
+                "turns": [dict(turn) for turn in thread["turns"]],
+            }
 
     def thread_exists(self, thread_id: str) -> bool:
         with self._lock:
@@ -206,6 +218,48 @@ class CloudflareD1StateStore:
                     }
                 )
         return list(threads.values())
+
+    def get_thread(self, thread_id: str) -> dict[str, Any] | None:
+        sql = """
+            SELECT
+                t.id AS thread_id,
+                t.title AS thread_title,
+                t.created_at AS thread_created_at,
+                r.id AS turn_id,
+                r.created_at AS turn_created_at,
+                r.classification AS turn_classification,
+                r.operator_text,
+                r.assistant_text,
+                r.route
+            FROM metaxis_threads AS t
+            LEFT JOIN metaxis_turns AS r ON r.thread_id = t.id
+            WHERE t.id = ?1
+            ORDER BY r.created_at ASC
+        """
+        rows = self._rows(
+            self._execute([{"sql": sql, "params": [thread_id]}])[0]
+        )
+        if not rows:
+            return None
+        thread = {
+            "id": str(rows[0]["thread_id"]),
+            "title": rows[0]["thread_title"],
+            "created_at": rows[0]["thread_created_at"],
+            "turns": [],
+        }
+        for row in rows:
+            if row.get("turn_id") is not None:
+                thread["turns"].append(
+                    {
+                        "id": row["turn_id"],
+                        "created_at": row["turn_created_at"],
+                        "classification": row["turn_classification"],
+                        "operator": row["operator_text"],
+                        "assistant": row["assistant_text"],
+                        "route": row["route"],
+                    }
+                )
+        return thread
 
     def create_thread(self, title: str) -> dict[str, Any]:
         thread_id = str(uuid.uuid4())

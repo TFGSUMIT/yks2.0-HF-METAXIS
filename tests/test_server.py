@@ -3,8 +3,34 @@ import threading
 import unittest
 import urllib.error
 import urllib.request
+from unittest.mock import patch
 
-from metaxis.server import _yeti_live_brief, make_server
+from metaxis.contracts import BrainProvenance, BrainResponse
+from metaxis.policy import Classification
+from metaxis.server import RuntimeState, _yeti_live_brief, make_server
+from metaxis.storage import MemoryStateStore
+
+
+class RecordingAdapter:
+    adapter_id = "recording-development"
+
+    def __init__(self) -> None:
+        self.requests = []
+
+    def generate(self, request):
+        self.requests.append(request)
+        return BrainResponse(
+            request_id=request.request_id,
+            text="recorded",
+            provenance=BrainProvenance(
+                provider="test",
+                model_repository="test/model",
+                model_revision="revision",
+                runtime="test-runtime",
+                runtime_version="1",
+                route=self.adapter_id,
+            ),
+        )
 
 
 class LocalServerTests(unittest.TestCase):
@@ -137,6 +163,38 @@ class LocalServerTests(unittest.TestCase):
         value = json.load(raised.exception)
         raised.exception.close()
         self.assertEqual(value["error"], "route_blocked")
+
+    def test_thread_can_be_loaded_by_id(self) -> None:
+        with self.request("/api/v1/threads", {"title": "resume me"}) as response:
+            thread = json.load(response)
+        with self.request(f"/api/v1/threads/{thread['id']}") as response:
+            loaded = json.load(response)
+        self.assertEqual(loaded["title"], "resume me")
+
+
+class ConversationContextTests(unittest.TestCase):
+    def test_prior_turns_are_bounded_and_sent_as_model_context(self) -> None:
+        state = RuntimeState(store=MemoryStateStore())
+        adapter = RecordingAdapter()
+        state._adapter = adapter
+        thread = state.create_thread("context")
+        with patch.dict(
+            "os.environ",
+            {"METAXIS_BRAIN_CONTEXT_TURNS": "1", "METAXIS_BRAIN_CONTEXT_CHARS": "24000"},
+            clear=False,
+        ):
+            state.add_turn(thread["id"], "first", Classification.DEVELOPMENT)
+            state.add_turn(thread["id"], "second", Classification.DEVELOPMENT)
+        messages = adapter.requests[-1].messages
+        self.assertEqual(messages[0]["role"], "system")
+        self.assertIn("Active brain route: recording-development", messages[0]["content"])
+        self.assertIn("This answer uses external inference: true", messages[0]["content"])
+        self.assertIn("does not make D1 itself read-only", messages[0]["content"])
+        self.assertEqual(messages[-3:], (
+            {"role": "user", "content": "first"},
+            {"role": "assistant", "content": "recorded"},
+            {"role": "user", "content": "second"},
+        ))
 
 
 if __name__ == "__main__":
