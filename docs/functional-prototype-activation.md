@@ -1,7 +1,9 @@
 # NemaShells functional prototype activation
 
-Status: installation complete; live integrations gated  
-Authority: YKS Ops #422, #423, and #474 → #475 → #476  
+Status: inference and GitHub proof passed; D1 durability pending
+
+Authority: YKS Ops #422, #423, and #474 → #475 → #476
+
 Observed: 2026-07-14
 
 ## Definition of functional prototype
@@ -21,10 +23,10 @@ profile remains DEVELOPMENT-only even after all three live integrations pass.
 | --- | --- | --- |
 | Installed Tauri 2 shell | Running through `PROTOS-4`; loopback-only | Retain health-gated `yetis live` boot |
 | Capability pack | `yeti-boot` active; GitHub broker active; Hugging Face and Cloudflare loaded/gated | Activate adapters only through their existing acceptance gates |
-| GitHub | Declared metadata only; no credential; writes denied | Live bounded read of `yks2.0-ops-hub` and `yks2.0-HF-METAXIS` |
-| Brain | `mock-local-development`; external calls disabled | One approved DEVELOPMENT turn through the pinned endpoint route |
+| GitHub | Live bounded read of both governed repositories; writes denied | Passed; retain repository-scoped read credential boundary |
+| Brain | Returned to `mock-local-development` after one controlled Super proof | Passed; reactivate only for an authorized DEVELOPMENT session |
 | Candidate | `nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16` at `d51eab0d1f979ebc26b546e634a04f450d99158e` | Preserve repository and revision in response provenance |
-| Bedrock route | Super model discovered ON_DEMAND in `us-east-1`; not invoked | Least-privilege role and one operator-approved synthetic turn |
+| Bedrock route | One synthetic turn passed; 38 input / 9 output tokens; `$0.00001155`; route then destroyed | Preserve evidence and repeat only with explicit spend approval |
 | Hugging Face endpoint | Disabled availability fallback; spend cap `$0` | Separate operator approval and hardware/spend acceptance |
 | Dynamic storage | `memory-development`; not durable | D1 migration applied and restart/recovery proof captured |
 | HIGH/NOFORN | Blocked | Remains blocked; prototype activation does not change this row |
@@ -53,7 +55,8 @@ contracts:
 - `yeti-boot@1.0.0` is active through the deterministic local readback route;
 - `github@0.1.8-2841cf9749ae` is active only through the METAXIS metadata
   broker, with writes denied;
-- `hugging-face@1.0.0` is loaded but inactive until Gate 2 passes; and
+- `hugging-face@1.0.0` is loaded but inactive pending its own endpoint and
+  spend acceptance; and
 - `cloudflare@0.1.2` is loaded but inactive until Gate 3 passes.
 
 The installer does not copy the host Codex plugin cache, browser sessions, app
@@ -66,6 +69,9 @@ and active entries.
 
 This gate is billable and must not start until the operator accepts the
 per-token rate, region, model route, and spend ceiling.
+
+This gate passed once on 2026-07-14. The route is currently off. The proof is
+recorded in `docs/bedrock-development-validation-2026-07-14.md`.
 
 1. Use Bedrock model `nvidia.nemotron-super-3-120b` in `us-east-1` for the
    primary DEVELOPMENT route. The observed rate is `$0.15` per million input

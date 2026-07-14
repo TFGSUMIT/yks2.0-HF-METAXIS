@@ -1,6 +1,6 @@
 # AWS Bedrock DEVELOPMENT route
 
-Status: adapter implemented / activation operator-controlled
+Status: controlled DEVELOPMENT proof passed / route shut down
 
 Authority: YKS Ops #422, #423, and #474 → #475 → #476
 
@@ -78,6 +78,18 @@ at 100,000 input characters, 4,096 output tokens, and an estimated $0.01. The
 API response records actual token counts, calculated cost, route, immutable
 model revision, and runtime version in `brain_evidence`.
 
+## Controlled proof result
+
+On 2026-07-14, the operator authorized one billable synthetic DEVELOPMENT
+turn. Container `metaxis:6428dda` invoked the registered Super route and
+returned the exact requested phrase. The response recorded 38 input tokens,
+9 output tokens, and calculated cost `$0.00001155`. Provider, repository,
+immutable revision, runtime, and route were present in `brain_evidence`.
+
+The container was then returned to `mock-local-development`, the role stack
+was deleted, the temporary session file was removed, and the AWS login cache
+was cleared. See `docs/bedrock-development-validation-2026-07-14.md`.
+
 ## Shutdown / billing off-state
 
 Return PROTOS-4 to the mock route, destroy the role, remove the session file,
@@ -97,7 +109,8 @@ invocations rather than erasing incurred charges.
 
 ## Non-claims
 
-Until a controlled validation is recorded, neither model has been invoked or
-evaluated by METAXIS. This profile is synthetic/public DEVELOPMENT only. It
-does not establish HIGH/NOFORN eligibility, U.S.-person-only administration,
-production availability, or a provider SLA.
+The successful connectivity proof is not a model-quality, safety, availability,
+or failover evaluation. The comparison model was not invoked. This profile is
+synthetic/public DEVELOPMENT only. It does not establish HIGH/NOFORN
+eligibility, U.S.-person-only administration, production availability, or a
+provider SLA.
