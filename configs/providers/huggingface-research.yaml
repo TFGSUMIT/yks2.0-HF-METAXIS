@@ -25,14 +25,15 @@ authentication:
   telemetry: disabled
 
 model:
-  repository: nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-BF16
-  revision: cbd3fa9f933d55ef16a84236559f4ee2a0526848
+  repository: nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16
+  revision: d51eab0d1f979ebc26b546e634a04f450d99158e
   license: nvidia-nemotron-open-model-license
   gated: false
 
 route:
   kind: dedicated-inference-endpoint
   activated: false
+  role: operator-approved-development-fallback
   region: pending
   scaling: pending
   spend_cap_usd: 0

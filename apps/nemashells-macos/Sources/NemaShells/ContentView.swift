@@ -252,7 +252,7 @@ struct ContentView: View {
 
                 InspectorHeader(title: "Brain", icon: "cpu")
                 ReadbackCard(rows: [
-                    ("Candidate", "Nemotron 3 Nano 30B-A3B"),
+                    ("Candidate", "Nemotron 3 Super 120B-A12B"),
                     ("Active", model.state?.model.activeRoute ?? "—"),
                     ("Quality", model.state?.model.sufficiency ?? "—"),
                     ("External API", "denied")

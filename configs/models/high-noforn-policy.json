@@ -16,11 +16,22 @@
   },
   "public_hosted_api_fallback": false,
   "primary_candidate": {
-    "repository": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-BF16",
-    "revision": "cbd3fa9f933d55ef16a84236559f4ee2a0526848",
+    "repository": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16",
+    "revision": "d51eab0d1f979ebc26b546e634a04f450d99158e",
+    "bedrock_model_id": "nvidia.nemotron-super-3-120b",
     "developer": "NVIDIA Corporation",
     "developer_country": "US",
+    "license": "nvidia-nemotron-open-model-license",
     "status": "candidate-evaluation-required"
+  },
+  "comparison_candidate": {
+    "repository": "openai/gpt-oss-120b",
+    "revision": "b5c939de8f754692c1647ca79fbf85e8c1e70f8a",
+    "bedrock_model_id": "openai.gpt-oss-120b-1:0",
+    "developer": "OpenAI",
+    "developer_country": "US",
+    "license": "apache-2.0",
+    "status": "independent-comparison-required"
   },
   "requirements": [
     "YKS-REQ-MTX-026",

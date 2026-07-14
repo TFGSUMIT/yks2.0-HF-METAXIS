@@ -42,6 +42,10 @@ class LocalServerTests(unittest.TestCase):
         self.assertFalse(value["application"]["browser_required"])
         self.assertEqual(value["classification"]["status"], "BLOCKED")
         self.assertFalse(value["model"]["external_api_allowed"])
+        self.assertEqual(
+            value["model"]["primary_candidate"],
+            "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16",
+        )
         self.assertEqual(value["storage"]["backend"], "memory-development")
         self.assertFalse(value["storage"]["durable"])
         self.assertFalse(value["storage"]["credential_exposed_to_model"])

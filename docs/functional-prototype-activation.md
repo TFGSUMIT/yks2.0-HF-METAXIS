@@ -23,8 +23,9 @@ profile remains DEVELOPMENT-only even after all three live integrations pass.
 | Capability pack | `yeti-boot` active; GitHub broker active; Hugging Face and Cloudflare loaded/gated | Activate adapters only through their existing acceptance gates |
 | GitHub | Declared metadata only; no credential; writes denied | Live bounded read of `yks2.0-ops-hub` and `yks2.0-HF-METAXIS` |
 | Brain | `mock-local-development`; external calls disabled | One approved DEVELOPMENT turn through the pinned endpoint route |
-| Candidate | `nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-BF16` at `cbd3fa9f933d55ef16a84236559f4ee2a0526848` | Preserve repository and revision in response provenance |
-| Hugging Face endpoint | Not created; spend cap `$0` | Operator-approved endpoint configuration and explicit spend ceiling |
+| Candidate | `nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16` at `d51eab0d1f979ebc26b546e634a04f450d99158e` | Preserve repository and revision in response provenance |
+| Bedrock route | Super model discovered ON_DEMAND in `us-east-1`; not invoked | Least-privilege role and one operator-approved synthetic turn |
+| Hugging Face endpoint | Disabled availability fallback; spend cap `$0` | Separate operator approval and hardware/spend acceptance |
 | Dynamic storage | `memory-development`; not durable | D1 migration applied and restart/recovery proof captured |
 | HIGH/NOFORN | Blocked | Remains blocked; prototype activation does not change this row |
 
@@ -64,23 +65,29 @@ and active entries.
 ## Gate 2 — DEVELOPMENT inference
 
 This gate is billable and must not start until the operator accepts the
-endpoint size, region, autoscaling bounds, idle behavior, and spend ceiling.
+per-token rate, region, model route, and spend ceiling.
 
-1. Create the dedicated Hugging Face Inference Endpoint from the pinned
-   candidate revision; do not use a floating branch.
-2. Record the endpoint runtime image/version and the effective license and
-   data-handling terms in the provider evidence.
-3. Create a separate inference-only runtime token. Do not mount the existing
-   endpoint-management token into METAXIS.
-4. Store the runtime token in an owner-only file outside the repository and set
-   `METAXIS_BRAIN_API_KEY_FILE` to its path.
-5. Set `METAXIS_BRAIN_MODE=openai-compatible`, the registered endpoint URL and
-   route metadata, then set `METAXIS_EXTERNAL_MODEL_CALLS=1` last.
+1. Use Bedrock model `nvidia.nemotron-super-3-120b` in `us-east-1` for the
+   primary DEVELOPMENT route. The observed rate is `$0.15` per million input
+   tokens and `$0.65` per million output tokens.
+2. Create a least-privilege assumable role limited to invocation of the named
+   model. Never mount root or broad AWS credentials into METAXIS.
+3. Export only temporary assumed-role credentials into an owner-only file
+   outside the repository and mount it read-only.
+4. Record the provider model ID, pinned source repository revision, license,
+   region, runtime, and data-handling terms in the provider evidence.
+5. Set `METAXIS_BRAIN_MODE=aws-bedrock`, the registered model/region metadata,
+   and then set `METAXIS_EXTERNAL_MODEL_CALLS=1` last.
 6. Run a synthetic/public prompt. Verify model repository, immutable revision,
    route, latency, token usage, and error evidence in the response.
 7. Re-run a HIGH/NOFORN request and verify denial occurs before network I/O.
 
-If any endpoint coordinate, credential, custody flag, or route gate is absent,
+The independent comparison/availability candidate is versioned Bedrock model
+`openai.gpt-oss-120b-1:0`. Switching is explicit and DEVELOPMENT-only. The
+Hugging Face Super endpoint remains a cold, operator-approved fallback; it is
+never an automatic HIGH/NOFORN fallback.
+
+If any model coordinate, credential, custody flag, or route gate is absent,
 METAXIS stays on the deterministic mock or denies the route.
 
 ## Gate 3 — Cloudflare D1 durability

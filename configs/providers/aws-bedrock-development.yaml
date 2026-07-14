@@ -1,0 +1,45 @@
+profile_id: aws-bedrock-development
+phase: 0
+state: discovered-not-activated
+provider: aws-bedrock
+account_readback: redacted-3942
+region: us-east-1
+
+authentication:
+  discovery_identity: temporary-root-console-login
+  runtime_identity: not-created
+  runtime_requirement: least-privilege-assume-role
+  root_credential_to_metaxis: prohibited
+
+primary_model:
+  provider_model_id: nvidia.nemotron-super-3-120b
+  repository: nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16
+  repository_revision: d51eab0d1f979ebc26b546e634a04f450d99158e
+  license: nvidia-nemotron-open-model-license
+  inference: on-demand
+  observed_active: 2026-07-14
+  price_per_million_input_tokens_usd: 0.15
+  price_per_million_output_tokens_usd: 0.65
+
+availability_fallback:
+  provider_model_id: openai.gpt-oss-120b-1:0
+  repository: openai/gpt-oss-120b
+  repository_revision: b5c939de8f754692c1647ca79fbf85e8c1e70f8a
+  license: apache-2.0
+  inference: on-demand
+  automatic_for_development: false
+  automatic_for_high_noforn: false
+
+huggingface_fallback:
+  state: disabled
+  activation: operator-approved-only
+  reason: dedicated Super BF16 requires capacity and an hourly spend gate
+
+controls:
+  data_classification: DEVELOPMENT
+  synthetic_or_public_only: true
+  high_noforn: blocked
+  consequential_actions: deny
+  max_output_tokens: 4096
+  spend_ceiling_usd: 10
+  fail_closed: true

@@ -88,11 +88,11 @@ def build_environment_status(environ: Mapping[str, str]) -> dict[str, object]:
             ),
             "candidate": environ.get(
                 "METAXIS_BRAIN_MODEL",
-                "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-BF16",
+                "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16",
             ),
             "revision": environ.get(
                 "METAXIS_BRAIN_REVISION",
-                "cbd3fa9f933d55ef16a84236559f4ee2a0526848",
+                "d51eab0d1f979ebc26b546e634a04f450d99158e",
             ),
         },
         "pythonpath": {

@@ -57,9 +57,9 @@ was created by this setup.
 
 ## Current Research Readback
 
-The first registered candidate is
-`nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-BF16` at immutable revision
-`cbd3fa9f933d55ef16a84236559f4ee2a0526848`. Its Hub metadata declares
+The primary registered candidate is
+`nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16` at immutable revision
+`d51eab0d1f979ebc26b546e634a04f450d99158e`. Its Hub metadata declares
 `nvidia-nemotron-open-model-license` and the repository is not gated. These
 facts register the research input; they do not establish evaluation quality,
 deployment suitability, export conformance, or HIGH/NOFORN eligibility.
@@ -82,7 +82,9 @@ arguments can be exposed through process inspection or logs.
 1. Materialize the first candidate register with immutable revisions and
    license/model-card evidence.
 2. Select at least one credible non-NVIDIA comparison candidate.
-3. Approve a dedicated Inference Endpoint configuration and hourly spend cap.
+3. Keep a dedicated Super Inference Endpoint as an operator-approved
+   DEVELOPMENT availability fallback; do not activate it under the current
+   `$10` experiment ceiling without a separately accepted hardware plan.
 4. Create a separate inference-only runtime token after the endpoint exists;
    do not expose the endpoint-management token as `METAXIS_BRAIN_API_KEY`.
 5. Keep Inference Endpoint deployment and spend at `activated: false` and

@@ -21,6 +21,14 @@ class EnvironmentStatusTests(unittest.TestCase):
         self.assertFalse(status["github_broker"]["writes_allowed"])
         self.assertEqual(status["brain"]["mode"], "mock")
         self.assertFalse(status["brain"]["external_calls_enabled"])
+        self.assertEqual(
+            status["brain"]["candidate"],
+            "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16",
+        )
+        self.assertEqual(
+            status["brain"]["revision"],
+            "d51eab0d1f979ebc26b546e634a04f450d99158e",
+        )
 
     def test_secret_value_is_never_returned_or_printed(self) -> None:
         secret = "never-print-this-token"

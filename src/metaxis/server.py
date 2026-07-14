@@ -229,7 +229,7 @@ def operator_state() -> dict[str, Any]:
             "reasons": list(noforn.reasons),
         },
         "model": {
-            "primary_candidate": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-BF16",
+            "primary_candidate": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16",
             "sufficiency": "EVALUATION-REQUIRED",
             "active_route": STATE._adapter.adapter_id,
             "external_api_allowed": STATE._adapter.adapter_id
