@@ -86,11 +86,23 @@ AWS_SECRET_ACCESS_KEY=$(python3 -c 'import json,sys; print(json.load(open(sys.ar
 unset AWS_SESSION_TOKEN
 export AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY
 
-TEMP_CALLER_ARN=$(AWS_CONFIG_FILE=/dev/null AWS_SHARED_CREDENTIALS_FILE=/dev/null \
-  aws sts get-caller-identity \
-    --region "$REGION" \
-    --query Arn \
-    --output text)
+attempt=0
+TEMP_CALLER_ARN=
+while :; do
+  if TEMP_CALLER_ARN=$(AWS_CONFIG_FILE=/dev/null AWS_SHARED_CREDENTIALS_FILE=/dev/null \
+    aws sts get-caller-identity \
+      --region "$REGION" \
+      --query Arn \
+      --output text 2>/dev/null); then
+    break
+  fi
+  attempt=$((attempt + 1))
+  if [ "$attempt" -ge 10 ]; then
+    printf '%s\n' 'Temporary IAM credentials did not become active.' >&2
+    exit 1
+  fi
+  sleep 2
+done
 case "$TEMP_CALLER_ARN" in
   *:user/METAXISBedrockBootstrap) ;;
   *) printf '%s\n' 'Temporary IAM credentials did not isolate from the root profile.' >&2; exit 1 ;;
