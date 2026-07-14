@@ -4,7 +4,8 @@ set -eu
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 MACHINE=${METAXIS_ORBSTACK_MACHINE:-ubuntu}
 REVISION=$(git -C "$ROOT" rev-parse --short=12 HEAD 2>/dev/null || printf 'development')
-TMP=$(mktemp -d "${TMPDIR:-/tmp}/nemashells.XXXXXX")
+mkdir -p "$ROOT/.build"
+TMP=$(mktemp -d "$ROOT/.build/nemashells-bootstrap.XXXXXX")
 trap 'rm -rf "$TMP"' EXIT HUP INT TERM
 
 command -v orb >/dev/null 2>&1 || {
@@ -29,14 +30,11 @@ tar -C "$ROOT" \
   --exclude=.env \
   -czf "$ARCHIVE" .
 
-REMOTE_BASE=".cache/nemashells-bootstrap"
-REMOTE_ARCHIVE="${REMOTE_BASE}/$(basename "$ARCHIVE")"
-REMOTE_HOME=$(orb -m "$MACHINE" sh -lc 'printf %s "$HOME"')
-REMOTE_SOURCE="${REMOTE_HOME}/${REMOTE_BASE}/source-${REVISION}"
-orb -m "$MACHINE" mkdir -p "${REMOTE_HOME}/${REMOTE_BASE}"
-orb push -m "$MACHINE" "$ARCHIVE" "$REMOTE_BASE/"
-orb -m "$MACHINE" sh -lc "rm -rf '${REMOTE_SOURCE}' && mkdir -p '${REMOTE_SOURCE}' && tar -xzf '${REMOTE_HOME}/${REMOTE_ARCHIVE}' -C '${REMOTE_SOURCE}'"
+REMOTE_ARCHIVE="/var/tmp/$(basename "$ARCHIVE")"
+REMOTE_SOURCE="/var/tmp/nemashells-source-${REVISION}"
+orb -m "$MACHINE" sh -lc "rm -rf '${REMOTE_SOURCE}' && mkdir -p '${REMOTE_SOURCE}' && cp '${ARCHIVE}' '${REMOTE_ARCHIVE}' && tar -xzf '${REMOTE_ARCHIVE}' -C '${REMOTE_SOURCE}'"
 orb -m "$MACHINE" sh "${REMOTE_SOURCE}/deployment/orbstack/install-guest.sh" "$REMOTE_SOURCE" "$REVISION"
+orb -m "$MACHINE" sh -lc "rm -rf '${REMOTE_SOURCE}' '${REMOTE_ARCHIVE}'"
 
 printf '%s\n' 'NemaShells installation complete.'
 printf '%s\n' "Normal use: orb start ${MACHINE}; orb -m ${MACHINE}; nemashells"
