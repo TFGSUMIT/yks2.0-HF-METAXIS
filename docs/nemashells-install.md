@@ -19,6 +19,8 @@ Python packages on macOS. It builds the checked-in Swift application with the
 Apple toolchain already present, installs it under `~/Applications`, builds the
 pinned `metaxis:<revision>` image on OrbStack's managed Docker engine, enables
 container restart, and installs the `nemashells` launcher inside Ubuntu.
+The guest launcher reaches the loopback-published service through OrbStack's
+private `host.internal` bridge; it is not exposed on the LAN.
 
 ## Normal operation
 

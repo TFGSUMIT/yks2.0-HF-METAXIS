@@ -51,7 +51,7 @@ while ! curl --fail --silent --show-error http://127.0.0.1:4310/healthz >/dev/nu
   sleep 0.25
 done
 
-orb -m "$MACHINE" curl --fail --silent --show-error http://127.0.0.1:4310/healthz >/dev/null
+orb -m "$MACHINE" curl --fail --silent --show-error http://host.internal:4310/healthz >/dev/null
 
 printf '%s\n' 'NemaShells installation complete.'
 printf '%s\n' "Normal use: orb start ${MACHINE}; orb -m ${MACHINE}; nemashells"

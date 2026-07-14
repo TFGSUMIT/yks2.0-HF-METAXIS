@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-SERVICE_URL="${METAXIS_URL:-http://127.0.0.1:4310}"
+SERVICE_URL="${METAXIS_URL:-http://host.internal:4310}"
 
 attempt=0
 while ! curl --fail --silent --show-error "${SERVICE_URL}/healthz" >/dev/null 2>&1; do
