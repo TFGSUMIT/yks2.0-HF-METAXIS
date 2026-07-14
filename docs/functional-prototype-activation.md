@@ -1,6 +1,6 @@
 # NemaShells functional prototype activation
 
-Status: inference and GitHub proof passed; D1 durability pending
+Status: all three functional-prototype gates passed; DEVELOPMENT only
 
 Authority: YKS Ops #422, #423, and #474 → #475 → #476
 
@@ -22,13 +22,13 @@ profile remains DEVELOPMENT-only even after all three live integrations pass.
 | Surface | Current state | Activation result required |
 | --- | --- | --- |
 | Installed Tauri 2 shell | Running through `PROTOS-4`; loopback-only | Retain health-gated `yetis live` boot |
-| Capability pack | `yeti-boot` active; GitHub broker active; Hugging Face and Cloudflare loaded/gated | Activate adapters only through their existing acceptance gates |
+| Capability pack | `yeti-boot`, GitHub broker, and Cloudflare D1 adapter active; Hugging Face loaded/gated | Retain adapter gates and deny general plugin writes |
 | GitHub | Live bounded read of both governed repositories; writes denied | Passed; retain repository-scoped read credential boundary |
 | Brain | Returned to `mock-local-development` after one controlled Super proof | Passed; reactivate only for an authorized DEVELOPMENT session |
 | Candidate | `nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16` at `d51eab0d1f979ebc26b546e634a04f450d99158e` | Preserve repository and revision in response provenance |
 | Bedrock route | One synthetic turn passed; 38 input / 9 output tokens; `$0.00001155`; route then destroyed | Preserve evidence and repeat only with explicit spend approval |
 | Hugging Face endpoint | Disabled availability fallback; spend cap `$0` | Separate operator approval and hardware/spend acceptance |
-| Dynamic storage | `memory-development`; not durable | D1 migration applied and restart/recovery proof captured |
+| Dynamic storage | `cloudflare-d1`; durable restart/recovery proof passed | Retain token isolation and DEVELOPMENT-only schema |
 | HIGH/NOFORN | Blocked | Remains blocked; prototype activation does not change this row |
 
 ## Gate 1 — GitHub metadata read
@@ -57,7 +57,8 @@ contracts:
   broker, with writes denied;
 - `hugging-face@1.0.0` is loaded but inactive pending its own endpoint and
   spend acceptance; and
-- `cloudflare@0.1.2` is loaded but inactive until Gate 3 passes.
+- `cloudflare@0.1.2` is active only through the D1 storage adapter after Gate 3;
+  general plugin writes remain denied.
 
 The installer does not copy the host Codex plugin cache, browser sessions, app
 connectors, MCP credentials, or macOS binaries into Ubuntu. Plugin metadata
@@ -100,7 +101,7 @@ METAXIS stays on the deterministic mock or denies the route.
 
 1. Select the approved Cloudflare account and create the
    `metaxis-dynamic-state` D1 database.
-2. Create a least-privilege D1 Read/Write token and store it in an owner-only
+2. Create a least-privilege D1 Edit token and store it in an owner-only
    file outside the repository.
 3. Apply
    `deployment/cloudflare/d1/migrations/0001_metaxis_dynamic_state.sql` to the
@@ -115,6 +116,9 @@ METAXIS stays on the deterministic mock or denies the route.
 
 Selecting D1 with an incomplete or insecure token-file configuration fails
 startup. It never falls back silently to memory.
+
+Gate 3 passed on 2026-07-14. The redacted proof is recorded in
+`docs/cloudflare-d1-validation-2026-07-14.md`.
 
 ## Acceptance evidence
 

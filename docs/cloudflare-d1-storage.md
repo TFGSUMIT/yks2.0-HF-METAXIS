@@ -1,6 +1,6 @@
 # Cloudflare D1 dynamic storage
 
-Status: Phase 0 development contract  
+Status: Gate 3 passed for the DEVELOPMENT prototype on 2026-07-14
 Authority: YKS Ops #434 → #449 → #464; thread-runtime dependency #436 → #451 → #466
 
 Cloudflare D1 is the durable dynamic-state backend for METAXIS thread, turn,
@@ -33,7 +33,18 @@ The OrbStack service uses Cloudflare's D1 REST query API with a narrowly scoped
 API token. The adapter sends parameterized SQL and reconstructs the thread list
 with one join, avoiding a per-thread query loop.
 
+The live user token is limited to `Account.D1:Edit` for the named Cloudflare
+account and expires on 2027-01-14. Cloudflare does not currently offer a
+database-specific token resource selector, so the adapter separately pins the
+exact database UUID. The token is revocable independently of the database.
+
 ## Configuration
+
+The governed DEVELOPMENT database is `metaxis-dynamic-state`, UUID
+`f5074e31-9de6-419c-aacf-4d8e3dbdf398`, in Cloudflare account
+`b96eaf77142947b0455db5425da6cb68`. It was created with an `ENAM` primary
+location hint. The hint is not a residency or HIGH/NOFORN control. Non-secret
+coordinates are checked into `deployment/cloudflare/d1/wrangler.jsonc`.
 
 Required when `METAXIS_STATE_BACKEND=cloudflare-d1`:
 
@@ -56,15 +67,14 @@ but the OrbStack installer rejects that form. Do not place populated values in
 
 ## Migration workflow
 
-Copy `wrangler.jsonc.example` to an external or ignored `wrangler.jsonc`, insert
-the database UUID, and run the pinned Wrangler version selected by operations:
+Use the checked-in DEVELOPMENT `wrangler.jsonc` and the pinned Wrangler version
+selected by operations:
 
 ```text
-npx wrangler d1 migrations apply metaxis-dynamic-state --local
-npx wrangler d1 migrations apply metaxis-dynamic-state --remote
+pnpm dlx wrangler@4.110.0 d1 migrations apply metaxis-dynamic-state --local --config deployment/cloudflare/d1/wrangler.jsonc
+pnpm dlx wrangler@4.110.0 d1 migrations apply metaxis-dynamic-state --remote --config deployment/cloudflare/d1/wrangler.jsonc
 ```
 
-Remote creation, migration, and live writes remain external-state operations.
-They require the Cloudflare account/database coordinates, a least-privilege D1
-token, and an operator-approved target. Checked-in schema and passing adapter
-tests do not claim a live database or production activation.
+The remote migration and one restart/recovery proof passed on 2026-07-14. See
+`docs/cloudflare-d1-validation-2026-07-14.md` for the redacted evidence. This is
+a DEVELOPMENT prototype result, not production or HIGH/NOFORN activation.

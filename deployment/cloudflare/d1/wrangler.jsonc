@@ -1,0 +1,13 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "metaxis-d1-operations",
+  "compatibility_date": "2026-07-14",
+  "d1_databases": [
+    {
+      "binding": "METAXIS_DB",
+      "database_name": "metaxis-dynamic-state",
+      "database_id": "f5074e31-9de6-419c-aacf-4d8e3dbdf398",
+      "migrations_dir": "migrations"
+    }
+  ]
+}

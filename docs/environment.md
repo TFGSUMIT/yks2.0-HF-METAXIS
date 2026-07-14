@@ -34,7 +34,7 @@ store. Never commit a populated `.env` file.
 | `METAXIS_STATE_BACKEND` | No | No | `memory` | Dynamic-state backend. Set `cloudflare-d1` only with the complete governed D1 configuration. |
 | `CLOUDFLARE_ACCOUNT_ID` | For D1 | No | None | Cloudflare account coordinate for the D1 REST query API. |
 | `METAXIS_D1_DATABASE_ID` | For D1 | No | None | UUID of the METAXIS dynamic-state D1 database. |
-| `CLOUDFLARE_D1_API_TOKEN` | For D1 | Yes | L2 credential mesh injection | Least-privilege D1 Read/Write API token; never exposed to the brain or stored in D1. |
+| `CLOUDFLARE_D1_API_TOKEN` | For D1 | Yes | L2 credential mesh injection | Least-privilege D1 Edit API token; never exposed to the brain or stored in D1. |
 | `CLOUDFLARE_D1_API_TOKEN_FILE` | Preferred for D1; required by OrbStack | Yes-bearing path | None | Absolute owner-only token file mounted read-only; takes precedence over the direct-process token variable. |
 | `METAXIS_D1_TIMEOUT_SECONDS` | No | No | `10` | D1 query timeout at the METAXIS adapter boundary. |
 | `METAXIS_D1_API_BASE` | No | No | `https://api.cloudflare.com/client/v4` | Cloudflare API base; override only for an authorized test double. |

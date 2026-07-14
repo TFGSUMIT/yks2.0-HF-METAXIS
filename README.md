@@ -88,6 +88,7 @@ The Phase 0 gate will:
 | docs/aws-bedrock-development.md | Bedrock Super route, availability fallback, and credential boundary |
 | docs/github-read-broker.md | Fail-closed GitHub metadata boundary for NemaShells |
 | docs/cloudflare-d1-storage.md | Durable Cloudflare D1 dynamic-state contract and migration |
+| docs/cloudflare-d1-validation-2026-07-14.md | Redacted D1 migration, isolation, and restart/recovery proof |
 | docs/functional-prototype-activation.md | No-spend-to-live activation gates and acceptance proof |
 | scripts | Repository automation and redacted environment readback |
 | tests | Contract and import checks |
@@ -102,7 +103,7 @@ The Phase 0 gate will:
 - Production inference: not activated
 - Endpoint spending: not authorized
 - HIGH/NOFORN processing: blocked in the laptop development profile
-- Functional prototype: shell installed; GitHub live read, inference, and D1 durability gated
+- Functional prototype: DEVELOPMENT gates passed for the installed shell, GitHub live read, one controlled inference proof, and D1 durability
 - PROTOS-4 capabilities: `yeti-boot` and GitHub broker active; Hugging Face and Cloudflare loaded/gated
 - Software license: selection pending an explicit governance decision
 

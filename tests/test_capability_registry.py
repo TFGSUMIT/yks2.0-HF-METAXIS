@@ -24,6 +24,19 @@ class CapabilityRegistryTests(unittest.TestCase):
         with self.assertRaises(CapabilityManifestError):
             CapabilityRegistry(manifest)
 
+    def test_runtime_gate_can_activate_loaded_adapter_without_write_grant(self) -> None:
+        status = REGISTRY.status(activated_ids={"cloudflare"})
+        cloudflare = next(
+            item for item in status["plugins"] if item["id"] == "cloudflare"
+        )
+        self.assertEqual(status["active_count"], 3)
+        self.assertTrue(cloudflare["active"])
+        self.assertFalse(cloudflare["writes_allowed"])
+
+    def test_runtime_gate_rejects_unknown_capability(self) -> None:
+        with self.assertRaises(CapabilityManifestError):
+            REGISTRY.status(activated_ids={"not-loaded"})
+
 
 if __name__ == "__main__":
     unittest.main()

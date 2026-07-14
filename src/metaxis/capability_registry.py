@@ -59,10 +59,24 @@ class CapabilityRegistry:
                         f"{identifier} cannot grant writes in PROTOS-4"
                     )
 
-    def status(self) -> dict[str, Any]:
+    def status(self, activated_ids: set[str] | None = None) -> dict[str, Any]:
+        activated = activated_ids or set()
         skills = [dict(value) for value in self._manifest["skills"]]
         plugins = [dict(value) for value in self._manifest["plugins"]]
         entries = skills + plugins
+        known_ids = {str(value["id"]) for value in entries}
+        unknown = activated - known_ids
+        if unknown:
+            raise CapabilityManifestError(
+                "cannot activate unknown capabilities: " + ", ".join(sorted(unknown))
+            )
+        for value in entries:
+            if value["id"] in activated:
+                value["active"] = True
+                value["reason"] = (
+                    "Activated through its METAXIS adapter after the runtime gate "
+                    "passed; general plugin writes remain denied."
+                )
         return {
             "profile": self._manifest["profile"],
             "schema_version": self._manifest["schema_version"],

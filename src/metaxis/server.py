@@ -211,7 +211,10 @@ class RuntimeState:
 
     @property
     def capability_status(self) -> dict[str, Any]:
-        return REGISTRY.status()
+        activated_ids: set[str] = set()
+        if self._store.backend_id == "cloudflare-d1" and self._store.durable:
+            activated_ids.add("cloudflare")
+        return REGISTRY.status(activated_ids=activated_ids)
 
 
 STATE = RuntimeState()
