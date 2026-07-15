@@ -2,6 +2,9 @@
 
 Status: passed for a bounded DEVELOPMENT session
 
+Sunset: PROTOS-4 was stopped and retired by operator ruling on 2026-07-15.
+This document records historical proof only and is not a forward delivery path.
+
 Authority: YKS Ops #422, #428, and #474 → #475 → #476
 
 Observed: 2026-07-14

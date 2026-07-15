@@ -2,6 +2,10 @@
 
 Status: all three functional-prototype gates passed; DEVELOPMENT only
 
+Sunset: the PROTOS-4/Tauri validation path was stopped and retired by operator
+ruling on 2026-07-15. The results below remain historical proof; forward
+NemaShells delivery does not depend on PROTOS-4 or Tauri.
+
 Authority: YKS Ops #422, #423, and #474 → #475 → #476
 
 Observed: 2026-07-14

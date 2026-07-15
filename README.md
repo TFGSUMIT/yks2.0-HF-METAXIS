@@ -36,11 +36,11 @@ One-time installation is documented in
 and systemd contract moves to the target Proxmox/KVM -> Debian VM -> Docker
 stack without changing the app or brain adapter.
 
-`PROTOS-4` remains available as an isolated NemaShells interface-development
-machine against the same loopback service. NemaShells is the interface and
-product contract; no Tauri implementation or fallback is required for forward
-delivery. The checked-in Tauri prototype and its validation notes are retained
-as historical evidence only and are not an active architecture dependency.
+`PROTOS-4` was stopped and retired by operator ruling on 2026-07-15. Its
+OrbStack disk, checked-in prototype, and validation notes are retained as
+historical evidence only; the machine is not a forward NemaShells delivery or
+acceptance dependency. NemaShells remains the interface and product contract,
+with no Tauri implementation or fallback required.
 
 ## HIGH/NOFORN hard gate
 
@@ -110,7 +110,7 @@ The Phase 0 gate will:
 - Endpoint spending: Bedrock on-demand DEVELOPMENT calls authorized within the registered per-request ceiling; no standing endpoint
 - HIGH/NOFORN processing: blocked in the laptop development profile
 - Functional prototype: DEVELOPMENT gates passed for the installed shell, GitHub live read, verified/blocked inference paths, and D1 evidence durability
-- PROTOS-4 capabilities: isolated NemaShells interface-development profile; historical Tauri proof is superseded for forward delivery
+- PROTOS-4: retired and stopped on 2026-07-15; disk and historical proof retained, with no forward delivery dependency
 - Software license: selection pending an explicit governance decision
 
 Public visibility does not itself grant a software license. License selection
