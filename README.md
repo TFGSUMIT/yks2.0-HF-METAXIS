@@ -7,16 +7,29 @@ of the YKS core-product critical path.
 
 > North Star: own the autonomy; progressively reclaim the brain.
 
-METAXIS owns threads, plans, agent lifecycle, workspaces, tools, governed
-memory, permissions, recovery, evaluation, replay, and evidence hooks. AXIS is
-the mission-focused derivative that consumes a pinned METAXIS capability set
-and adds mission authority, guardrails, degraded-mode rules, and proof-bound
-execution.
+METAXIS owns three direct sibling components:
+
+- **EXARTYSIS** — the sovereign execution harness for threads, plans,
+  workspaces, capabilities, routing, enforcement, recovery, evidence hooks,
+  and a native Accelerated Execution Plane; its external-provider extension
+  point is dormant and no current requirement selects NVIDIA OpenShell;
+- **LECTOR** — the METAXIS retrieval-augmented generation component / RAG; and
+- **NemaShells** — the presentation-only operator interface.
+
+None owns or contains another. AXIS is the mission-focused derivative that
+consumes pinned METAXIS contracts and adds mission authority, guardrails,
+degraded-mode rules, and proof-bound execution.
 
 ## Architecture map
 
 🟩 YKS Ops → 🟦 METAXIS → 🟥 AXIS → 🟪 mission execution →
 🟩 TESTIMONIUM / ACTA proof → 🟪 OCULUS readback
+
+The exact component, capability-root, derivative-bridge, and external-candidate
+map is documented in
+[`docs/architecture/component-model.md`](docs/architecture/component-model.md)
+and rendered as
+[`artifacts/design/metaxis-component-architecture.png`](artifacts/design/metaxis-component-architecture.png).
 
 ## NemaShells installed application
 
@@ -100,6 +113,8 @@ The Phase 0 gate will:
 | configs/providers | Research-only provider profiles |
 | evals | Candidate register and repeatable evaluation design |
 | docs/architecture | Ownership boundaries and migration architecture |
+| docs/architecture/component-model.md | Canonical EXARTYSIS, LECTOR, NemaShells, derivative-bridge, and NVIDIA candidate boundary |
+| artifacts/design | Rendered architecture and design deliverables bound to YKS Ops authority |
 | docs/architecture/self-correction-harness.md | Structured repair, deterministic readback, and fail-closed action verification |
 | docs/environment.md | Environment-variable and secret-handling contract |
 | docs/huggingface-setup.md | Phase 0 Hugging Face toolchain and credential boundary |

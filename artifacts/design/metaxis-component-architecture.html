@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>METAXIS Component Architecture</title>
+<style>
+  *{box-sizing:border-box} html,body{margin:0;width:100%;height:100%;background:#061017;color:#edf8fa;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+  .canvas{width:1600px;height:1000px;overflow:hidden;position:relative;padding:42px 56px;background:radial-gradient(circle at 50% -15%,#183b43 0,#0b1d25 34%,#061017 68%)}
+  .grain{position:absolute;inset:0;opacity:.05;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E")}
+  header{position:relative;display:flex;justify-content:space-between;align-items:flex-start}
+  .eyebrow{font-size:14px;letter-spacing:.18em;color:#7ddfd2;text-transform:uppercase;font-weight:700}
+  h1{font-size:54px;line-height:1;margin:10px 0 8px;letter-spacing:-.035em}
+  .sub{font-size:20px;color:#a9bec4;max-width:850px}
+  .stamp{border:1px solid #2f5960;background:#0a2028;padding:14px 18px;border-radius:12px;text-align:right;color:#b8cbd0;font-size:14px;line-height:1.5}
+  .stamp b{color:#fff}.metaxis{position:relative;margin-top:28px;border:2px solid #5de3cc;border-radius:24px;background:linear-gradient(180deg,rgba(16,45,54,.95),rgba(7,23,30,.96));padding:22px 24px 24px;box-shadow:0 24px 70px rgba(0,0,0,.3)}
+  .metaxis-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:17px}
+  .metaxis-title{display:flex;gap:14px;align-items:center}.mark{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;background:#5de3cc;color:#052024;font-weight:900;font-size:21px}
+  .metaxis-title h2{margin:0;font-size:29px}.metaxis-title p{margin:2px 0 0;color:#a5c1c6;font-size:15px}.rule{font-size:13px;color:#77b7b1;border:1px solid #29545a;border-radius:999px;padding:8px 13px}
+  .components{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
+  .card{min-height:248px;border:1px solid #284b53;border-radius:18px;background:#091b22;padding:20px;position:relative;overflow:hidden}
+  .card:after{content:"";position:absolute;width:110px;height:110px;border-radius:50%;right:-48px;top:-50px;background:var(--c);opacity:.12}
+  .tag{font-size:12px;text-transform:uppercase;letter-spacing:.13em;color:var(--c);font-weight:800}.card h3{font-size:28px;margin:7px 0 4px}.role{font-size:16px;color:#cfdee1;margin-bottom:13px}.owns{font-size:14px;line-height:1.52;color:#9eb5bb}.ids{position:absolute;left:20px;bottom:17px;font:12px ui-monospace,SFMono-Regular,Menlo,monospace;color:#78949b}
+  .x{--c:#ffb454;border-color:#68472b}.l{--c:#7ea7ff;border-color:#354e79}.n{--c:#d48cff;border-color:#5a3b6b}
+  .contract{margin:15px auto 0;width:max-content;border:1px dashed #4e7c82;border-radius:999px;padding:8px 18px;color:#9eb8bd;font-size:13px}.contract b{color:#e8ffff}
+  .bridge{position:relative;margin-top:22px;display:grid;grid-template-columns:1.15fr 2.85fr;gap:20px}
+  .boundary{border:1px solid #3f5962;border-radius:18px;padding:18px 20px;background:#081820}.boundary h4,.consumers h4{margin:0 0 10px;font-size:16px}.axis{border-left:4px solid #f4d35e}.axis p{margin:4px 0;color:#aabdc2;font-size:14px;line-height:1.5}.consumers{border:1px solid #274650;border-radius:18px;padding:18px 20px;background:#081820}.chips{display:flex;gap:8px;flex-wrap:wrap}.chip{border:1px solid #31535c;background:#0d252d;color:#c5d9dd;border-radius:999px;padding:8px 12px;font-size:13px}.chip b{color:#fff}
+  .vendor{position:relative;margin-top:18px;border:1px solid #52622f;background:linear-gradient(90deg,#152113,#0a1817);border-radius:16px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between}.vendor strong{color:#b8e55c}.vendor .map{font-size:14px;color:#c4d0bd}.vendor .state{font-size:12px;text-transform:uppercase;letter-spacing:.1em;border:1px solid #6e7f42;border-radius:999px;padding:7px 10px;color:#d2e69b}
+  footer{position:absolute;left:56px;right:56px;bottom:25px;display:flex;justify-content:space-between;color:#6f8a91;font-size:12px}.legend span{margin-right:17px}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}.owned{background:#5de3cc}.derived{background:#f4d35e}.candidate{background:#9ac64d}
+</style>
+</head>
+<body><main class="canvas"><div class="grain"></div>
+<header><div><div class="eyebrow">YKS Ops PROD 0.1 · Architecture Decision Stamp</div><h1>METAXIS</h1><div class="sub">One sovereign agentic box. Three first-class sibling components. Versioned derivative contracts—never duplicated ownership.</div></div><div class="stamp"><b>Portfolio root #422 · Project 21</b><br>Capability roots #484 / #483<br>Proof posture: manual-placeholder<br>NOFORN: external NVIDIA paths blocked</div></header>
+
+<section class="metaxis"><div class="metaxis-head"><div class="metaxis-title"><div class="mark">MX</div><div><h2>METAXIS core product boundary</h2><p>Owns the common contracts; does not own mission policy or evidence authority.</p></div></div><div class="rule">NO NESTING · NO CO-OWNERSHIP</div></div>
+<div class="components">
+  <article class="card x"><div class="tag">Execution sibling</div><h3>EXARTYSIS</h3><div class="role">Sovereign execution harness</div><div class="owns">Threads · workspaces · agents/tools · routing · enforcement · recovery · evidence hooks<br><b>Accelerated Execution Plane:</b> native provider · dormant external-provider extension</div><div class="ids">ROOT #484 · PLANE #488 · YKS-REQ-MTX-EXARTYSIS-001…011 · OUT-002/003/004/007</div></article>
+  <article class="card l"><div class="tag">Knowledge sibling</div><h3>LECTOR</h3><div class="role">The METAXIS RAG</div><div class="owns">Source registry · fetch · normalize · retrieve · rank · curate · cite · context budget · grounding evaluation · retrieval evidence</div><div class="ids">ROOT #483 · YKS-REQ-MTX-LECTOR-001…010 · OUT-005</div></article>
+  <article class="card n"><div class="tag">Interface sibling</div><h3>NemaShells</h3><div class="role">Operator interface contract</div><div class="owns">Installed app journey · steering · health · provenance and gap display · citation readback · presentation only—no execution, RAG, or mission authority</div><div class="ids">CHAIN #474 → #475 → #476 · UI-001…012 · OUT-006/007</div></article>
+</div><div class="contract"><b>Versioned METAXIS contracts</b> exchange state, context, commands, health, and evidence across sibling boundaries</div></section>
+
+<section class="bridge"><div class="boundary axis"><h4>AXIS · mission derivative</h4><p>Supplies mission authorization, guardrails, trusted/degraded-mode policy, and proof-bound action. AXIS consumes pinned METAXIS contracts; it is not a fourth component.</p></div><div class="consumers"><h4>Derivative bridge roots · #485 EXARTYSIS · #486 LECTOR</h4><div class="chips"><span class="chip"><b>FABRICA</b> orchestration</span><span class="chip"><b>SYMBOLON</b> identity</span><span class="chip"><b>CUSTODIA</b> custody</span><span class="chip"><b>TENAX</b> adversarial gates</span><span class="chip"><b>TESTIMONIUM</b> witness</span><span class="chip"><b>ACTA</b> receipts</span><span class="chip"><b>OCULUS</b> readback</span><span class="chip"><b>ARBITER/NIMBUS</b> routing</span></div></div></section>
+
+<section class="vendor"><div class="map"><strong>NVIDIA OpenShell</strong> → cataloged/deferred · no current requirement or provider selection · <strong>NVIDIA RAG / cuVS</strong> → candidate LECTOR backends · never METAXIS authority</div><div class="state">#487 clarified · #488 native-plane proof pending</div></section>
+
+<footer><div class="legend"><span><i class="dot owned"></i>METAXIS-owned</span><span><i class="dot derived"></i>consumer derivative</span><span><i class="dot candidate"></i>external candidate</span></div><div>Architecture stamp · 2026-07-15 · 91 METAXIS requirement rows · external sources public/synthetic evaluation only</div></footer>
+</main></body></html>

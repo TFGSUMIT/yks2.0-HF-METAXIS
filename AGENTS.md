@@ -1,7 +1,9 @@
 # METAXIS Agent Instructions
 
-METAXIS is the provider-neutral agentic harness. It owns reusable autonomy;
-AXIS owns mission-specific authorization and guardrails.
+METAXIS is the provider-neutral agentic box. Its direct sibling components are
+EXARTYSIS (sovereign execution harness), LECTOR (the METAXIS RAG), and
+NemaShells (operator interface). None owns or contains another. AXIS owns
+mission-specific authorization and guardrails as a downstream derivative.
 
 ## Operating Boundary
 
@@ -42,7 +44,9 @@ AXIS owns mission-specific authorization and guardrails.
 
 ## Rules
 
-- Treat yks2.0-ops-hub issues 422 and 423 as the governing product sources.
+- Treat yks2.0-ops-hub issue 422, capability roots 484/483, accelerated-plane
+  issue 488, derivative bridges 485/486, completed boundary review 487, and
+  research issue 423 as the governing product sources.
 - Treat this repository's issue 1 as a generated one-way mirror of issue 422;
   make root changes only in YKS Ops.
 - Do not claim production activation from scaffolding or research artifacts.
@@ -54,6 +58,8 @@ AXIS owns mission-specific authorization and guardrails.
 - Consequential actions must fail closed when authority is absent.
 - Preserve evaluation, replay, recovery, and evidence hooks in every adapter.
 - AXIS may declare mission overrides but must not fork the METAXIS core.
+- External runtimes and RAG frameworks remain replaceable provider candidates
+  behind EXARTYSIS or LECTOR contracts; vendor names never become authority.
 
 ## Handoff
 
