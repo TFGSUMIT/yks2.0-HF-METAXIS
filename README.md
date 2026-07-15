@@ -36,10 +36,11 @@ One-time installation is documented in
 and systemd contract moves to the target Proxmox/KVM -> Debian VM -> Docker
 stack without changing the app or brain adapter.
 
-The optional Tauri 2 second shell uses the same API and is isolated behind the
-`PROTOS-4` login/launcher path. See
-[`docs/nemashells-tauri.md`](docs/nemashells-tauri.md). From its guest shell,
-`yetis live` performs the health-gated application boot.
+`PROTOS-4` remains available as an isolated NemaShells interface-development
+machine against the same loopback service. NemaShells is the interface and
+product contract; no Tauri implementation or fallback is required for forward
+delivery. The checked-in Tauri prototype and its validation notes are retained
+as historical evidence only and are not an active architecture dependency.
 
 ## HIGH/NOFORN hard gate
 
@@ -77,7 +78,7 @@ The Phase 0 gate will:
 | --- | --- |
 | src/metaxis | Provider-neutral harness contracts and CLI |
 | apps/nemashells-macos | Native presentation-only NemaShells application |
-| apps/nemashells-tauri | Tauri 2 presentation-only second shell |
+| apps/nemashells-tauri | Historical Tauri 2 prototype retained as superseded evidence; not a forward delivery requirement |
 | deployment | OrbStack, systemd, Docker, and Proxmox profiles |
 | src/metaxis/capabilities | Pinned skill and plugin inventory for PROTOS-4 |
 | schemas/brain-contract | Machine-readable request and response envelopes |
@@ -109,7 +110,7 @@ The Phase 0 gate will:
 - Endpoint spending: Bedrock on-demand DEVELOPMENT calls authorized within the registered per-request ceiling; no standing endpoint
 - HIGH/NOFORN processing: blocked in the laptop development profile
 - Functional prototype: DEVELOPMENT gates passed for the installed shell, GitHub live read, verified/blocked inference paths, and D1 evidence durability
-- PROTOS-4 capabilities: `yeti-boot` and GitHub broker active; Hugging Face and Cloudflare loaded/gated
+- PROTOS-4 capabilities: isolated NemaShells interface-development profile; historical Tauri proof is superseded for forward delivery
 - Software license: selection pending an explicit governance decision
 
 Public visibility does not itself grant a software license. License selection

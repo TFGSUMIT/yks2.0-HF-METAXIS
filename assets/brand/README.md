@@ -32,7 +32,8 @@ contract in native UI code.
 
 ## Interaction contract
 
-- **NemaShells** is the installed operator console and application shell.
+- **NemaShells** is the installed operator console, interface, and application
+  contract.
 - **METAXIS** is the provider-neutral agentic harness behind the console.
 - **SkipJack** supplies the parent brand and skin; it does not become runtime
   authority.
@@ -40,9 +41,11 @@ contract in native UI code.
   rearrangeable, collapsible, pinnable, resizable cards and saved layouts.
 - The component system, design tokens, state contracts, and workflows remain
   independent from the desktop package.
-- Chromium/Electron is the preferred reference-package evaluation target for
-  Codex-like rendering consistency. Tauri 2 remains the working lightweight
-  fallback until an evidence-backed package decision is accepted.
+- The desktop packager is an implementation detail beneath NemaShells. No
+  Tauri implementation or fallback is required for acceptance. A native or
+  Chromium/Electron wrapper may be evaluated only when distribution evidence
+  requires one; it must not change the NemaShells interaction or authority
+  contract.
 - Every card must distinguish live, synthetic/mock, stale, denied, and
   unavailable data. A design mockup never proves operational state.
 

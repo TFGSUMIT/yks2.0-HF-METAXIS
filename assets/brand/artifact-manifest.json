@@ -64,8 +64,9 @@
       "interaction_contract": {
         "ui_substrate": "React and TypeScript component system",
         "workspace": "rearrangeable, collapsible, pinnable, resizable cards",
-        "reference_package": "Chromium/Electron evaluation target",
-        "fallback_package": "Tauri 2 remains available until an evidence-backed package decision",
+        "interface_contract": "NemaShells is the product interface; desktop packaging is an implementation detail",
+        "package_policy": "No Tauri implementation or fallback is required; evaluate a native or Chromium/Electron wrapper only if distribution evidence requires one",
+        "tauri_required": false,
         "authority_effect": "none; presentation only"
       },
       "footer_endorsement": "Powered by SkipJack",

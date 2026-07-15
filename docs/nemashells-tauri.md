@@ -1,5 +1,10 @@
 # NemaShells Tauri 2 shell
 
+> **Superseded for forward delivery (operator ruling 2026-07-15).** NemaShells
+> is the interface contract and no Tauri implementation or fallback is
+> required. This document is retained only as historical prototype and
+> validation evidence.
+
 Status: Phase 0 second-shell implementation
 Authority: YKS Ops #474 → #475 → #476
 
