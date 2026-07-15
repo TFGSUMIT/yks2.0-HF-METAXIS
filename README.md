@@ -39,8 +39,23 @@ stack without changing the app or brain adapter.
 `PROTOS-4` was stopped and retired by operator ruling on 2026-07-15. Its
 OrbStack disk, checked-in prototype, and validation notes are retained as
 historical evidence only; the machine is not a forward NemaShells delivery or
-acceptance dependency. NemaShells remains the interface and product contract,
-with no Tauri implementation or fallback required.
+acceptance dependency. NemaShells remains the internal interface/package
+contract until separately migrated, with no Tauri implementation or fallback
+required. Promoted presentation follows the SkipJack Console Design Language
+and does not use NemaShells as visible branding.
+
+## SkipJack Console Design Language
+
+Every METAXIS UI uses `SKIPJACK-CONSOLE-DL-1.0` and cites
+`MTX-ART-DL-20260715-004` as its source design artifact. The canonical
+specification and Standard Clean / Complex Unpacked references live under
+`assets/brand/`. METAXIS is the visible product identity; SkipJack is the
+parent brand and supplies the `Powered by SkipJack` endorsement.
+
+The design stamp is operator-accepted and has row-backed D1 receipt
+`MTX-DESIGN-OUTPUT-SJCDL-20260715-001`. It does not claim that the current
+application fully implements the design language, that the package is
+production-ready, or that HIGH/NOFORN processing is authorized.
 
 ## HIGH/NOFORN hard gate
 
@@ -98,7 +113,7 @@ The Phase 0 gate will:
 | scripts | Repository automation and redacted environment readback |
 | tests | Contract and import checks |
 | assets | METAXIS identity assets |
-| assets/brand | Versioned METAXIS lockup, skin projection, and artifact metadata |
+| assets/brand | Versioned METAXIS lockup, SkipJack Console Design Language, reference views, and artifact metadata |
 
 ## Current posture
 

@@ -30,7 +30,7 @@
     {
       "artifact_id": "MTX-ART-UI-20260714-002",
       "name": "NemaShells METAXIS skin mockup v0.1",
-      "status": "current-draft",
+      "status": "superseded",
       "files": [
         "assets/brand/nemashells-skin-mockup-v0.1.png"
       ],
@@ -42,12 +42,13 @@
       ],
       "footer_endorsement": "Powered by SkipJack",
       "source_of_truth_rule": "Visual design projection only; implementation, tests, YKS Ops authority, D1, TESTIMONIUM, ACTA, and operator rulings outrank this mockup.",
-      "provenance": "Operator-directed OpenAI-generated NemaShells skin mockup dated 2026-07-14."
+      "provenance": "Operator-directed OpenAI-generated NemaShells skin mockup dated 2026-07-14.",
+      "superseded_by": "MTX-ART-UI-20260715-005"
     },
     {
       "artifact_id": "MTX-ART-UI-20260714-003",
       "name": "NemaShells modular operator workspace mockup v0.1",
-      "status": "current-draft",
+      "status": "superseded",
       "files": [
         "assets/brand/nemashells-modular-workspace-mockup-v0.1.png"
       ],
@@ -71,7 +72,78 @@
       },
       "footer_endorsement": "Powered by SkipJack",
       "source_of_truth_rule": "Interaction-design projection only. Every rendered operational value must be supplied by deterministic METAXIS state or labeled synthetic/mock/stale; the image itself proves no runtime state, implementation, package selection, or authorization.",
-      "provenance": "Operator-approved OpenAI-generated modular NemaShells workspace concept dated 2026-07-14, derived from MTX-ART-UI-20260714-002."
+      "provenance": "Operator-approved OpenAI-generated modular NemaShells workspace concept dated 2026-07-14, derived from MTX-ART-UI-20260714-002.",
+      "superseded_by": "MTX-ART-UI-20260715-005"
+    },
+    {
+      "artifact_id": "MTX-ART-DL-20260715-004",
+      "name": "SkipJack Console Design Language 1.0",
+      "status": "accepted-current",
+      "files": [
+        "assets/brand/skipjack-console-design-language-v1.0.md"
+      ],
+      "classification": "operations",
+      "dependency_role": "source-design-language",
+      "product_role": "mandatory source design system for METAXIS operator UIs",
+      "authority_issue": 422,
+      "execution_chains": [
+        "442 -> 457 -> 472",
+        "474 -> 475 -> 476"
+      ],
+      "decision_state": "accepted",
+      "accepted_at": "2026-07-15",
+      "source_design_language": "SKIPJACK-CONSOLE-DL-1.0",
+      "brand_relationship": "METAXIS is the product; SkipJack is the parent brand; NemaShells is not visible design-language branding.",
+      "required_for": "Every METAXIS UI and any downstream UI declaring SJCDL conformance.",
+      "source_of_truth_rule": "The specification is canonical design direction. YKS Ops issue 422, the product and requirements manifests, D1 registry state, TESTIMONIUM, ACTA, deterministic runtime state, and later operator rulings outrank rendered examples.",
+      "proof_posture": "row-backed-design-decision",
+      "live_d1_receipt": "MTX-DESIGN-OUTPUT-SJCDL-20260715-001",
+      "live_d1_artifact_registry": "deferred-until-artifact tables are applied",
+      "provenance": "Operator-stamped design-language decision from the 2026-07-15 METAXIS console mockup session."
+    },
+    {
+      "artifact_id": "MTX-ART-UI-20260715-005",
+      "name": "SkipJack Console Design Language Standard Clean v1.0",
+      "status": "accepted-current",
+      "files": [
+        "assets/brand/skipjack-console-design-language-standard-clean-v1.0.png"
+      ],
+      "png_sha256": "13dd84908ed88aec368e51eea4fba31568360dcafde8b0fdf338f6edf0cb1efa",
+      "classification": "operations",
+      "dependency_role": "visual-projection",
+      "depends_on": [
+        "MTX-ART-BRAND-20260714-001",
+        "MTX-ART-DL-20260715-004"
+      ],
+      "view_mode": "standard-clean",
+      "footer_endorsement": "Powered by SkipJack",
+      "source_of_truth_rule": "Visual projection only; the accepted design-language specification, YKS Ops, D1, canon, TESTIMONIUM, ACTA, deterministic state, and operator rulings outrank this image.",
+      "proof_posture": "row-backed-design-decision",
+      "live_d1_receipt": "MTX-DESIGN-OUTPUT-SJCDL-20260715-001",
+      "provenance": "Operator-approved OpenAI-generated Standard Clean reference dated 2026-07-15."
+    },
+    {
+      "artifact_id": "MTX-ART-UI-20260715-006",
+      "name": "SkipJack Console Design Language Complex Unpacked v1.0",
+      "status": "accepted-current",
+      "files": [
+        "assets/brand/skipjack-console-design-language-complex-unpacked-v1.0.png"
+      ],
+      "png_sha256": "485db8d1bbb2bce08a911dbbe223fbf0f4c5f771eae61db639e427791a8410cf",
+      "classification": "operations",
+      "dependency_role": "visual-projection",
+      "depends_on": [
+        "MTX-ART-BRAND-20260714-001",
+        "MTX-ART-DL-20260715-004",
+        "MTX-ART-UI-20260715-005"
+      ],
+      "view_mode": "complex-unpacked-10",
+      "hard_maximum_cards": 10,
+      "footer_endorsement": "Powered by SkipJack",
+      "source_of_truth_rule": "Visual projection only; the accepted design-language specification, YKS Ops, D1, canon, TESTIMONIUM, ACTA, deterministic state, and operator rulings outrank this image.",
+      "proof_posture": "row-backed-design-decision",
+      "live_d1_receipt": "MTX-DESIGN-OUTPUT-SJCDL-20260715-001",
+      "provenance": "Operator-approved OpenAI-generated Complex Unpacked reference dated 2026-07-15."
     }
   ],
   "schema_version": "1.0.0"

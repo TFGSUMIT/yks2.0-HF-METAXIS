@@ -1,13 +1,19 @@
 # METAXIS Brand Artifacts
 
-These files record the operator-selected METAXIS identity direction and the
-corresponding NemaShells skin projection.
+These files record the operator-selected METAXIS identity and the accepted
+SkipJack Console Design Language used by METAXIS operator interfaces.
 
 | Artifact ID | File | Role | Posture |
 | --- | --- | --- | --- |
 | `MTX-ART-BRAND-20260714-001` | `metaxis-product-lockup-v0.1.svg` and `metaxis-product-lockup-v0.1.png` | Primary METAXIS product identity | current draft / manual-placeholder |
 | `MTX-ART-UI-20260714-002` | `nemashells-skin-mockup-v0.1.png` | NemaShells visual projection using the selected identity | current draft / manual-placeholder |
 | `MTX-ART-UI-20260714-003` | `nemashells-modular-workspace-mockup-v0.1.png` | Codex-inspired modular NemaShells operator-workspace projection | current draft / manual-placeholder |
+| `MTX-ART-DL-20260715-004` | `skipjack-console-design-language-v1.0.md` | Mandatory source design language for METAXIS UIs | accepted / row-backed design receipt |
+| `MTX-ART-UI-20260715-005` | `skipjack-console-design-language-standard-clean-v1.0.png` | Standard Clean reference view | accepted / row-backed design receipt |
+| `MTX-ART-UI-20260715-006` | `skipjack-console-design-language-complex-unpacked-v1.0.png` | Complex Unpacked ten-card reference view | accepted / row-backed design receipt |
+
+The 2026-07-14 NemaShells-branded UI projections are retained as superseded
+history. They are not the source design language for new UI implementation.
 
 ## Identity hierarchy
 
@@ -30,7 +36,22 @@ Using the SVG through an `<img>` element cannot toggle the internal state.
 Surfaces that need stateful motion must inline the SVG or reproduce the motion
 contract in native UI code.
 
-## Interaction contract
+## SkipJack Console Design Language
+
+Every METAXIS UI uses `SKIPJACK-CONSOLE-DL-1.0` and cites
+`MTX-ART-DL-20260715-004` as its source design artifact. The design language is
+package- and product-interface-neutral: consuming products supply their own
+visible identity. METAXIS surfaces use `METAXIS`, `MX`, and `Message METAXIS`;
+NemaShells is not visible design-language branding.
+
+The standard view has three information columns, a 16/64/20 desktop geometry,
+a conversation-local composer, summarized secondary information, and one soft
+detail disclosure per section. Expanded operation uses 4-6 cards; complex
+operation uses 7-10; 10 is the hard maximum. Each operational card scrolls
+independently and can be resized, reordered, pinned, collapsed, expanded, or
+focused full-width while retaining context and explicit provenance.
+
+## Historical interaction contract
 
 - **NemaShells** is the installed operator console, interface, and application
   contract.
@@ -58,4 +79,5 @@ contract in native UI code.
 - Detailed provenance, checksums, and non-claims are recorded in
   `artifact-manifest.json`.
 
-These are design artifacts, not production-activation or HIGH/NOFORN proof.
+These are design artifacts, not production-activation, live-D1, or
+HIGH/NOFORN proof.
