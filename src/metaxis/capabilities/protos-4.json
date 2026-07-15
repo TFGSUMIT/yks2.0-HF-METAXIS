@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "profile": "PROTOS-4",
+  "authority": {
+    "root": "LittleYeti-Dev/yks2.0-ops-hub#422",
+    "safe_chain": [474, 475, 476]
+  },
+  "execution_boundary": "metaxis-provider-neutral",
+  "credential_exposed_to_model": false,
+  "skills": [
+    {
+      "id": "yeti-boot",
+      "version": "1.0.0",
+      "source": "metaxis-repository",
+      "instruction_path": "skills/yeti-boot/SKILL.md",
+      "loaded": true,
+      "active": true,
+      "mode": "deterministic-local-readback",
+      "writes_allowed": false,
+      "reason": "Boot trigger is handled locally without model or network execution."
+    }
+  ],
+  "plugins": [
+    {
+      "id": "github",
+      "version": "0.1.8-2841cf9749ae",
+      "source": "openai/plugins",
+      "license": "MIT",
+      "loaded": true,
+      "active": true,
+      "mode": "metaxis-read-broker",
+      "writes_allowed": false,
+      "reason": "Only the repository-scoped METAXIS metadata broker is active."
+    },
+    {
+      "id": "hugging-face",
+      "version": "1.0.0",
+      "source": "openai/plugins",
+      "license": "MIT",
+      "loaded": true,
+      "active": false,
+      "mode": "provider-adapter-gated",
+      "writes_allowed": false,
+      "reason": "Endpoint route, inference-only credential, and spend gate are not active."
+    },
+    {
+      "id": "cloudflare",
+      "version": "0.1.2",
+      "source": "openai/plugins",
+      "license": "MIT",
+      "loaded": true,
+      "active": false,
+      "mode": "storage-adapter-gated",
+      "writes_allowed": false,
+      "reason": "D1 database, least-privilege credential, and migration proof are not active."
+    }
+  ]
+}

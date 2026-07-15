@@ -3,12 +3,13 @@ __pycache__/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+.wrangler/
 .venv/
 venv/
 dist/
 build/
+.build/
 *.egg-info/
 .env
 .env.*
 !.env.example
-

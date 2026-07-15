@@ -1,0 +1,18 @@
+#!/bin/sh
+set -eu
+
+SERVICE_URL="${METAXIS_URL:-http://host.internal:4310}"
+
+attempt=0
+while ! curl --fail --silent --show-error "${SERVICE_URL}/healthz" >/dev/null 2>&1; do
+  attempt=$((attempt + 1))
+  if [ "$attempt" -ge 20 ]; then
+    printf '%s\n' 'NemaShells service failed its health gate.' >&2
+    printf '%s\n' 'Start OrbStack Docker and rerun the one-time installer from macOS.' >&2
+    exit 1
+  fi
+  sleep 0.25
+done
+
+printf '%s\n' 'METAXIS healthy; opening the installed NemaShells application.'
+exec open -a NemaShells

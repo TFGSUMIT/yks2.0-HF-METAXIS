@@ -1,0 +1,43 @@
+#!/bin/sh
+set -eu
+
+MANIFEST=/etc/metaxis/capabilities/protos-4.json
+test -r "$MANIFEST" || {
+  printf '%s\n' 'PROTOS-4 capability pack is not installed.' >&2
+  exit 1
+}
+
+python3 - "$MANIFEST" <<'PY'
+import json
+import sys
+import urllib.request
+
+with open(sys.argv[1], encoding="utf-8") as stream:
+    manifest = json.load(stream)
+
+status = manifest
+source = "checked-in baseline"
+try:
+    with urllib.request.urlopen(
+        "http://host.internal:4310/api/v1/capabilities", timeout=1
+    ) as response:
+        candidate = json.load(response)
+    if (
+        isinstance(candidate, dict)
+        and candidate.get("profile") == manifest["profile"]
+        and isinstance(candidate.get("skills"), list)
+        and isinstance(candidate.get("plugins"), list)
+    ):
+        status = candidate
+        source = "live METAXIS runtime"
+except (OSError, ValueError):
+    pass
+
+print(f"METAXIS capability pack: {status['profile']} ({source})")
+for kind in ("skills", "plugins"):
+    print(f"{kind}:")
+    for item in status[kind]:
+        state = "active" if item["active"] else "loaded / gated"
+        print(f"  {item['id']}@{item['version']}: {state}; writes denied")
+print("credential exposed to model: never")
+PY

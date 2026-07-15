@@ -1,0 +1,13 @@
+.git
+.github
+.venv
+__pycache__
+*.pyc
+.env
+apps
+assets
+deployment
+docs
+evals
+tests
+scripts

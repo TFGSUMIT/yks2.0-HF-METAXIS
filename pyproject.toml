@@ -15,11 +15,21 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
 ]
 
+[project.urls]
+Repository = "https://github.com/LittleYeti-Dev/yks2.0-HF-METAXIS"
+
 [project.scripts]
 metaxis = "metaxis.cli:main"
+
+[project.optional-dependencies]
+huggingface = ["huggingface_hub==1.23.0"]
+aws = ["boto3==1.43.47"]
 
 [tool.setuptools]
 package-dir = {"" = "src"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+metaxis = ["capabilities/*.json", "capabilities/skills/*/*.md"]

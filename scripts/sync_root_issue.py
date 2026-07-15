@@ -33,7 +33,7 @@ def build_mirror_body(
 class GitHubAPI:
     def __init__(self, token: str) -> None:
         if not token:
-            raise ValueError("GITHUB_TOKEN is required")
+            raise ValueError("GH_TOKEN or GITHUB_TOKEN is required")
         self.token = token
 
     def request(

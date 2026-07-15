@@ -1,24 +1,45 @@
 profile_id: huggingface-research
 phase: 0
-state: discovery-only
+state: candidate-pinned-endpoint-disabled
 provider: huggingface
 organization: yks-metaxis
 
+toolchain:
+  plugin: hugging-face
+  plugin_version: 1.0.0
+  cli: hf
+  huggingface_hub_version: 1.23.0
+
+authentication:
+  discovery_connector: configured
+  discovery_identity: yetisdigits
+  cli_identity: yetisdigits
+  cli_organization: yks-metaxis
+  cli_session: oauth-authenticated
+  endpoint_management_token: configured-external-custody
+  endpoint_management_scopes:
+    - inference-endpoints-call
+    - inference-endpoints-manage
+  runtime_inference_token: not-created
+  implicit_token: disabled
+  telemetry: disabled
+
 model:
-  repository: pending
-  revision: pending
-  license: pending-verification
-  gated: pending-verification
+  repository: nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16
+  revision: d51eab0d1f979ebc26b546e634a04f450d99158e
+  license: nvidia-nemotron-open-model-license
+  gated: false
 
 route:
   kind: dedicated-inference-endpoint
   activated: false
+  role: operator-approved-development-fallback
   region: pending
   scaling: pending
   spend_cap_usd: 0
 
 runtime:
-  hosted: pending
+  hosted: hugging-face-inference-endpoint-candidate
   export_target: vllm
   export_proven: false
 
@@ -33,4 +54,3 @@ controls:
   consequential_actions: deny
   fail_closed: true
   evidence_required: true
-

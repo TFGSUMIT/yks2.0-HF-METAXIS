@@ -1,0 +1,19 @@
+[Unit]
+Description=METAXIS service for the NemaShells application
+Documentation=https://github.com/LittleYeti-Dev/yks2.0-HF-METAXIS
+After=docker.service network-online.target
+Wants=network-online.target
+Requires=docker.service
+
+[Service]
+Type=simple
+EnvironmentFile=-/etc/metaxis/nemashells.env
+ExecStartPre=-/usr/bin/docker rm -f nemashells-metaxis
+ExecStart=/usr/bin/docker run --name nemashells-metaxis --read-only --tmpfs /tmp:rw,noexec,nosuid,size=16m --cap-drop ALL --security-opt no-new-privileges:true --pids-limit 128 --memory 512m --publish 127.0.0.1:4310:4310 --env METAXIS_PROFILE=${METAXIS_PROFILE} --env METAXIS_DATA_CLASSIFICATION=DEVELOPMENT --env METAXIS_EXTERNAL_MODEL_CALLS=0 --env METAXIS_EXTERNAL_TELEMETRY=0 --env "METAXIS_OPERATOR_CADENCE=5.6 sol" ${METAXIS_IMAGE}
+ExecStop=/usr/bin/docker stop -t 10 nemashells-metaxis
+Restart=always
+RestartSec=3
+TimeoutStartSec=120
+
+[Install]
+WantedBy=multi-user.target

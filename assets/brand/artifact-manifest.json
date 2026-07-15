@@ -1,0 +1,159 @@
+{
+  "manifest_id": "MTX-BRAND-ARTIFACTS",
+  "owning_product": "METAXIS",
+  "authority_issue": "https://github.com/LittleYeti-Dev/yks2.0-ops-hub/issues/422",
+  "product_manifest": "https://github.com/LittleYeti-Dev/yks2.0-ops-hub/blob/codex/metaxis-core-product/canon/products/product-manifest.md",
+  "proof_posture": "manual-placeholder",
+  "artifacts": [
+    {
+      "artifact_id": "MTX-ART-BRAND-20260714-001",
+      "name": "METAXIS product lockup v0.1",
+      "status": "current-draft",
+      "files": [
+        "assets/brand/metaxis-product-lockup-v0.1.svg",
+        "assets/brand/metaxis-product-lockup-v0.1.png"
+      ],
+      "png_sha256": "52c225a7f7fda416af098df464f2f282afbf31a356a84d8f452ef3d6685207e2",
+      "classification": "operations",
+      "dependency_role": "operator-artifact",
+      "product_role": "primary product identity",
+      "brand_relationship": "METAXIS is the product; SkipJack is the parent brand.",
+      "motion_contract": {
+        "idle": "static unequal-height seven-bar signal",
+        "processing": "2.6 second staggered undulation",
+        "reduced_motion": "static unequal-height seven-bar signal"
+      },
+      "source_of_truth_rule": "This artifact records the operator-selected design direction. YKS Ops issue 422, the YKS product manifest, and later accepted brand canon outrank the rendering.",
+      "provenance": "Operator-selected OpenAI-generated concept refined against the user-owned Non Sequitur brand surface on 2026-07-14; SVG is a repository-native implementation specification.",
+      "license_posture": "Original/user-owned brand treatment; no font binaries are embedded. Inter is referenced by family name and must be separately packaged and license-recorded before distribution."
+    },
+    {
+      "artifact_id": "MTX-ART-UI-20260714-002",
+      "name": "NemaShells METAXIS skin mockup v0.1",
+      "status": "superseded",
+      "files": [
+        "assets/brand/nemashells-skin-mockup-v0.1.png"
+      ],
+      "png_sha256": "d5657e097ee7e9e38928a19a2c868b52ca05e8cb6babb735efcc39f8cfe02fbd",
+      "classification": "operations",
+      "dependency_role": "visual-projection",
+      "depends_on": [
+        "MTX-ART-BRAND-20260714-001"
+      ],
+      "footer_endorsement": "Powered by SkipJack",
+      "source_of_truth_rule": "Visual design projection only; implementation, tests, YKS Ops authority, D1, TESTIMONIUM, ACTA, and operator rulings outrank this mockup.",
+      "provenance": "Operator-directed OpenAI-generated NemaShells skin mockup dated 2026-07-14.",
+      "superseded_by": "MTX-ART-UI-20260715-005"
+    },
+    {
+      "artifact_id": "MTX-ART-UI-20260714-003",
+      "name": "NemaShells modular operator workspace mockup v0.1",
+      "status": "superseded",
+      "files": [
+        "assets/brand/nemashells-modular-workspace-mockup-v0.1.png"
+      ],
+      "png_sha256": "c82ab1cef1102ce5a9057f4fa58497053496d0fbdd9b27fa51ecf26174a2d306",
+      "classification": "operations",
+      "dependency_role": "interaction-design-projection",
+      "depends_on": [
+        "MTX-ART-BRAND-20260714-001",
+        "MTX-ART-UI-20260714-002"
+      ],
+      "operator_console": "NemaShells",
+      "harness": "METAXIS",
+      "parent_brand": "SkipJack",
+      "interaction_contract": {
+        "ui_substrate": "React and TypeScript component system",
+        "workspace": "rearrangeable, collapsible, pinnable, resizable cards",
+        "interface_contract": "NemaShells is the product interface; desktop packaging is an implementation detail",
+        "package_policy": "No Tauri implementation or fallback is required; evaluate a native or Chromium/Electron wrapper only if distribution evidence requires one",
+        "tauri_required": false,
+        "authority_effect": "none; presentation only"
+      },
+      "footer_endorsement": "Powered by SkipJack",
+      "source_of_truth_rule": "Interaction-design projection only. Every rendered operational value must be supplied by deterministic METAXIS state or labeled synthetic/mock/stale; the image itself proves no runtime state, implementation, package selection, or authorization.",
+      "provenance": "Operator-approved OpenAI-generated modular NemaShells workspace concept dated 2026-07-14, derived from MTX-ART-UI-20260714-002.",
+      "superseded_by": "MTX-ART-UI-20260715-005"
+    },
+    {
+      "artifact_id": "MTX-ART-DL-20260715-004",
+      "name": "SkipJack Console Design Language 1.0",
+      "status": "accepted-current",
+      "files": [
+        "assets/brand/skipjack-console-design-language-v1.0.md"
+      ],
+      "classification": "operations",
+      "dependency_role": "source-design-language",
+      "product_role": "mandatory source design system for METAXIS operator UIs",
+      "authority_issue": 422,
+      "execution_chains": [
+        "442 -> 457 -> 472",
+        "474 -> 475 -> 476"
+      ],
+      "decision_state": "accepted",
+      "accepted_at": "2026-07-15",
+      "source_design_language": "SKIPJACK-CONSOLE-DL-1.0",
+      "brand_relationship": "METAXIS is the product; SkipJack is the parent brand; NemaShells is not visible design-language branding.",
+      "required_for": "Every METAXIS UI and any downstream UI declaring SJCDL conformance.",
+      "source_of_truth_rule": "The specification is canonical design direction. YKS Ops issue 422, the product and requirements manifests, D1 registry state, TESTIMONIUM, ACTA, deterministic runtime state, and later operator rulings outrank rendered examples.",
+      "proof_posture": "row-backed-design-decision",
+      "live_d1_receipt": "MTX-DESIGN-OUTPUT-SJCDL-20260715-001",
+      "future_capabilities": [
+        {
+          "capability": "multi-monitor-workspace",
+          "state": "planned-deferred",
+          "scope": "every METAXIS UI",
+          "card_capacity_rule": "10 cards maximum across the governed workspace, not per display",
+          "d1_receipt": "MTX-DESIGN-OUTPUT-SJCDL-MULTIMONITOR-20260715-002"
+        }
+      ],
+      "live_d1_artifact_registry": "deferred-until-artifact tables are applied",
+      "provenance": "Operator-stamped design-language decision from the 2026-07-15 METAXIS console mockup session."
+    },
+    {
+      "artifact_id": "MTX-ART-UI-20260715-005",
+      "name": "SkipJack Console Design Language Standard Clean v1.0",
+      "status": "accepted-current",
+      "files": [
+        "assets/brand/skipjack-console-design-language-standard-clean-v1.0.png"
+      ],
+      "png_sha256": "13dd84908ed88aec368e51eea4fba31568360dcafde8b0fdf338f6edf0cb1efa",
+      "classification": "operations",
+      "dependency_role": "visual-projection",
+      "depends_on": [
+        "MTX-ART-BRAND-20260714-001",
+        "MTX-ART-DL-20260715-004"
+      ],
+      "view_mode": "standard-clean",
+      "footer_endorsement": "Powered by SkipJack",
+      "source_of_truth_rule": "Visual projection only; the accepted design-language specification, YKS Ops, D1, canon, TESTIMONIUM, ACTA, deterministic state, and operator rulings outrank this image.",
+      "proof_posture": "row-backed-design-decision",
+      "live_d1_receipt": "MTX-DESIGN-OUTPUT-SJCDL-20260715-001",
+      "provenance": "Operator-approved OpenAI-generated Standard Clean reference dated 2026-07-15."
+    },
+    {
+      "artifact_id": "MTX-ART-UI-20260715-006",
+      "name": "SkipJack Console Design Language Complex Unpacked v1.0",
+      "status": "accepted-current",
+      "files": [
+        "assets/brand/skipjack-console-design-language-complex-unpacked-v1.0.png"
+      ],
+      "png_sha256": "485db8d1bbb2bce08a911dbbe223fbf0f4c5f771eae61db639e427791a8410cf",
+      "classification": "operations",
+      "dependency_role": "visual-projection",
+      "depends_on": [
+        "MTX-ART-BRAND-20260714-001",
+        "MTX-ART-DL-20260715-004",
+        "MTX-ART-UI-20260715-005"
+      ],
+      "view_mode": "complex-unpacked-10",
+      "hard_maximum_cards": 10,
+      "footer_endorsement": "Powered by SkipJack",
+      "source_of_truth_rule": "Visual projection only; the accepted design-language specification, YKS Ops, D1, canon, TESTIMONIUM, ACTA, deterministic state, and operator rulings outrank this image.",
+      "proof_posture": "row-backed-design-decision",
+      "live_d1_receipt": "MTX-DESIGN-OUTPUT-SJCDL-20260715-001",
+      "provenance": "Operator-approved OpenAI-generated Complex Unpacked reference dated 2026-07-15."
+    }
+  ],
+  "schema_version": "1.0.0"
+}

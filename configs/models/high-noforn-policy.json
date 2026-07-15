@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0",
+  "classification": "HIGH/NOFORN",
+  "default": "deny",
+  "development_data": ["synthetic", "public", "explicitly-approved-non-sensitive"],
+  "required_controls": {
+    "model_developer_country": "US",
+    "model_provenance_review": "accepted",
+    "administrators": "US-person-only",
+    "workload_users": "US-person-only",
+    "compute_and_data_location": "approved-US-only",
+    "network_egress": "deny-by-default",
+    "external_telemetry": "disabled",
+    "credential_custody": "approved",
+    "authority_record": "required"
+  },
+  "public_hosted_api_fallback": false,
+  "primary_candidate": {
+    "repository": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16",
+    "revision": "d51eab0d1f979ebc26b546e634a04f450d99158e",
+    "bedrock_model_id": "nvidia.nemotron-super-3-120b",
+    "developer": "NVIDIA Corporation",
+    "developer_country": "US",
+    "license": "nvidia-nemotron-open-model-license",
+    "status": "candidate-evaluation-required"
+  },
+  "comparison_candidate": {
+    "repository": "openai/gpt-oss-120b",
+    "revision": "b5c939de8f754692c1647ca79fbf85e8c1e70f8a",
+    "bedrock_model_id": "openai.gpt-oss-120b-1:0",
+    "developer": "OpenAI",
+    "developer_country": "US",
+    "license": "apache-2.0",
+    "status": "independent-comparison-required"
+  },
+  "requirements": [
+    "YKS-REQ-MTX-026",
+    "YKS-REQ-MTX-BRAIN-018",
+    "YKS-REQ-MTX-BRAIN-019",
+    "YKS-REQ-MTX-BRAIN-020",
+    "YKS-REQ-MTX-BRAIN-021"
+  ]
+}
