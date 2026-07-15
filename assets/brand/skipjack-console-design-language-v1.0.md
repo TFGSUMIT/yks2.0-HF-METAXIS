@@ -80,6 +80,34 @@ The composer belongs inside the conversation column it controls. It is never a
 global footer. Focusing a column full-width retains that column's context and
 local controls.
 
+## Future Capability: Multi-Monitor Workspace
+
+Every METAXIS UI shall preserve a future path to a multi-monitor workspace.
+This capability is planned and deferred: it is not implemented by the 1.0
+references and is not a Phase 0 conformance blocker.
+
+The future capability shall allow the operator to move, pin, and focus columns
+across connected displays while preserving one governed workspace, session,
+and authority context. The ten-card hard maximum applies across the complete
+workspace, not separately to each monitor. A conforming implementation shall:
+
+- retain each column's task context, provenance, proof state, and local
+  composer when moved between displays;
+- make the active display and focused column unambiguous;
+- restore displaced columns safely to the primary display when a monitor is
+  disconnected, without losing state or silently replacing pinned work;
+- support saved operator layouts without treating monitor identity or layout
+  state as authorization;
+- apply classification, privacy, stale-state, and blocked-state presentation
+  consistently on every display; and
+- retain a usable single-monitor fallback with no capability or authority
+  loss.
+
+Future acceptance requires multi-display layout persistence, disconnect and
+reconnect recovery, focus and keyboard traversal across windows, scaling and
+mixed-resolution checks, provenance continuity, and proof that no additional
+runtime authority is created by opening another display.
+
 ## Information Density
 
 - Summarize secondary information to one line by default.
@@ -124,4 +152,5 @@ authority contract.
 
 Acceptance of SJCDL does not claim that every view is implemented, that a
 desktop package is selected, that a runtime is production-ready, that D1 has a
-live row, or that HIGH/NOFORN processing is authorized.
+live row, that multi-monitor operation is implemented, or that HIGH/NOFORN
+processing is authorized.

@@ -54,8 +54,17 @@ class SkipJackConsoleDesignLanguageTests(unittest.TestCase):
             "Ten is the hard maximum",
             "NemaShells is not visible branding",
             "Message METAXIS",
+            "Future Capability: Multi-Monitor Workspace",
+            "ten-card hard maximum applies across the complete",
+            "single-monitor fallback",
         ):
             self.assertIn(token, source)
+
+        design = self.artifacts["MTX-ART-DL-20260715-004"]
+        capability = design["future_capabilities"][0]
+        self.assertEqual(capability["capability"], "multi-monitor-workspace")
+        self.assertEqual(capability["state"], "planned-deferred")
+        self.assertEqual(capability["scope"], "every METAXIS UI")
 
 
 if __name__ == "__main__":

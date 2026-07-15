@@ -98,6 +98,15 @@
       "source_of_truth_rule": "The specification is canonical design direction. YKS Ops issue 422, the product and requirements manifests, D1 registry state, TESTIMONIUM, ACTA, deterministic runtime state, and later operator rulings outrank rendered examples.",
       "proof_posture": "row-backed-design-decision",
       "live_d1_receipt": "MTX-DESIGN-OUTPUT-SJCDL-20260715-001",
+      "future_capabilities": [
+        {
+          "capability": "multi-monitor-workspace",
+          "state": "planned-deferred",
+          "scope": "every METAXIS UI",
+          "card_capacity_rule": "10 cards maximum across the governed workspace, not per display",
+          "d1_receipt": "MTX-DESIGN-OUTPUT-SJCDL-MULTIMONITOR-20260715-001"
+        }
+      ],
       "live_d1_artifact_registry": "deferred-until-artifact tables are applied",
       "provenance": "Operator-stamped design-language decision from the 2026-07-15 METAXIS console mockup session."
     },

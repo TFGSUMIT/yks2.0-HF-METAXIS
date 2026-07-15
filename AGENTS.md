@@ -61,6 +61,24 @@ Report the active branch, changed artifacts, authority links, validation
 result, proof posture, and any YKS Ops link/readback update needed to keep the
 control plane current.
 
+## Operator Code Word: Stamp It
+
+When the operator says `stamp it`, treat that as a request to promote the
+decision or artifact into governed canon, not merely to save or export it.
+Unless the operator narrows the scope, the stamp includes:
+
+- a durable artifact identity and version;
+- approval, provenance, source/render status, and appropriate content hash;
+- canonical source files stored in this implementation repository;
+- product-manifest and requirements-traceability bindings in YKS Ops;
+- appropriate D1 metadata or append-only proof receipt with readback;
+- conformance requirements for every affected METAXIS UI or consumer;
+- validation, an authority-linked commit/PR, and explicit non-claims.
+
+Ask before stamping when the target, authority, classification, affected
+products, or consequential external write is ambiguous. A stamp never invents
+authority, bypasses approval, or turns a mockup into implementation proof.
+
 ## Verification
 
 Run:
