@@ -31,3 +31,33 @@ services:
       CLOUDFLARE_D1_API_TOKEN: ${CLOUDFLARE_D1_API_TOKEN:-}
       METAXIS_D1_TIMEOUT_SECONDS: ${METAXIS_D1_TIMEOUT_SECONDS:-10}
       METAXIS_D1_API_BASE: ${METAXIS_D1_API_BASE:-https://api.cloudflare.com/client/v4}
+    networks:
+      - default
+      - metaxis_private
+  lector:
+    build:
+      context: .
+      dockerfile: deployment/lector/Dockerfile
+      args:
+        METAXIS_REVISION: ${METAXIS_REVISION:-development}
+    image: metaxis-lector:${METAXIS_REVISION:-development}
+    container_name: nemashells-lector
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=16m
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 64
+    mem_limit: 256m
+    environment:
+      LECTOR_HOST: 0.0.0.0
+      LECTOR_PORT: 4320
+    networks:
+      - metaxis_private
+
+networks:
+  metaxis_private:
+    internal: true

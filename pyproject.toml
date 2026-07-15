@@ -20,6 +20,7 @@ Repository = "https://github.com/LittleYeti-Dev/yks2.0-HF-METAXIS"
 
 [project.scripts]
 metaxis = "metaxis.cli:main"
+metaxis-lector = "metaxis.lector.cli:main"
 
 [project.optional-dependencies]
 huggingface = ["huggingface_hub==1.23.0"]
