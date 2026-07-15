@@ -104,7 +104,7 @@
           "state": "planned-deferred",
           "scope": "every METAXIS UI",
           "card_capacity_rule": "10 cards maximum across the governed workspace, not per display",
-          "d1_receipt": "MTX-DESIGN-OUTPUT-SJCDL-MULTIMONITOR-20260715-001"
+          "d1_receipt": "MTX-DESIGN-OUTPUT-SJCDL-MULTIMONITOR-20260715-002"
         }
       ],
       "live_d1_artifact_registry": "deferred-until-artifact tables are applied",

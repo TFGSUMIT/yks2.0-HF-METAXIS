@@ -1,7 +1,7 @@
 # METAXIS Environment Contract
 
-Status: Phase 0 development contract  
-Authority: YKS Ops issues 422 and 423
+- Status: Phase 0 development contract
+- Authority: YKS Ops issues 422 and 423
 
 METAXIS keeps configuration names and non-secret defaults in the repository.
 Credentials remain in an external secret authority or an authorized CI secret

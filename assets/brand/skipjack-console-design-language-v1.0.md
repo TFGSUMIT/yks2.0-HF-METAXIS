@@ -1,10 +1,10 @@
 # SkipJack Console Design Language 1.0
 
-Artifact ID: `MTX-ART-DL-20260715-004`  
-Decision state: accepted  
-Operator ruling: 2026-07-15  
-Authority: YKS Ops #422  
-No-orphan execution chain: #442 -> #457 -> #472 and #474 -> #475 -> #476
+- Artifact ID: `MTX-ART-DL-20260715-004`
+- Decision state: accepted
+- Operator ruling: 2026-07-15
+- Authority: YKS Ops #422
+- No-orphan execution chain: #442 -> #457 -> #472 and #474 -> #475 -> #476
 
 ## Product And Brand Boundary
 

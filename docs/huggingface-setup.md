@@ -1,8 +1,8 @@
 # Hugging Face Phase 0 Setup
 
-Status: discovery-ready / authenticated connector and CLI  
-Authority: YKS Ops issue 423 and requirement `YKS-REQ-MTX-025`  
-Observed: 2026-07-14
+- Status: discovery-ready / authenticated connector and CLI
+- Authority: YKS Ops issue 423 and requirement `YKS-REQ-MTX-025`
+- Observed: 2026-07-14
 
 ## Purpose
 

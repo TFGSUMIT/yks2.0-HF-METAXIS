@@ -65,6 +65,10 @@ class SkipJackConsoleDesignLanguageTests(unittest.TestCase):
         self.assertEqual(capability["capability"], "multi-monitor-workspace")
         self.assertEqual(capability["state"], "planned-deferred")
         self.assertEqual(capability["scope"], "every METAXIS UI")
+        self.assertEqual(
+            capability["d1_receipt"],
+            "MTX-DESIGN-OUTPUT-SJCDL-MULTIMONITOR-20260715-002",
+        )
 
 
 if __name__ == "__main__":
