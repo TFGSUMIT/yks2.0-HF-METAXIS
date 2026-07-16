@@ -1,0 +1,16 @@
+# METAXIS
+
+![METAXIS sasquatch avatar](assets/metaxis-sasquatch-avatar.png)
+
+YKS Ops PROD 0.1 METAXIS is the provider-neutral agentic box at the beginning
+of
+
+PLAN TO FOLLOW:
+Implement solution for: [YKS OPS PROD 0.1][CORE PRODUCT][BRIDGE ROOT v0.1] METAXIS — agentic box and harness
+
+PREVIOUS FEEDBACK (address these issues):
+AI agents failed to produce working code. Try a simpler approach.
+
+IMPORTANT:
+- Output complete, working code for EACH file
+- Use
